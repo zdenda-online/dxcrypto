@@ -7,9 +7,10 @@
     <groupId>cz.d1x</groupId>
     <artifactId>dxcrypto</artifactId>
     <version>1.0</version>
+    <packaging>jar</packaging>
 
     <name>DXCrypto</name>
-    <description>Set of simple tools for cryptography tools</description>
+    <description>Set of simple tools for cryptography</description>
     <url>https://github.com/d1x/dxcrypto</url>
 
     <developers>
@@ -53,6 +54,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
