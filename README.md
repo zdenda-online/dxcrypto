@@ -8,6 +8,16 @@ In most cases, you expect much more simple API, so this is only an abstraction b
 
 If you find any issue or you would like to contribute, feel free to contact me.
 
+Maven dependency (will be published to Central soon)
+----------------
+```xml
+<dependency>
+   <groupId>cz.d1x</groupId>
+   <artifactId>dxcrypto</artifactId>
+   <version>1.0</version>
+</dependency>
+```
+
 Features
 --------
 
@@ -38,3 +48,4 @@ byte[] andBack = aes.decrypt(asBytes);
 String asString = aes.encrypt("hello");
 String andBack2 = aes.decrypt(asString);
 ```
+
