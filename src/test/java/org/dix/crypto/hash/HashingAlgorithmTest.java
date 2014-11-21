@@ -1,11 +1,11 @@
 package org.dix.crypto.hash;
 
+import org.dix.crypto.hash.impl.SimpleSaltingAdapter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Generic test for all {@link HashingAlgorithm} implementations using default encoding.
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 public abstract class HashingAlgorithmTest {
 
     protected static final int REPEATS_COUNT = 3;
-    protected static final String[] INPUTS = new String[] {
+    protected static final String[] INPUTS = new String[]{
             "Toto-jePrvni.vstupPro_h@sh",
             "0111111111101101111111111111111111111",
             ""
@@ -79,6 +79,15 @@ public abstract class HashingAlgorithmTest {
             testHash(expected[i], repeatedAlgorithm.hash(input), i);
             i++;
         }
+    }
+
+    @Test
+    public void saltedHashing() {
+        SaltingAdapter saltingAdapter = new SimpleSaltingAdapter(algorithm);
+        String input = INPUTS[0];
+        String hash1 = saltingAdapter.hash(input, "s@Lt1");
+        String hash2 = saltingAdapter.hash(input, "s@Lt2");
+        assertNotEquals("Same inputs with different salt must have different hash", hash1, hash2);
     }
 
     protected void testHash(String expectedHash, String actualHash, int idx) {

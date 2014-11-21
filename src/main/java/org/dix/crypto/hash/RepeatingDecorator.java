@@ -8,17 +8,21 @@ package org.dix.crypto.hash;
  */
 public class RepeatingDecorator implements HashingAlgorithm {
 
-    private final HashingAlgorithm decoratedAlgorithm;
+    private final HashingAlgorithm hashingAlgorithm;
     private final int repeatsCount;
 
     /**
      * Creates a new repeating decorator with specified algorithm a repeats count.
      *
-     * @param repeatedAlgorithm algorithm to be repeated
-     * @param repeatsCount      number of repeats of hashing
+     * @param hashingAlgorithm algorithm to be repeated
+     * @param repeatsCount     number of repeats of hashing
      */
-    public RepeatingDecorator(HashingAlgorithm repeatedAlgorithm, int repeatsCount) {
-        this.decoratedAlgorithm = repeatedAlgorithm;
+    public RepeatingDecorator(HashingAlgorithm hashingAlgorithm, int repeatsCount) {
+        if (hashingAlgorithm == null) {
+            throw new IllegalArgumentException("Expecting non-null decorated algorithm");
+        }
+        this.hashingAlgorithm = hashingAlgorithm;
+
         if (repeatsCount < 1) {
             throw new IllegalArgumentException("Expecting at least 1 repeat");
         }
@@ -30,8 +34,9 @@ public class RepeatingDecorator implements HashingAlgorithm {
      * <p/>
      * Repeats algorithm by specified number of times.
      */
-    public String hash(String text) {
-        return repeat(decoratedAlgorithm.hash(text));
+    @Override
+    public String hash(String input) {
+        return repeat(hashingAlgorithm.hash(input));
     }
 
     /**
@@ -40,18 +45,8 @@ public class RepeatingDecorator implements HashingAlgorithm {
      * Repeats algorithm by specified number of times.
      */
     @Override
-    public byte[] hash(byte[] bytes) throws HashingException {
-        return repeat(decoratedAlgorithm.hash(bytes));
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * It is encoding of decorated algorithm.
-     */
-    @Override
-    public String getEncoding() {
-        return decoratedAlgorithm.getEncoding();
+    public byte[] hash(byte[] input) throws HashingException {
+        return repeat(hashingAlgorithm.hash(input));
     }
 
     /**
@@ -62,7 +57,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      */
     private String repeat(String text) {
         for (int i = 0; i < repeatsCount - 1; i++) {
-            text = decoratedAlgorithm.hash(text);
+            text = hashingAlgorithm.hash(text);
         }
         return text;
     }
@@ -75,7 +70,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      */
     private byte[] repeat(byte[] input) {
         for (int i = 0; i < repeatsCount - 1; i++) {
-            input = decoratedAlgorithm.hash(input);
+            input = hashingAlgorithm.hash(input);
         }
         return input;
     }

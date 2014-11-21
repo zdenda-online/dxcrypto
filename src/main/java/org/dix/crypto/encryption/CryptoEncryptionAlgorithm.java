@@ -37,37 +37,32 @@ import java.security.spec.InvalidKeySpecException;
  */
 public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
 
-    protected final Key key;
-    private static final String KEY_SALT = "s4lTTTT-us3d~bY_re4l_m3n5"; // something not easy to guess
-    private static final int KEY_HASH_ITERATIONS_COUNTS = 27891; // something tough to find out
-
-    protected final SecureRandom random = new SecureRandom();
-    protected final String encoding;
-    protected final Cipher cipher;
-    protected final SecretKeyFactory keyFactory;
+    private final SecureRandom random = new SecureRandom();
+    private final String encoding;
+    private final Key key;
+    private final Cipher cipher;
 
     /**
      * Creates a new instance of base algorithm.
      *
-     * @param key       key for encryption
-     * @param keyLength length of key
-     * @param encoding  encoding for string inputs and outputs
+     * @param keyPassword password for encryption key derivation
+     * @param keyLength   length of encryption key
+     * @param encoding    encoding used for strings
      */
-    protected CryptoEncryptionAlgorithm(byte[] key, int keyLength, String encoding) {
+    protected CryptoEncryptionAlgorithm(byte[] keyPassword, int keyLength, String encoding) {
         if (!Charset.isSupported(encoding)) {
             throw new HashingException("Given encoding " + encoding + " is not supported");
         }
-        if (key == null || key.length == 0) {
-            throw new EncryptionException("Key must be set");
+        if (keyPassword == null || keyPassword.length == 0) {
+            throw new EncryptionException("Encryption keyPassword must be set");
         }
 
         this.encoding = encoding;
         try {
             this.cipher = Cipher.getInstance(getCipherName());
-            this.keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            this.key = deriveKey(key, keyLength);
+            this.key = deriveKey(keyPassword, keyLength);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new EncryptionException("Invalid encryption/key algorithm", e);
+            throw new EncryptionException("Invalid encryption algorithm", e);
         }
     }
 
@@ -126,23 +121,39 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
         }
     }
 
+    /**
+     * Generates random initialization vector depending on cipher block size.
+     *
+     * @return random initialization vector
+     */
     private IvParameterSpec generateIV() {
         byte[] iv = new byte[cipher.getBlockSize()];
         random.nextBytes(iv);
         return new IvParameterSpec(iv);
     }
 
-    private Key deriveKey(byte[] key, int keyLength) throws EncryptionException {
+    /**
+     * Derives a key from given password and expected key length.
+     *
+     * @param keyPassword password for encryption key derivation
+     * @param keyLength   length of encryption key
+     * @return derived encryption key
+     * @throws EncryptionException possible exception during key derivation
+     */
+    private Key deriveKey(byte[] keyPassword, int keyLength) throws EncryptionException {
         try {
-            byte[] salt = KEY_SALT.getBytes(encoding);
-            char[] keyEncoded = new String(key, encoding).toCharArray();
-            PBEKeySpec keySpec = new PBEKeySpec(keyEncoded, salt, KEY_HASH_ITERATIONS_COUNTS, keyLength);
-            SecretKey tmp = keyFactory.generateSecret(keySpec);
+            char[] keyEncoded = new String(keyPassword, encoding).toCharArray();
+            // no need to introduce salt and iterations as constant - no-one is gonna find out here :-)
+            byte[] salt = "s4lTTTT-us3d~bY_re4l_m3n5".getBytes(encoding);
+            PBEKeySpec keySpec = new PBEKeySpec(keyEncoded, salt, 27891, keyLength);
+            SecretKey tmp = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(keySpec);
             return new SecretKeySpec(tmp.getEncoded(), cutCipherName(getCipherName()));
         } catch (InvalidKeySpecException e) {
-            throw new EncryptionException("Encryption key specification is not valid", e);
+            throw new EncryptionException("Encryption keyPassword specification is not valid", e);
         } catch (UnsupportedEncodingException e) {
             throw new EncryptionException("Unsupported encoding", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new EncryptionException("Invalid key derivation algorithm", e);
         }
     }
 

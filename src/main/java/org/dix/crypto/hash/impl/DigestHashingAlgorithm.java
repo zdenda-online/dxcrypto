@@ -30,7 +30,7 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
     /**
      * Creates a new instance with given encoding.
      *
-     * @param encoding encoding to be used
+     * @param encoding encoding used for strings
      */
     protected DigestHashingAlgorithm(String encoding) {
         if (!Charset.isSupported(encoding)) {
@@ -55,30 +55,25 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
     protected abstract String getDigestName();
 
     @Override
-    public byte[] hash(byte[] bytes) throws HashingException {
-        if (bytes == null) {
+    public byte[] hash(byte[] input) throws HashingException {
+        if (input == null) {
             throw new HashingException("Input data are null!");
         }
         digest.reset();
-        return digest.digest(bytes);
+        return digest.digest(input);
     }
 
     @Override
-    public String hash(String text) throws HashingException {
-        if (text == null) {
+    public String hash(String input) throws HashingException {
+        if (input == null) {
             throw new HashingException("Input data are null!");
         }
         try {
-            byte[] textBytes = text.getBytes(encoding);
+            byte[] textBytes = input.getBytes(encoding);
             byte[] hash = hash(textBytes);
             return DatatypeConverter.printHexBinary(hash).toLowerCase();
         } catch (UnsupportedEncodingException e) {
             throw new HashingException(e);
         }
-    }
-
-    @Override
-    public String getEncoding() {
-        return encoding;
     }
 }

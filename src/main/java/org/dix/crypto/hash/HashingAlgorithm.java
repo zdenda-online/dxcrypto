@@ -17,25 +17,18 @@ public interface HashingAlgorithm {
     /**
      * Creates a hash from input text.
      *
-     * @param text input text to be hashed
+     * @param input input text to be hashed
      * @return hashed text in hex string
      * @throws HashingException possible exception during hashing process
      */
-    String hash(String text) throws HashingException;
+    String hash(String input) throws HashingException;
 
     /**
-     * Creates a hash from input bytes.
+     * Creates a hash from input input.
      *
-     * @param bytes bytes to be hashed
-     * @return hashed text in bytes
+     * @param input input to be hashed
+     * @return hashed text in input
      * @throws HashingException possible exception during hashing process
      */
-    byte[] hash(byte[] bytes) throws HashingException;
-
-    /**
-     * Gets encoding that is used for strings.
-     *
-     * @return used encoding
-     */
-    String getEncoding();
+    byte[] hash(byte[] input) throws HashingException;
 }

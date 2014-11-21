@@ -15,24 +15,24 @@ import org.dix.crypto.encryption.EncryptionException;
 public class TripleDES extends CryptoEncryptionAlgorithm {
 
     /**
-     * Creates a new instance of Triple DES algorithm using given key.
+     * Creates a new instance of Triple DES algorithm using given keyPassword.
      *
-     * @param key key for encryption
+     * @param keyPassword password for encryption key derivation
      * @throws EncryptionException possible exception whether algorithm cannot be initialized
      */
-    public TripleDES(byte[] key) throws EncryptionException {
-        this(key, DEFAULT_ENCODING);
+    public TripleDES(byte[] keyPassword) throws EncryptionException {
+        this(keyPassword, DEFAULT_ENCODING);
     }
 
     /**
      * Creates a new instance of Triple DES algorithm using given key and encoding used for strings.
      *
-     * @param key      key for encryption
-     * @param encoding encoding for input and output strings
+     * @param keyPassword password for encryption key derivation
+     * @param encoding    encoding for input and output strings
      * @throws EncryptionException possible exception whether algorithm cannot be initialized
      */
-    public TripleDES(byte[] key, String encoding) throws EncryptionException {
-        super(key, 24 * 8, encoding);
+    public TripleDES(byte[] keyPassword, String encoding) throws EncryptionException {
+        super(keyPassword, 24 * 8, encoding);
     }
 
     @Override

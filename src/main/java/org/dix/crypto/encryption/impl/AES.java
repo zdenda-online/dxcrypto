@@ -17,22 +17,22 @@ public class AES extends CryptoEncryptionAlgorithm {
     /**
      * Creates a new instance of AES algorithm using given key.
      *
-     * @param key key for encryption
+     * @param keyPassword password for encryption key derivation
      * @throws EncryptionException possible exception whether algorithm cannot be initialized
      */
-    public AES(byte[] key) throws EncryptionException {
-        this(key, DEFAULT_ENCODING);
+    public AES(byte[] keyPassword) throws EncryptionException {
+        this(keyPassword, DEFAULT_ENCODING);
     }
 
     /**
      * Creates a new instance of AES algorithm using given key and encoding used for strings.
      *
-     * @param key      key for encryption
-     * @param encoding encoding for input and output strings
+     * @param keyPassword password for encryption key derivation
+     * @param encoding    encoding for input and output strings
      * @throws EncryptionException possible exception whether algorithm cannot be initialized
      */
-    public AES(byte[] key, String encoding) throws EncryptionException {
-        super(key, 16 * 8, encoding);
+    public AES(byte[] keyPassword, String encoding) throws EncryptionException {
+        super(keyPassword, 16 * 8, encoding);
     }
 
     @Override
