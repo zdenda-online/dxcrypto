@@ -5,6 +5,7 @@ import org.dix.crypto.encryption.impl.TripleDES;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,9 @@ public class EncryptionAlgorithmsTest {
         }};
     }
 
+    /**
+     * Tests encryption and decryption of byte methods.
+     */
     @Test
     public void bytesEncryption() throws UnsupportedEncodingException {
         String plain = "th1s_is_something inter3sting -*";
@@ -43,6 +47,9 @@ public class EncryptionAlgorithmsTest {
         }
     }
 
+    /**
+     * Tests encryption and decryption of string methods.
+     */
     @Test
     public void stringEncryption() throws UnsupportedEncodingException {
         String plain = "th1s_is_something inter3sting -*";
@@ -54,6 +61,9 @@ public class EncryptionAlgorithmsTest {
         }
     }
 
+    /**
+     * Tests whether encryption and decryption works if different instances with same key are used for each operation.
+     */
     @Test
     public void sameKeyDifferentInstance() throws UnsupportedEncodingException {
         List<EncryptionAlgorithm> encryptionAlgorithms1 = getImplementationsToTest();
@@ -68,6 +78,21 @@ public class EncryptionAlgorithmsTest {
             byte[] encryptedBytes = alg1.encrypt(plainBytes);
             byte[] decryptedBytes = alg2.decrypt(encryptedBytes); // using different instance but same key for decrypt
             Assert.assertArrayEquals("Original and decrypted strings are not equal", plainBytes, decryptedBytes);
+        }
+    }
+
+    /**
+     * Tests compatibility between byte and string methods.
+     * To be precise when encryption is made using byte method and decryption by string method.
+     */
+    @Test
+    public void sameInstanceDifferentMethod() throws UnsupportedEncodingException {
+        String plainString = "Som3 T@";
+        byte[] plainBytes = new byte[]{'S', 'o', 'm', '3', ' ', 'T', '@'};
+        for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
+            byte[] encrypted = encryptionAlgorithm.encrypt(plainBytes);
+            String decrypted = encryptionAlgorithm.decrypt(DatatypeConverter.printHexBinary(encrypted).toLowerCase());
+            Assert.assertEquals("Original and decrypted strings are not equal", plainString, decrypted);
         }
     }
 }

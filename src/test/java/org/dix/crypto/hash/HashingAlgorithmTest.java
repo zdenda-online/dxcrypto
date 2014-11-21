@@ -52,12 +52,18 @@ public abstract class HashingAlgorithmTest {
         this.algorithm = getAlgorithm();
     }
 
+    /**
+     * Tests that null for hashing throws exception.
+     */
     @Test(expected = HashingException.class)
     public void nullHashing() {
         String str = null;
         algorithm.hash(str);
     }
 
+    /**
+     * Tests simple string hashing.
+     */
     @Test
     public void simpleHashing() {
         String[] expected = getExpectedSimpleOutputs();
@@ -69,6 +75,9 @@ public abstract class HashingAlgorithmTest {
         }
     }
 
+    /**
+     * Tests repeating decorator.
+     */
     @Test
     public void repeatingHashing() {
         HashingAlgorithm repeatedAlgorithm = new RepeatingDecorator(algorithm, REPEATS_COUNT);
@@ -81,6 +90,9 @@ public abstract class HashingAlgorithmTest {
         }
     }
 
+    /**
+     * Tests usage of salt returns different hash for same input but different hash.
+     */
     @Test
     public void saltedHashing() {
         SaltingAdapter saltingAdapter = new SimpleSaltingAdapter(algorithm);
