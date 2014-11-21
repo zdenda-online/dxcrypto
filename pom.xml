@@ -8,9 +8,9 @@
     <artifactId>dxcrypto</artifactId>
     <version>1.0</version>
 
-    <name>Crypto</name>
+    <name>DXCrypto</name>
     <description>Set of simple tools for cryptography tools</description>
-    <url>https://github.com/d1x/crypto</url>
+    <url>https://github.com/d1x/dxcrypto</url>
 
     <developers>
         <developer>
@@ -28,9 +28,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:d1x/crypto.git</connection>
-        <developerConnection>scm:git:git@github.com:d1x/crypto.git</developerConnection>
-        <url>git@github.com:d1x/crypto.git</url>
+        <connection>scm:git:git@github.com:d1x/dxcrypto.git</connection>
+        <developerConnection>scm:git:git@github.com:d1x/dxcrypto.git</developerConnection>
+        <url>git@github.com:d1x/dxcrypto.git</url>
     </scm>
 
     <properties>
