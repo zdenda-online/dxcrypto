@@ -1,7 +1,12 @@
 DXCrypto - Java library for simple cryptography
 ===============================================
-Set of simple tools for cryptography tools (e.g. hashing, encryption functions) built purely on Java SE
-without any other dependency. Only JUnit is used for testing purposes.
+Set of simple tools for cryptography (hashing and encryption) built purely on Java SE (no transitive dependencies).
+
+I created this library because I was tired of using existing Java API for hashing and encryption algorithms.
+In most cases, you expect much more simple API, so this is only an abstraction built on existing
+java.security and javax.crypto packages.
+
+If you find any issue or you would like to contribute, feel free to contact me.
 
 Features
 --------
