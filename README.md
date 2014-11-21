@@ -6,15 +6,16 @@ without any other dependency. Only JUnit is used for testing purposes.
 Features
 --------
 
--	Hashing algorithms: MD5, SHA1, SHA256 and SHA512
+- Immutable structures (algorithm instances) for thread safety
+- Hashing algorithms: MD5, SHA1, SHA256 and SHA512
 
 ```java
-HashingAlgorithm sha256 = new SHA256(); // or new SHA("yourEncoding") if you are not OK with UTF-8
+HashingAlgorithm sha256 = new SHA256(); // or new SHA("yourEncoding")
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
-String asString = sha256.hash("hello"); // 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+String asString = sha256.hash("hello"); // 2cf24db...
 ```
 
--	Encryption algorithms: AES and Triple DES both using CBC (PKCS5Padding and PBKDF2 for key derivation)
+- Encryption algorithms: AES and Triple DES both using CBC (PKCS5Padding and PBKDF2 for key derivation)
 
 ```java
 byte[] key = new byte[] {'m', 'y', 'k', 'e', 'y'};
