@@ -19,7 +19,7 @@ HashingAlgorithm sha256 = new SHA256(); // or SHA256("yourEncoding")
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
 String asString = sha256.hash("hello"); // 2cf24db...
 
-RepeatingDecorator decorator = new RepeatingDecorator(sha256, 27);
+HashingAlgorithm decorator = new RepeatingDecorator(sha256, 27);
 String repeated = decorator.hash("hello"); // sha256(sha256("hello")) ~ 27x
 
 SaltingAdapter adapter = new SimpleSaltingAdapter(sha256);
