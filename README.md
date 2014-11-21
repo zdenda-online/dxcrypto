@@ -1,5 +1,5 @@
-DXCrypto - Java library for simple cryptography
-===============================================
+DXCrypto - Simple Java cryptography
+===================================
 Set of simple tools for cryptography (hashing and encryption) built purely on Java SE (no transitive dependencies).
 
 I created this library because I was tired of using existing Java API for hashing and encryption algorithms.
@@ -15,7 +15,7 @@ Features
 - Hashing algorithms: MD5, SHA1, SHA256 and SHA512
 
 ```java
-HashingAlgorithm sha256 = new SHA256(); // or new SHA("yourEncoding")
+HashingAlgorithm sha256 = new SHA256(); // or new SHA256("yourEncoding")
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
 String asString = sha256.hash("hello"); // 2cf24db...
 ```
