@@ -1,15 +1,16 @@
 DXCrypto: Easy Java Cryptography
 ================================
-Set of simple tools for cryptography (hashing and encryption) built purely on Java SE (no transitive dependencies).
+Simple Java library for cryptography (hashing and encryption) built purely on Java SE (no transitive dependencies).
 
-I created this library because I was tired of using existing Java API for hashing and encryption algorithms.
-In most cases, you expect much more simple API, so this is only an abstraction built on existing
+I created this library because I was tired of object initializations of existing Java APIs.
+In many cases, a lot simplier API is needed. This library provides higher abstraction built on existing
 *java.security* and *javax.crypto* packages.
 
-If you find any issue or you would like to contribute, feel free to contact me.
+If you find any issue or you would like to contribute, feel free to contact me (contact in POM).
 
 Maven dependency (will be published to Central soon)
 ----------------
+
 ```xml
 <dependency>
    <groupId>cz.d1x</groupId>
@@ -22,6 +23,7 @@ Features
 --------
 
 - Immutable structures (algorithm instances) for thread safety
+
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**, decorator for **repeated hashing** and adapter for **salting**
 
 ```java
@@ -36,7 +38,7 @@ SaltingAdapter adapter = new SimpleSaltingAdapter(sha256);
 String withSalt = adapter.hash("hello", "sillySalt");
 ```
 
-- Encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS #5 padding
+- Encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS#5 padding
 
 ```java
 byte[] keyPassword = new byte[] {'m', 'y', 'k', 'e', 'y'};
