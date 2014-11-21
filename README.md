@@ -29,8 +29,8 @@ String withSalt = adapter.hash("hello", "sillySalt");
 - Encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS #5 padding
 
 ```java
-byte[] key = new byte[] {'m', 'y', 'k', 'e', 'y'};
-EncryptionAlgorithm aes = new AES(key); // or AES(key, "yourEncoding")
+byte[] keyPassword = new byte[] {'m', 'y', 'k', 'e', 'y'};
+EncryptionAlgorithm aes = new AES(keyPassword); // or AES(key, "yourEncoding")
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
 byte[] andBack = aes.decrypt(asBytes);
