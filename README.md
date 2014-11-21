@@ -15,16 +15,16 @@ Features
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
 ```java
-HashingAlgorithm sha256 = new SHA256(); // or new SHA256("yourEncoding")
+HashingAlgorithm sha256 = new SHA256(); // or SHA256("yourEncoding")
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
 String asString = sha256.hash("hello"); // 2cf24db...
 ```
 
-- Encryption algorithms: **AES** and **Triple DES** both using CBC (PKCS5Padding and PBKDF2 for key derivation)
+- Encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS #5 padding
 
 ```java
 byte[] key = new byte[] {'m', 'y', 'k', 'e', 'y'};
-EncryptionAlgorithm aes = new AES(key);
+EncryptionAlgorithm aes = new AES(key); // or AES(key, "yourEncoding")
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
 byte[] andBack = aes.decrypt(asBytes);
