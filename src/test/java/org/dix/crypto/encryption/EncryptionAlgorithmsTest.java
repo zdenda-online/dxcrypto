@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Tests {@link EncryptionAlgorithm} implementations.
@@ -25,7 +25,7 @@ public class EncryptionAlgorithmsTest {
             0x43, 0x03, 0x11, 0x27, 0x1F, 0x0D, 0x6D, 0x64,
             0x44, 0x18, 0x27, 0x09, 0x7A, 0x44, 0x17, 0x3E};
 
-    protected Collection<EncryptionAlgorithm> getImplementationsToTest() {
+    protected List<EncryptionAlgorithm> getImplementationsToTest() {
         return new ArrayList<EncryptionAlgorithm>() {{
             add(new AES(AES_KEY));
             add(new TripleDES(TRIPLE_DES_KEY));
@@ -34,8 +34,8 @@ public class EncryptionAlgorithmsTest {
 
     @Test
     public void bytesEncryption() throws UnsupportedEncodingException {
+        String plain = "th1s_is_something inter3sting -*";
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
-            String plain = "th1s_is_something_inter3sting";
             byte[] plainBytes = plain.getBytes("UTF-8");
             byte[] encryptedBytes = encryptionAlgorithm.encrypt(plainBytes);
             byte[] decryptedBytes = encryptionAlgorithm.decrypt(encryptedBytes);
@@ -44,14 +44,30 @@ public class EncryptionAlgorithmsTest {
     }
 
     @Test
-    public void basicEncryption() throws UnsupportedEncodingException {
+    public void stringEncryption() throws UnsupportedEncodingException {
+        String plain = "th1s_is_something inter3sting -*";
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
-            String plain = "th1s_is_something_inter3sting";
             String encrypted = encryptionAlgorithm.encrypt(plain);
             String decrypted = encryptionAlgorithm.decrypt(encrypted);
             Assert.assertNotEquals("Plain and encrypted strings are not different", plain, encrypted);
             Assert.assertEquals("Original and decrypted strings are not equal", plain, decrypted);
-            System.out.println(plain + " -> " + encrypted + " -> " + decrypted);
+        }
+    }
+
+    @Test
+    public void sameKeyDifferentInstance() throws UnsupportedEncodingException {
+        List<EncryptionAlgorithm> encryptionAlgorithms1 = getImplementationsToTest();
+        List<EncryptionAlgorithm> encryptionAlgorithms2 = getImplementationsToTest();
+
+        String plain = "th1s_is_something inter3sting -*";
+        for (int i = 0; i < encryptionAlgorithms1.size(); i++) {
+            EncryptionAlgorithm alg1 = encryptionAlgorithms1.get(i);
+            EncryptionAlgorithm alg2 = encryptionAlgorithms2.get(i);
+
+            byte[] plainBytes = plain.getBytes("UTF-8");
+            byte[] encryptedBytes = alg1.encrypt(plainBytes);
+            byte[] decryptedBytes = alg2.decrypt(encryptedBytes); // using different instance but same key for decrypt
+            Assert.assertArrayEquals("Original and decrypted strings are not equal", plainBytes, decryptedBytes);
         }
     }
 }

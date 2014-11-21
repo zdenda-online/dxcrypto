@@ -19,13 +19,14 @@ import java.security.spec.InvalidKeySpecException;
  * <p/>
  * This base implementation generates a new random initialization vector for every message and includes it in
  * encrypted message. This allows you to use one instance for different messages (otherwise it would be dangerous to use
- * same combination of key and initialization for every message).
+ * same combination of key and IV for every message).
  * <p/>
  * For key derivation, PBKDF2 algorithm is used along with HMAC-SHA1 as the pseudo-random function.
  * <p/>
- * This base class also expects input to padded, so it is not recommended to use NoPadding variants of algorithm names.
+ * This base class also expects input to padded to the correct length, so it is not recommended to use NoPadding
+ * variants of algorithm.
  * <p/>
- * Inputs and outputs from this encryption are bytes or bytes represented in string in HEX format.
+ * Inputs and outputs from this encryption are bytes represented in HEX string.
  * <p/>
  * This class is immutable and can be considered thread safe. If you extend this class, it is recommended it
  * stays that way.
