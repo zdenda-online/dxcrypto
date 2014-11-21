@@ -1,5 +1,7 @@
 package org.dix.crypto.encryption;
 
+import org.dix.crypto.encryption.impl.AES;
+
 /**
  * Interface for algorithms that are able to encrypt given input and decrypt it afterwards.
  * <p/>
@@ -12,7 +14,7 @@ package org.dix.crypto.encryption;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see CryptoEncryptionAlgorithm
- * @see org.dix.crypto.encryption.impl.AES
+ * @see AES
  */
 public interface EncryptionAlgorithm {
 

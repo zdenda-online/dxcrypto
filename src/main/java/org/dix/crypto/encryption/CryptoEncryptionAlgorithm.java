@@ -1,5 +1,7 @@
 package org.dix.crypto.encryption;
 
+import org.dix.crypto.encryption.impl.AES;
+import org.dix.crypto.encryption.impl.TripleDES;
 import org.dix.crypto.hash.HashingException;
 
 import javax.crypto.*;
@@ -16,7 +18,8 @@ import java.security.spec.InvalidKeySpecException;
  * Base class for implementations of {@link EncryptionAlgorithm} class which uses Java SDK's javax.crypto implementation.
  * <p/>
  * This base implementation generates a new random initialization vector for every message and includes it in
- * encrypted message. This allows you to re-use one implementation for different messages.
+ * encrypted message. This allows you to use one instance for different messages (otherwise it would be dangerous to use
+ * same combination of key and initialization for every message).
  * <p/>
  * For key derivation, PBKDF2 algorithm is used along with HMAC-SHA1 as the pseudo-random function.
  * <p/>
@@ -28,8 +31,8 @@ import java.security.spec.InvalidKeySpecException;
  * stays that way.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see org.dix.crypto.encryption.impl.AES
- * @see org.dix.crypto.encryption.impl.TripleDES
+ * @see AES
+ * @see TripleDES
  */
 public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
 
@@ -42,6 +45,13 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
     protected final Cipher cipher;
     protected final SecretKeyFactory keyFactory;
 
+    /**
+     * Creates a new instance of base algorithm.
+     *
+     * @param key       key for encryption
+     * @param keyLength length of key
+     * @param encoding  encoding for string inputs and outputs
+     */
     protected CryptoEncryptionAlgorithm(byte[] key, int keyLength, String encoding) {
         if (!Charset.isSupported(encoding)) {
             throw new HashingException("Given encoding " + encoding + " is not supported");
