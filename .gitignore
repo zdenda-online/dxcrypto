@@ -11,5 +11,8 @@
 *.ipr
 *.iws
 
-# virtual machine crash logs
+# VM crash logs
 hs_err_pid*
+
+# Other files
+*~
