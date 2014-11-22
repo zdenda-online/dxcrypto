@@ -67,7 +67,7 @@ EncryptionAlgorithm rsa = new RSA(modulus, publicExponent, privateExponent);
 
 // generated keys
 RSAKeysGenerator keysGenerator = new RSAKeysGenerator();
-EncryptionAlgorithm rsa = new RSA(keysGenerator.getKeyPair());
+EncryptionAlgorithm rsa = new RSA(keysGenerator.generateKeys());
 
 String encrypted = rsa.encrypt("hello");
 String decrypted = rsa.decrypt(encrypted); // hello

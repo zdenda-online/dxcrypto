@@ -28,7 +28,7 @@ public class EncryptionAlgorithmsTest {
             0x27, 0x18, 0x27, 0x09, 0x7C, 0x44, 0x17, 0x1E,
             0x43, 0x03, 0x11, 0x27, 0x1F, 0x0D, 0x6D, 0x64,
             0x44, 0x18, 0x27, 0x09, 0x7A, 0x44, 0x17, 0x3E};
-    private static final KeyPair RSA_KEYS = new RSAKeysGenerator().getKeyPair();
+    private static final KeyPair RSA_KEYS = new RSAKeysGenerator().generateKeys();
 
     protected List<EncryptionAlgorithm> getImplementationsToTest() {
         return new ArrayList<EncryptionAlgorithm>() {{

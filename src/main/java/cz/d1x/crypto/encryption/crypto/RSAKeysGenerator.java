@@ -2,15 +2,13 @@ package cz.d1x.crypto.encryption.crypto;
 
 import cz.d1x.crypto.encryption.EncryptionException;
 
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
 /**
  * Generator that can provide key pair for RSA encryption.
- * Due to security reasons, generator cannot be re-used for key generation, you must create a new instance
- * if you need a new key pair.
+ * This generator can be re-used for multiple key pair generations.
  * <p/>
  * This class is immutable and can be considered thread safe.
  *
@@ -19,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class RSAKeysGenerator {
 
-    private final KeyPair keyPair;
+    private final KeyPairGenerator generator;
 
     /**
      * Creates a new generator of RSA keys.
@@ -28,48 +26,19 @@ public class RSAKeysGenerator {
      */
     public RSAKeysGenerator() throws EncryptionException {
         try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(1024);
-            this.keyPair = keyGen.generateKeyPair();
+            this.generator = KeyPairGenerator.getInstance("RSA");
+            this.generator.initialize(1024);
         } catch (NoSuchAlgorithmException e) {
             throw new EncryptionException("Unable to generate RSA keys", e);
         }
     }
 
     /**
-     * Gets generated RSA key pair.
+     * Generates a new key pair for RSA.
      *
-     * @return generated RSA key pair
+     * @return RSA key pair
      */
-    public KeyPair getKeyPair() {
-        return keyPair;
-    }
-
-    /**
-     * Gets a factory for public key of RSA.
-     *
-     * @return factory for public key
-     */
-    public CryptoKeyFactory getPublicKeyFactory() {
-        return new CryptoKeyFactory() {
-            @Override
-            public Key getKey() throws EncryptionException {
-                return keyPair.getPublic();
-            }
-        };
-    }
-
-    /**
-     * Gets a factory for private key of RSA.
-     *
-     * @return factory for private key
-     */
-    public CryptoKeyFactory getPrivateKeyFactory() {
-        return new CryptoKeyFactory() {
-            @Override
-            public Key getKey() throws EncryptionException {
-                return keyPair.getPrivate();
-            }
-        };
+    public KeyPair generateKeys() {
+        return generator.generateKeyPair();
     }
 }
