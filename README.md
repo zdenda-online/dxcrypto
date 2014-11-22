@@ -56,7 +56,7 @@ String asString = aes.encrypt("hello");
 String andBack2 = aes.decrypt(asString);
 ```
 
-- Asymmetric key encryption algorithm: **RSA** ECB with OAEP padding
+- Asymmetric (key pair) encryption algorithm: **RSA** ECB with OAEP padding
 
 ```java
 // custom keys
