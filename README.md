@@ -60,9 +60,9 @@ String andBack2 = aes.decrypt(asString);
 
 ```java
 // custom keys
-BigInteger modulus = null; // your modulus (n)
-BigInteger publicExponent = null; // your public exponent (e)
-BigInteger privateExponent = null; // your private exponent (d)
+BigInteger modulus = ...; // your modulus (n)
+BigInteger publicExponent = ...; // your public exponent (e)
+BigInteger privateExponent = ...; // your private exponent (d)
 EncryptionAlgorithm rsa = new RSA(modulus, publicExponent, privateExponent);
 
 // generated keys
