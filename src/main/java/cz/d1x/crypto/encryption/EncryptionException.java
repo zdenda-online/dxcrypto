@@ -17,6 +17,11 @@ public class EncryptionException extends RuntimeException {
         super(message, cause);
     }
 
+    /**
+     * Creates a new encryption exception.
+     *
+     * @param message message of exception
+     */
     public EncryptionException(String message) {
         super(message);
     }

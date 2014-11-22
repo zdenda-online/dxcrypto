@@ -1,12 +1,15 @@
 package cz.d1x.crypto.encryption;
 
-import cz.d1x.crypto.encryption.impl.AES;
-import cz.d1x.crypto.encryption.impl.TripleDES;
+import cz.d1x.crypto.encryption.crypto.AES;
+import cz.d1x.crypto.encryption.crypto.RSA;
+import cz.d1x.crypto.encryption.crypto.RSAKeysGenerator;
+import cz.d1x.crypto.encryption.crypto.TripleDES;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +28,13 @@ public class EncryptionAlgorithmsTest {
             0x27, 0x18, 0x27, 0x09, 0x7C, 0x44, 0x17, 0x1E,
             0x43, 0x03, 0x11, 0x27, 0x1F, 0x0D, 0x6D, 0x64,
             0x44, 0x18, 0x27, 0x09, 0x7A, 0x44, 0x17, 0x3E};
+    private static final KeyPair RSA_KEYS = new RSAKeysGenerator().getKeyPair();
 
     protected List<EncryptionAlgorithm> getImplementationsToTest() {
         return new ArrayList<EncryptionAlgorithm>() {{
             add(new AES(AES_KEY));
             add(new TripleDES(TRIPLE_DES_KEY));
+            add(new RSA(RSA_KEYS));
         }};
     }
 

@@ -36,7 +36,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      */
     @Override
     public String hash(String input) {
-        return repeat(hashingAlgorithm.hash(input));
+        return repeat(input);
     }
 
     /**
@@ -46,7 +46,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      */
     @Override
     public byte[] hash(byte[] input) throws HashingException {
-        return repeat(hashingAlgorithm.hash(input));
+        return repeat(input);
     }
 
     /**
@@ -56,7 +56,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      * @return repeated hashing output
      */
     private String repeat(String text) {
-        for (int i = 0; i < repeatsCount - 1; i++) {
+        for (int i = 0; i < repeatsCount; i++) {
             text = hashingAlgorithm.hash(text);
         }
         return text;
@@ -69,7 +69,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      * @return repeated hashing output
      */
     private byte[] repeat(byte[] input) {
-        for (int i = 0; i < repeatsCount - 1; i++) {
+        for (int i = 0; i < repeatsCount; i++) {
             input = hashingAlgorithm.hash(input);
         }
         return input;

@@ -12,8 +12,6 @@ import cz.d1x.crypto.hash.impl.SHA256;
  */
 public interface HashingAlgorithm {
 
-    public static final String DEFAULT_ENCODING = "UTF-8";
-
     /**
      * Creates a hash from input text.
      *

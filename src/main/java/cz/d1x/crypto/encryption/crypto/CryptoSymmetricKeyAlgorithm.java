@@ -1,18 +1,15 @@
-package cz.d1x.crypto.encryption;
+package cz.d1x.crypto.encryption.crypto;
 
-import cz.d1x.crypto.encryption.impl.AES;
-import cz.d1x.crypto.encryption.impl.TripleDES;
-import cz.d1x.crypto.hash.HashingException;
+import cz.d1x.crypto.TextUtil;
+import cz.d1x.crypto.encryption.EncryptionAlgorithm;
+import cz.d1x.crypto.encryption.EncryptionException;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 
 /**
  * Base class for implementations of {@link EncryptionAlgorithm} class which uses Java SDK's javax.crypto implementation.
@@ -20,9 +17,6 @@ import java.security.spec.InvalidKeySpecException;
  * This base implementation generates a new random initialization vector for every message and includes it in
  * encrypted message. This allows you to use one instance for different messages (otherwise it would be dangerous to use
  * same combination of key and IV for every message).
- * <p/>
- * For key derivation, PBKDF2 algorithm is used along with HMAC-SHA1 as the pseudo-random function.
- * <p/>
  * This base class also expects input to padded to the correct length, so it is not recommended to use NoPadding
  * variants of algorithm.
  * <p/>
@@ -35,7 +29,7 @@ import java.security.spec.InvalidKeySpecException;
  * @see AES
  * @see TripleDES
  */
-public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
+public abstract class CryptoSymmetricKeyAlgorithm implements EncryptionAlgorithm {
 
     private final SecureRandom random = new SecureRandom();
     private final String encoding;
@@ -45,22 +39,19 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
     /**
      * Creates a new instance of base algorithm.
      *
-     * @param keyPassword password for encryption key derivation
-     * @param keyLength   length of encryption key
-     * @param encoding    encoding used for strings
+     * @param keyFactory factory used for creation of encryption key
+     * @param encoding   encoding used for strings
      */
-    protected CryptoEncryptionAlgorithm(byte[] keyPassword, int keyLength, String encoding) {
-        if (!Charset.isSupported(encoding)) {
-            throw new HashingException("Given encoding " + encoding + " is not supported");
-        }
-        if (keyPassword == null || keyPassword.length == 0) {
-            throw new EncryptionException("Encryption keyPassword must be set");
+    protected CryptoSymmetricKeyAlgorithm(CryptoKeyFactory keyFactory, String encoding) {
+        TextUtil.checkEncoding(encoding);
+        if (keyFactory == null) {
+            throw new EncryptionException("Key factory must be set");
         }
 
         this.encoding = encoding;
         try {
             this.cipher = Cipher.getInstance(getCipherName());
-            this.key = deriveKey(keyPassword, keyLength);
+            this.key = keyFactory.getKey();
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new EncryptionException("Invalid encryption algorithm", e);
         }
@@ -76,11 +67,11 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
 
 
     @Override
-    public byte[] encrypt(byte[] bytes) throws EncryptionException {
+    public byte[] encrypt(byte[] input) throws EncryptionException {
         try {
             IvParameterSpec iv = generateIV();
             cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-            byte[] encryptedBytes = cipher.doFinal(bytes);
+            byte[] encryptedBytes = cipher.doFinal(input);
             return combineIvAndCipherText(iv.getIV(), encryptedBytes);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
             throw new EncryptionException("Unable to encrypt message", e);
@@ -88,20 +79,16 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
     }
 
     @Override
-    public String encrypt(String text) throws EncryptionException {
-        try {
-            byte[] textBytes = text.getBytes(encoding);
-            byte[] encryptedBytes = encrypt(textBytes);
-            return DatatypeConverter.printHexBinary(encryptedBytes).toLowerCase();
-        } catch (UnsupportedEncodingException e) {
-            throw new EncryptionException("Unsupported encoding", e);
-        }
+    public String encrypt(String input) throws EncryptionException {
+        byte[] textBytes = TextUtil.getBytes(input, encoding);
+        byte[] encryptedBytes = encrypt(textBytes);
+        return TextUtil.toHex(encryptedBytes);
     }
 
     @Override
-    public byte[] decrypt(byte[] bytes) throws EncryptionException {
+    public byte[] decrypt(byte[] input) throws EncryptionException {
         try {
-            byte[][] ivAndCipherText = deriveIvAndCipherText(bytes);
+            byte[][] ivAndCipherText = deriveIvAndCipherText(input);
             IvParameterSpec iv = new IvParameterSpec(ivAndCipherText[0]);
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
             return cipher.doFinal(ivAndCipherText[1]);
@@ -111,14 +98,10 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
     }
 
     @Override
-    public String decrypt(String text) throws EncryptionException {
-        try {
-            byte[] textBytes = DatatypeConverter.parseHexBinary(text.toLowerCase());
-            byte[] decryptedBytes = decrypt(textBytes);
-            return new String(decryptedBytes, encoding);
-        } catch (UnsupportedEncodingException e) {
-            throw new EncryptionException("Unsupported encoding", e);
-        }
+    public String decrypt(String input) throws EncryptionException {
+        byte[] textBytes = TextUtil.fromHex(input);
+        byte[] decryptedBytes = decrypt(textBytes);
+        return TextUtil.getString(decryptedBytes, encoding);
     }
 
     /**
@@ -130,31 +113,6 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
         byte[] iv = new byte[cipher.getBlockSize()];
         random.nextBytes(iv);
         return new IvParameterSpec(iv);
-    }
-
-    /**
-     * Derives a key from given password and expected key length.
-     *
-     * @param keyPassword password for encryption key derivation
-     * @param keyLength   length of encryption key
-     * @return derived encryption key
-     * @throws EncryptionException possible exception during key derivation
-     */
-    private Key deriveKey(byte[] keyPassword, int keyLength) throws EncryptionException {
-        try {
-            char[] keyEncoded = new String(keyPassword, encoding).toCharArray();
-            // no need to introduce salt and iterations as constant - no-one is gonna find out here :-)
-            byte[] salt = "s4lTTTT-us3d~bY_re4l_m3n5".getBytes(encoding);
-            PBEKeySpec keySpec = new PBEKeySpec(keyEncoded, salt, 27891, keyLength);
-            SecretKey tmp = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(keySpec);
-            return new SecretKeySpec(tmp.getEncoded(), cutCipherName(getCipherName()));
-        } catch (InvalidKeySpecException e) {
-            throw new EncryptionException("Encryption keyPassword specification is not valid", e);
-        } catch (UnsupportedEncodingException e) {
-            throw new EncryptionException("Unsupported encoding", e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new EncryptionException("Invalid key derivation algorithm", e);
-        }
     }
 
     /**
@@ -190,14 +148,5 @@ public abstract class CryptoEncryptionAlgorithm implements EncryptionAlgorithm {
         out[0] = iv;
         out[1] = cipherText;
         return out;
-    }
-
-    private String cutCipherName(String cipherName) {
-        int slashIdx = cipherName.indexOf("/");
-        if (slashIdx != -1) {
-            return cipherName.substring(0, slashIdx);
-        } else {
-            return cipherName;
-        }
     }
 }

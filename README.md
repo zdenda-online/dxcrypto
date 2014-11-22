@@ -24,6 +24,8 @@ Features
 
 - Immutable structures (algorithm instances) for thread safety
 
+- Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation) 
+
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**, decorator for **repeated hashing** and adapter for **salting**
 
 ```java
@@ -35,19 +37,38 @@ HashingAlgorithm decorator = new RepeatingDecorator(sha256, 27);
 String repeated = decorator.hash("hello"); // sha256(sha256("hello")) ~ 27x
 
 SaltingAdapter adapter = new SimpleSaltingAdapter(sha256);
-String withSalt = adapter.hash("hello", "sillySalt");
+String withSalt = adapter.hash("hello", "s@lt");
 ```
 
-- Encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS#5 padding
+- Symmetric key encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS#5 padding
 
 ```java
 byte[] keyPassword = new byte[] {'m', 'y', 'k', 'e', 'y'};
-EncryptionAlgorithm aes = new AES(keyPassword); // or AES(key, "yourEncoding")
+EncryptionAlgorithm des = new TripleDES(keyPassword);
 
-byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
-byte[] andBack = aes.decrypt(asBytes);
+byte[] keySalt = new byte[] {'s', '@', 'l', 't'};
+EncryptionAlgorithm aes = new AES(keyPassword, keySalt); // PBKDF2 key derivation
+
+byte[] asBytes = des.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
+byte[] andBack = des.decrypt(asBytes);
 
 String asString = aes.encrypt("hello");
 String andBack2 = aes.decrypt(asString);
 ```
 
+- Asymmetric key encryption algorithm: **RSA** ECB with OAEP padding
+
+```java
+// custom keys
+BigInteger modulus = null; // your modulus (n)
+BigInteger publicExponent = null; // your public exponent (e)
+BigInteger privateExponent = null; // your private exponent (d)
+EncryptionAlgorithm rsa = new RSA(modulus, publicExponent, privateExponent);
+
+// generated keys
+RSAKeysGenerator keysGenerator = new RSAKeysGenerator();
+EncryptionAlgorithm rsa = new RSA(keysGenerator.getKeyPair());
+
+String encrypted = rsa.encrypt("hello");
+String decrypted = rsa.decrypt(encrypted); // hello
+```

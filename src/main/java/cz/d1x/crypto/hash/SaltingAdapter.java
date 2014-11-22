@@ -1,9 +1,7 @@
 package cz.d1x.crypto.hash;
 
+import cz.d1x.crypto.TextUtil;
 import cz.d1x.crypto.hash.impl.SimpleSaltingAdapter;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 /**
  * Base adapter of {@link HashingAlgorithm} implementations which concatenates text and salt before hashing.
@@ -26,7 +24,7 @@ public abstract class SaltingAdapter {
      * @param hashingAlgorithm algorithm used for hashing
      */
     public SaltingAdapter(HashingAlgorithm hashingAlgorithm) {
-        this(hashingAlgorithm, HashingAlgorithm.DEFAULT_ENCODING);
+        this(hashingAlgorithm, TextUtil.DEFAULT_ENCODING);
     }
 
     /**
@@ -41,9 +39,7 @@ public abstract class SaltingAdapter {
         }
         this.hashingAlgorithm = hashingAlgorithm;
 
-        if (!Charset.isSupported(encoding)) {
-            throw new HashingException("Given encoding " + encoding + " is not supported");
-        }
+        TextUtil.checkEncoding(encoding);
         this.encoding = encoding;
     }
 
@@ -66,12 +62,10 @@ public abstract class SaltingAdapter {
      * @throws HashingException possible exception during hashing
      */
     public String hash(String input, String salt) throws HashingException {
-        try {
-            byte[] toHash = concatenate(input.getBytes(encoding), salt.getBytes(encoding));
-            return hashingAlgorithm.hash(new String(toHash, encoding));
-        } catch (UnsupportedEncodingException e) {
-            throw new HashingException(e);
-        }
+        byte[] inputBytes = TextUtil.getBytes(input, encoding);
+        byte[] saltBytes = TextUtil.getBytes(salt, encoding);
+        byte[] toHash = concatenate(inputBytes, saltBytes);
+        return TextUtil.getString(hashingAlgorithm.hash(toHash), encoding);
     }
 
     /**

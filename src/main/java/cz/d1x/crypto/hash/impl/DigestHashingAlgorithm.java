@@ -1,11 +1,9 @@
 package cz.d1x.crypto.hash.impl;
 
+import cz.d1x.crypto.TextUtil;
 import cz.d1x.crypto.hash.HashingAlgorithm;
 import cz.d1x.crypto.hash.HashingException;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -24,7 +22,7 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
      * Creates a new instance with default encoding.
      */
     protected DigestHashingAlgorithm() {
-        this(DEFAULT_ENCODING);
+        this(TextUtil.DEFAULT_ENCODING);
     }
 
     /**
@@ -33,9 +31,7 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
      * @param encoding encoding used for strings
      */
     protected DigestHashingAlgorithm(String encoding) {
-        if (!Charset.isSupported(encoding)) {
-            throw new HashingException("Given encoding " + encoding + " is not supported");
-        }
+        TextUtil.checkEncoding(encoding);
         this.encoding = encoding;
 
         try {
@@ -57,7 +53,7 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
     @Override
     public byte[] hash(byte[] input) throws HashingException {
         if (input == null) {
-            throw new HashingException("Input data are null!");
+            throw new HashingException("Input data for hashing cannot be null");
         }
         digest.reset();
         return digest.digest(input);
@@ -66,14 +62,10 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
     @Override
     public String hash(String input) throws HashingException {
         if (input == null) {
-            throw new HashingException("Input data are null!");
+            throw new HashingException("Input data for hashing cannot be null");
         }
-        try {
-            byte[] textBytes = input.getBytes(encoding);
-            byte[] hash = hash(textBytes);
-            return DatatypeConverter.printHexBinary(hash).toLowerCase();
-        } catch (UnsupportedEncodingException e) {
-            throw new HashingException(e);
-        }
+        byte[] textBytes = TextUtil.getBytes(input, encoding);
+        byte[] hash = hash(textBytes);
+        return TextUtil.toHex(hash);
     }
 }
