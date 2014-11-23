@@ -49,7 +49,7 @@ String salted = adapter.hash("your input text", "your salt");
 
 // salting with custom combine algorithm
 CombineAlgorithm combineAlg = ...; // your implementation
-SaltingAdapter adapter = new SaltingAdapter(hashAlg, combineAlg); // ConcatCombineAlgorithm
+SaltingAdapter adapter = new SaltingAdapter(hashAlg, combineAlg);
 ```
 
 - Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
@@ -70,7 +70,7 @@ byte[] andBack = aes.decrypt(asBytes);
 
 ```java
 EncryptionAlgorithm des = new TripleDESBuilder("secret")
-    .build(); // default salt and iterations count
+    .build(); // default key salt, iterations count and combine alg.
 
 String asString = des.encrypt("hello");
 String andBack = des.decrypt(asString);
