@@ -33,9 +33,9 @@ for encryption or custom combination of input text and salt prior to hashing)
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
 ```java
-HashingAlgorithm sha256 = new SHA256();
+HashingAlgorithm sha256 = HashingAlgorithms.sha256(); // or new SHA256()
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
-String asString = sha256.hash("hello"); // String instances also accepted
+String asString = sha256.hash("hello"); // Strings also supported
 ```
 - Additional hashing operations like **repeated hashing** or **salting**
 
@@ -61,7 +61,7 @@ so instances are later able to derive this vector during decryption.
 
 ```java
 // fluent API for encryption algorithm builders
-EncryptionAlgorithm aes = new AESBuilder("secret")
+EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secret")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
     .combineAlgorithm(...) // optional
@@ -72,7 +72,7 @@ byte[] andBack = aes.decrypt(asBytes);
 ```
 
 ```java
-EncryptionAlgorithm des = new TripleDESBuilder("secret")
+EncryptionAlgorithm des = EncryptionAlgorithms.tripleDes("secret")
     .build(); // default key salt, iterations count and combine alg.
 
 String asString = des.encrypt("hello");
@@ -86,7 +86,7 @@ String andBack = des.decrypt(asString);
 BigInteger modulus = ...; // your modulus (n)
 BigInteger publicExponent = ...; // your public exponent (e)
 BigInteger privateExponent = ...; // your private exponent (d)
-EncryptionAlgorithm rsa = new RSABuilder()
+EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
         .publicKey(modulus, publicExponent)
         .privateKey(modulus, privateExponent)
         .build();
@@ -96,7 +96,7 @@ EncryptionAlgorithm rsa = new RSABuilder()
 // generated keys
 RSAKeysGenerator keysGen = new RSAKeysGenerator();
 KeyPair keys = keysGen.generateKeys();
-EncryptionAlgorithm rsa = new RSABuilder()
+EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
         .keyPair(keys)
         .build();
 ```

@@ -1,9 +1,6 @@
 package cz.d1x.dxcrypto.encryption;
 
-import cz.d1x.dxcrypto.encryption.crypto.AESBuilder;
-import cz.d1x.dxcrypto.encryption.crypto.RSABuilder;
 import cz.d1x.dxcrypto.encryption.crypto.RSAKeysGenerator;
-import cz.d1x.dxcrypto.encryption.crypto.TripleDESBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,9 +29,9 @@ public class EncryptionAlgorithmsTest {
 
     protected List<EncryptionAlgorithm> getImplementationsToTest() {
         return new ArrayList<EncryptionAlgorithm>() {{
-            add(new AESBuilder(AES_KEY).build());
-            add(new TripleDESBuilder(TRIPLE_DES_KEY).build());
-            add(new RSABuilder().keyPair(RSA_KEYS).build());
+            add(EncryptionAlgorithms.aes(AES_KEY).build());
+            add(EncryptionAlgorithms.tripleDes(TRIPLE_DES_KEY).build());
+            add(EncryptionAlgorithms.rsa().keyPair(RSA_KEYS).build());
         }};
     }
 
