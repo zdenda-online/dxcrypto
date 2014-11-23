@@ -5,7 +5,7 @@ import cz.d1x.dxcrypto.encryption.KeyFactory;
 import java.security.Key;
 
 /**
- * Base class for key factories that use {@link CryptoSymmetricAlgorithm}.
+ * Base class for key factories that use {@link SymmetricAlgorithm}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */

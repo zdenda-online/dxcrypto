@@ -16,10 +16,7 @@ import java.security.spec.InvalidKeySpecException;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public abstract class PBECryptoKeyFactory extends CryptoKeyFactory {
-
-    private static final byte[] DEFAULT_SALT = Encoding.getBytes("s4lTTTT-us3d~bY_re4l_m3n5", Encoding.DEFAULT_ENCODING);
-    private static final int DEFAULT_ITERATIONS = 27891;
+public abstract class PBEKeyFactory extends CryptoKeyFactory {
 
     private final String algorithm;
     private final byte[] keyPassword;
@@ -27,15 +24,7 @@ public abstract class PBECryptoKeyFactory extends CryptoKeyFactory {
     private final byte[] keySalt;
     private final int iterationsCount;
 
-    protected PBECryptoKeyFactory(String algorithm, byte[] keyPassword, int keyLength) {
-        this(algorithm, keyPassword, keyLength, DEFAULT_SALT, DEFAULT_ITERATIONS);
-    }
-
-    protected PBECryptoKeyFactory(String algorithm, byte[] keyPassword, int keyLength, byte[] keySalt) {
-        this(algorithm, keyPassword, keyLength, keySalt, DEFAULT_ITERATIONS);
-    }
-
-    protected PBECryptoKeyFactory(String algorithm, byte[] keyPassword, int keyLength, byte[] keySalt, int iterationsCount) {
+    protected PBEKeyFactory(String algorithm, byte[] keyPassword, int keyLength, byte[] keySalt, int iterationsCount) {
         this.algorithm = algorithm;
         this.keyPassword = keyPassword;
         this.keyLength = keyLength;
@@ -53,7 +42,7 @@ public abstract class PBECryptoKeyFactory extends CryptoKeyFactory {
     @Override
     public Key getKey() throws EncryptionException {
         try {
-            char[] keyEncoded = Encoding.getString(keyPassword, Encoding.DEFAULT_ENCODING).toCharArray();
+            char[] keyEncoded = Encoding.getString(keyPassword).toCharArray();
             PBEKeySpec keySpec = new PBEKeySpec(keyEncoded, keySalt, iterationsCount, keyLength);
             SecretKey tmp = SecretKeyFactory.getInstance(getAlgorithmName()).generateSecret(keySpec);
             return new SecretKeySpec(tmp.getEncoded(), algorithm);

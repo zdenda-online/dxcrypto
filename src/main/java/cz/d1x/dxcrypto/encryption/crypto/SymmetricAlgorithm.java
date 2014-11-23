@@ -12,7 +12,7 @@ import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
 
 /**
- * Base class for implementations of {@link EncryptionAlgorithm} class which uses Java SDK's javax.crypto implementation.
+ * Main implementation of encryption algorithms that use symmetric key based on existing javax.crypto package.
  * <p/>
  * This base implementation generates a new random initialization vector for every message and includes it in
  * encrypted message. This allows you to use one instance for different messages (otherwise it would be dangerous to use
@@ -26,10 +26,10 @@ import java.security.*;
  * stays that way.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see AES
- * @see TripleDES
+ * @see AESBuilder
+ * @see TripleDESBuilder
  */
-public abstract class CryptoSymmetricAlgorithm implements EncryptionAlgorithm {
+public class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     private final SecureRandom random = new SecureRandom();
     private final String encoding;
@@ -41,8 +41,9 @@ public abstract class CryptoSymmetricAlgorithm implements EncryptionAlgorithm {
      *
      * @param keyFactory factory used for creation of encryption key
      * @param encoding   encoding used for strings
+     * @throws EncryptionException possible exception when algorithm cannot be created
      */
-    protected CryptoSymmetricAlgorithm(CryptoKeyFactory keyFactory, String encoding) {
+    public SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, String encoding) throws EncryptionException {
         Encoding.checkEncoding(encoding);
         if (keyFactory == null) {
             throw new EncryptionException("Key factory must be set");
@@ -50,20 +51,12 @@ public abstract class CryptoSymmetricAlgorithm implements EncryptionAlgorithm {
 
         this.encoding = encoding;
         try {
-            this.cipher = Cipher.getInstance(getCipherName());
+            this.cipher = Cipher.getInstance(cipherName);
             this.key = keyFactory.getKey();
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new EncryptionException("Invalid encryption algorithm", e);
         }
     }
-
-    /**
-     * Gets a name of the cipher supported by dxcrypto implementations.
-     * It is recommended to use any variant with padding.
-     *
-     * @return name of cipher
-     */
-    protected abstract String getCipherName();
 
 
     @Override

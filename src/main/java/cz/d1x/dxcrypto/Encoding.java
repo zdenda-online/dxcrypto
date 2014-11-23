@@ -11,7 +11,7 @@ import java.nio.charset.Charset;
  */
 public class Encoding {
 
-    public static final String DEFAULT_ENCODING = "UTF-8";
+    public static final String UTF_8 = "UTF-8"; // default encoding
 
     /**
      * Converts given byte array into {@link String} in HEX representation.
@@ -88,6 +88,17 @@ public class Encoding {
     }
 
     /**
+     * Converts given {@link String} to byte array representation using {@link #UTF_8}.
+     *
+     * @param text text to be converted
+     * @return byte array representation
+     * @throws IllegalArgumentException possible exception if text is null or encoding is not supported
+     */
+    public static byte[] getBytes(String text) {
+        return getBytes(text, UTF_8);
+    }
+
+    /**
      * Converts given byte array to {@link String} with given encoding.
      * It is recommended to check your encoding via {@link #checkEncoding(String)}.
      *
@@ -105,5 +116,16 @@ public class Encoding {
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("Given encoding " + encoding + " is not supported");
         }
+    }
+
+    /**
+     * Converts given byte array to {@link String} using {@link #UTF_8}.
+     *
+     * @param text text bytes to be converted
+     * @return encoded text
+     * @throws IllegalArgumentException possible exception if text bytes are null or encoding is not supported
+     */
+    public static String getString(byte[] text) {
+        return getString(text, UTF_8);
     }
 }

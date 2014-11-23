@@ -13,7 +13,7 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Base class for implementations of {@link EncryptionAlgorithm} class which uses Java SDK's javax.crypto implementation.
+ * Main implementation of encryption algorithms that use asymmetric key pair based on existing javax.crypto package.
  * <p/>
  * This implementation can provide both encoding and decoding or only one of these functions depending on what key
  * was provided during instantiation. Public key is needed for encryption, private key for decryption.
@@ -24,17 +24,16 @@ import java.security.NoSuchAlgorithmException;
  * stays that way.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see AES
- * @see TripleDES
+ * @see RSABuilder
  */
-public abstract class CryptoAsymmetricAlgorithm implements EncryptionAlgorithm {
+public class AsymmetricAlgorithm implements EncryptionAlgorithm {
 
     private final String encoding;
     private final Key publicKey;
     private final Key privateKey;
     private final Cipher cipher;
 
-    protected CryptoAsymmetricAlgorithm(CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory, String encoding) {
+    protected AsymmetricAlgorithm(String cipherName, CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory, String encoding) {
         Encoding.checkEncoding(encoding);
         if (publicKeyFactory == null && privateKeyFactory == null) {
             throw new EncryptionException("At least one (public/private) key factory must be set");
@@ -42,21 +41,13 @@ public abstract class CryptoAsymmetricAlgorithm implements EncryptionAlgorithm {
 
         this.encoding = encoding;
         try {
-            this.cipher = Cipher.getInstance(getCipherName());
+            this.cipher = Cipher.getInstance(cipherName);
             this.publicKey = publicKeyFactory != null ? publicKeyFactory.getKey() : null;
             this.privateKey = privateKeyFactory != null ? privateKeyFactory.getKey() : null;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new EncryptionException("Invalid encryption algorithm", e);
         }
     }
-
-    /**
-     * Gets a name of the cipher supported by crypto implementations.
-     * It is recommended to use any variant with padding.
-     *
-     * @return name of cipher
-     */
-    protected abstract String getCipherName();
 
     @Override
     public byte[] encrypt(byte[] input) throws EncryptionException {

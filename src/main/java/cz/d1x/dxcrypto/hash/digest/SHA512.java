@@ -19,10 +19,10 @@ import cz.d1x.dxcrypto.hash.RepeatingDecorator;
 public class SHA512 extends DigestHashingAlgorithm {
 
     /**
-     * Creates a new instance that uses {@link cz.d1x.dxcrypto.Encoding#DEFAULT_ENCODING} for string encoding.
+     * Creates a new instance that uses {@link cz.d1x.dxcrypto.Encoding#UTF_8} for string encoding.
      */
     public SHA512() {
-        super(Encoding.DEFAULT_ENCODING);
+        super(Encoding.UTF_8);
     }
 
     /**

@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
  * This class is immutable and can be considered thread safe.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see RSA
+ * @see RSABuilder
  */
 public class RSAKeysGenerator {
 

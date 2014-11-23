@@ -22,20 +22,17 @@ Maven dependency (soon in Maven Central)
 Features
 --------
 
-- Immutable structures for thread safety
+- Immutable structures of algorithms for thread safety
 
 - Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation)
-
-- Using runtime exceptions without need to mess code with many try-catch blocks
 
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
 ```java
 HashingAlgorithm sha256 = new SHA256();
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
-String asString = sha256.hash("hello"); // 2cf24db...
+String asString = sha256.hash("hello"); // String instances also accepted
 ```
-
 - Additional hashing operations like **repeated hashing** or **salting**
 
 ```java
@@ -48,22 +45,27 @@ SaltingAdapter adapter = new SaltingAdapter(alg); // DefaultConcatStrategy
 String salted = adapter.hash("your input text", "your salt");
 ```
 
-- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC and PKCS#5 padding
+- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC and PKCS#5 padding.
 
 ```java
-byte[] keyPassword = new byte[] {'m', 'y', 'k', 'e', 'y'};
-EncryptionAlgorithm des = new TripleDES(keyPassword);
+// fluent API for encryption algorithm builders
+EncryptionAlgorithm aes = new AESBuilder("secret")
+    .build();
 
-// custom salt for key derivation
-byte[] keySalt = new byte[] {'s', '@', 'l', 't'};
-EncryptionAlgorithm aes = new AES(keyPassword, keySalt); // PBKDF2 key derivation
-
-byte[] asBytes = des.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
-byte[] andBack = des.decrypt(asBytes);
-
-String asString = aes.encrypt("hello");
-String andBack2 = aes.decrypt(asString);
+byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
+byte[] andBack = aes.decrypt(asBytes);
 ```
+
+```java
+EncryptionAlgorithm des = new TripleDESBuilder("secret")
+    .keySalt("saltForKeyDerivation") // optional
+    .iterations(27) // optional
+    .build();
+
+String asString = des.encrypt("hello");
+String andBack = des.decrypt(asString);
+```
+
 
 - Asymmetric (key pair) encryption algorithm: **RSA** with ECB and OAEP padding
 
@@ -71,13 +73,19 @@ String andBack2 = aes.decrypt(asString);
 // custom keys
 BigInteger modulus = ...; // your modulus (n)
 BigInteger publicExponent = ...; // your public exponent (e)
-BigInteger privateExponent = ...; // your private exponent (d)
-EncryptionAlgorithm rsa = new RSA(modulus, publicExponent, privateExponent);
+BigInteger privateExponent = ...; // your private exponent (e)
+EncryptionAlgorithm rsa = new RSABuilder()
+        .publicKey(modulus, publicExponent)
+        .privateKey(modulus, privateExponent)
+        .encoding(Encoding.UTF_8) // optional
+        .build();
+```
 
+```java
 // generated keys
-RSAKeysGenerator keysGenerator = new RSAKeysGenerator();
-EncryptionAlgorithm rsa = new RSA(keysGenerator.generateKeys());
-
-String encrypted = rsa.encrypt("hello");
-String decrypted = rsa.decrypt(encrypted); // hello
+RSAKeysGenerator keysGen = new RSAKeysGenerator();
+KeyPair keys = keysGen.generateKeys();
+EncryptionAlgorithm rsa = new RSABuilder()
+        .keyPair(keys)
+        .build();
 ```

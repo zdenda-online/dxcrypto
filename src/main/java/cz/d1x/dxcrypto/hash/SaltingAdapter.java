@@ -29,12 +29,12 @@ public class SaltingAdapter {
     /**
      * Creates a new salting adapter.
      * {@link DefaultConcatStrategy} will be used for input text and salt concatenation.
-     * {@link Encoding#DEFAULT_ENCODING} will be used for strings.
+     * {@link Encoding#UTF_8} will be used for strings.
      *
      * @param hashingAlgorithm algorithm used for hashing
      */
     public SaltingAdapter(HashingAlgorithm hashingAlgorithm) {
-        this(hashingAlgorithm, DEFAULT_CONCAT_STRATEGY, Encoding.DEFAULT_ENCODING);
+        this(hashingAlgorithm, DEFAULT_CONCAT_STRATEGY, Encoding.UTF_8);
     }
 
     /**
@@ -50,13 +50,13 @@ public class SaltingAdapter {
 
     /**
      * Creates a new salting adapter.
-     * {@link Encoding#DEFAULT_ENCODING} will be used for strings.
+     * {@link Encoding#UTF_8} will be used for strings.
      *
      * @param hashingAlgorithm algorithm for hashing
      * @param concatStrategy   strategy how to concatenate input text and salt
      */
     public SaltingAdapter(HashingAlgorithm hashingAlgorithm, ConcatStrategy concatStrategy) {
-        this(hashingAlgorithm, concatStrategy, Encoding.DEFAULT_ENCODING);
+        this(hashingAlgorithm, concatStrategy, Encoding.UTF_8);
     }
 
     /**

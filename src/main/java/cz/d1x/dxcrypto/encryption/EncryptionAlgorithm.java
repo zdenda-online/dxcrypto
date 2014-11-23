@@ -1,16 +1,17 @@
 package cz.d1x.dxcrypto.encryption;
 
-import cz.d1x.dxcrypto.encryption.crypto.AES;
-import cz.d1x.dxcrypto.encryption.crypto.CryptoSymmetricAlgorithm;
-import cz.d1x.dxcrypto.encryption.crypto.TripleDES;
+import cz.d1x.dxcrypto.encryption.crypto.AESBuilder;
+import cz.d1x.dxcrypto.encryption.crypto.RSABuilder;
+import cz.d1x.dxcrypto.encryption.crypto.TripleDESBuilder;
 
 /**
  * Interface for algorithms that are able to encrypt given input and decrypt it afterwards.
+ * Note that it is strongly recommended that implementations will be <strong>immutable</strong>.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see CryptoSymmetricAlgorithm
- * @see AES
- * @see TripleDES
+ * @see AESBuilder
+ * @see TripleDESBuilder
+ * @see RSABuilder
  */
 public interface EncryptionAlgorithm {
 

@@ -5,30 +5,7 @@ package cz.d1x.dxcrypto.encryption.crypto;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class PBKDF2KeyFactory extends PBECryptoKeyFactory {
-
-    /**
-     * Creates a new PBKDF2 key factory.
-     *
-     * @param algorithm   name of encryption algorithm for which key will be generated
-     * @param keyPassword password for key derivation
-     * @param keyLength   length of desired key
-     */
-    public PBKDF2KeyFactory(String algorithm, byte[] keyPassword, int keyLength) {
-        super(algorithm, keyPassword, keyLength);
-    }
-
-    /**
-     * Creates a new PBKDF2 key factory.
-     *
-     * @param algorithm   name of encryption algorithm for which key will be generated
-     * @param keyPassword password for key derivation
-     * @param keySalt     salt for key derivation
-     * @param keyLength   length of desired key
-     */
-    public PBKDF2KeyFactory(String algorithm, byte[] keyPassword, int keyLength, byte[] keySalt) {
-        super(algorithm, keyPassword, keyLength, keySalt);
-    }
+public class PBKDF2KeyFactory extends PBEKeyFactory {
 
     /**
      * Creates a new PBKDF2 key factory.
