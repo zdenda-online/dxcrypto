@@ -6,6 +6,7 @@ I created this library because I was tired of object initializations of existing
 exceptions you have to take care of. In many cases, programmer needs simpler API, so this library provides higher
 level of abstraction over existing *java.security* and *javax.crypto* packages.
 
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
 If you find any issue please contact me on my e-mail.
 
 Maven dependency (soon in Maven Central)
@@ -27,6 +28,8 @@ Features
 - Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation
 for encryption or custom combination of input text and salt prior to hashing)
 
+- Detailed javadoc for understanding what is happening under the hood
+
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
 ```java
@@ -47,7 +50,7 @@ String repeated = decorator.hash("hello"); // hash(hash("hello")) ~ 27x
 SaltingAdapter adapter = new SaltingAdapter(hashAlg);
 String salted = adapter.hash("your input text", "your salt");
 
-// salting with custom combine algorithm
+// salting with custom combining of input text and salt
 CombineAlgorithm combineAlg = ...; // your implementation
 SaltingAdapter adapter = new SaltingAdapter(hashAlg, combineAlg);
 ```
