@@ -20,12 +20,11 @@
             <organizationUrl>https://github.com/d1x</organizationUrl>
         </developer>
     </developers>
-
+    
     <licenses>
         <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
 
