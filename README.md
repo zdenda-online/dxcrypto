@@ -73,11 +73,10 @@ String andBack = des.decrypt(asString);
 // custom keys
 BigInteger modulus = ...; // your modulus (n)
 BigInteger publicExponent = ...; // your public exponent (e)
-BigInteger privateExponent = ...; // your private exponent (e)
+BigInteger privateExponent = ...; // your private exponent (d)
 EncryptionAlgorithm rsa = new RSABuilder()
         .publicKey(modulus, publicExponent)
         .privateKey(modulus, privateExponent)
-        .encoding(Encoding.UTF_8) // optional
         .build();
 ```
 
