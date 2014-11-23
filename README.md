@@ -25,7 +25,7 @@ Features
 - Immutable structures of algorithms for thread safety
 
 - Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation
-for encryption or custom concatenation of input text and salt before hashing)
+for encryption or custom combination of input text and salt prior to hashing)
 
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
@@ -44,7 +44,7 @@ HashingAlgorithm decorator = new RepeatingDecorator(hashAlg, 27);
 String repeated = decorator.hash("hello"); // hash(hash("hello")) ~ 27x
 
 // default salting
-SaltingAdapter adapter = new SaltingAdapter(hashAlg); // ConcatCombineAlgorithm
+SaltingAdapter adapter = new SaltingAdapter(hashAlg);
 String salted = adapter.hash("your input text", "your salt");
 
 // salting with custom combine algorithm
