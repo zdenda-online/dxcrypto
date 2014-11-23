@@ -24,7 +24,9 @@ Features
 
 - Immutable structures for thread safety
 
-- Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation) 
+- Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation)
+
+- Using runtime exceptions without need to mess code with many try-catch blocks
 
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
@@ -46,12 +48,13 @@ SaltingAdapter adapter = new SaltingAdapter(alg); // DefaultConcatStrategy
 String salted = adapter.hash("your input text", "your salt");
 ```
 
-- Symmetric key encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS#5 padding
+- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC and PKCS#5 padding
 
 ```java
 byte[] keyPassword = new byte[] {'m', 'y', 'k', 'e', 'y'};
 EncryptionAlgorithm des = new TripleDES(keyPassword);
 
+// custom salt for key derivation
 byte[] keySalt = new byte[] {'s', '@', 'l', 't'};
 EncryptionAlgorithm aes = new AES(keyPassword, keySalt); // PBKDF2 key derivation
 
@@ -62,7 +65,7 @@ String asString = aes.encrypt("hello");
 String andBack2 = aes.decrypt(asString);
 ```
 
-- Asymmetric (key pair) encryption algorithm: **RSA** ECB with OAEP padding
+- Asymmetric (key pair) encryption algorithm: **RSA** with ECB and OAEP padding
 
 ```java
 // custom keys
