@@ -17,7 +17,7 @@ package cz.d1x.dxcrypto.encryption.crypto;
  * <pre>
  * EncryptionAlgorithm des = new TripleDESBuilder("secret")
  *      .keySalt("saltForKeyDerivation") // optional
- *      .iterations(27) // optional
+ *      .iterations(4096) // optional
  *      .build();
  * </pre>
  * <p/>

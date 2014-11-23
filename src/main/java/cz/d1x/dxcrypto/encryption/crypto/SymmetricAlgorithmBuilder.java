@@ -13,6 +13,11 @@ import cz.d1x.dxcrypto.encryption.EncryptionException;
  */
 public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBuilder {
 
+    private static final byte[] DEFAULT_SALT = new byte[]{0x27, 0x11, 0x65, 0x35,
+            0x13, 0x77, 0x33, 0x21,
+            0x40, 0x43, 0x18, 0x65};
+    private static final int DEFAULT_ITERATIONS = 4096;
+
     private CryptoKeyFactory customKeyFactory;
     private byte[] keyPassword;
     private byte[] keySalt;
@@ -39,6 +44,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
 
     /**
      * Sets salt for key derivation.
+     * Recommended length is at least 8 bytes.
      *
      * @param keySalt salt to be set
      * @return this instance
@@ -50,6 +56,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
 
     /**
      * Sets salt for key derivation.
+     * Recommended length is at least 8 bytes.
      *
      * @param keySalt salt to be set
      * @return this instance
@@ -60,12 +67,13 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     }
 
     /**
-     * Sets number of iterations for key derivation.
+     * Sets number of iterations of hashing for key derivation.
+     * Recommended count is at least 1000.
      *
      * @param iterations number of iterations
      * @return this instance
      */
-    public SymmetricAlgorithmBuilder iterations(int iterations) {
+    public SymmetricAlgorithmBuilder hashingIterations(int iterations) {
         this.iterations = iterations;
         return this;
     }
@@ -92,10 +100,10 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
             keyFactory = customKeyFactory;
         } else {
             if (keySalt == null) {
-                keySalt = new byte['0']; // default salt
+                keySalt = DEFAULT_SALT;
             }
             if (iterations == 0) {
-                iterations = 1; // default iterations
+                iterations = DEFAULT_ITERATIONS;
             }
             keyFactory = new PBKDF2KeyFactory(getShortAlgorithm(), keyPassword, getKeySize(), keySalt, iterations);
         }

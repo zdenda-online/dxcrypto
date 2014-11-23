@@ -45,11 +45,13 @@ SaltingAdapter adapter = new SaltingAdapter(alg); // DefaultConcatStrategy
 String salted = adapter.hash("your input text", "your salt");
 ```
 
-- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC and PKCS#5 padding.
+- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation
 
 ```java
 // fluent API for encryption algorithm builders
 EncryptionAlgorithm aes = new AESBuilder("secret")
+    .keySalt("saltForKeyDerivation") // optional
+    .iterations(4096) // optional
     .build();
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
@@ -58,9 +60,7 @@ byte[] andBack = aes.decrypt(asBytes);
 
 ```java
 EncryptionAlgorithm des = new TripleDESBuilder("secret")
-    .keySalt("saltForKeyDerivation") // optional
-    .iterations(27) // optional
-    .build();
+    .build(); // default salt and iterations count
 
 String asString = des.encrypt("hello");
 String andBack = des.decrypt(asString);
