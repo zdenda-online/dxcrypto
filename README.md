@@ -6,7 +6,7 @@ I created this library because I was tired of object initializations of existing
 exceptions you have to take care of. In many cases, programmer needs simpler API, so this library provides higher
 level of abstraction over existing *java.security* and *javax.crypto* packages.
 
-This library is distributed under MIT license in the hope that it will be useful, but **WITHOUT ANY WARRANTY**.
+This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
 If you find any issue please contact me on my e-mail.
 
 Maven dependency (soon in Maven Central)
