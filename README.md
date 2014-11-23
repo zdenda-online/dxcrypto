@@ -51,7 +51,7 @@ String salted = adapter.hash("your input text", "your salt");
 // fluent API for encryption algorithm builders
 EncryptionAlgorithm aes = new AESBuilder("secret")
     .keySalt("saltForKeyDerivation") // optional
-    .iterations(4096) // optional
+    .keyHashIterations(4096) // optional
     .build();
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
