@@ -2,6 +2,7 @@ package cz.d1x.dxcrypto.hash.digest;
 
 import cz.d1x.dxcrypto.Encoding;
 import cz.d1x.dxcrypto.hash.RepeatingDecorator;
+import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
  * SHA-1 hashing algorithm.
@@ -9,7 +10,7 @@ import cz.d1x.dxcrypto.hash.RepeatingDecorator;
  * Even when this algorithm is stronger than {@link MD5}, it has also its weaknesses.
  * If you can choose, go with some stronger function (e.g. SHA-256 or SHA-512).
  * <p/>
- * You can make potential attacks harder if you use salt (e.g. by using {@link cz.d1x.dxcrypto.hash.DefaultConcatStrategy}).
+ * You can make potential attacks harder if you use salt (e.g. by using {@link SaltingAdapter}).
  * You can also do repeated hashing by using {@link RepeatingDecorator} if higher execution time is not an issue for you.
  * <p/>
  * This class is immutable and can be considered thread safe.
@@ -19,7 +20,7 @@ import cz.d1x.dxcrypto.hash.RepeatingDecorator;
 public class SHA1 extends DigestHashingAlgorithm {
 
     /**
-     * Creates a new instance that uses {@link cz.d1x.dxcrypto.Encoding#UTF_8} for string encoding.
+     * Creates a new instance that uses {@link Encoding#UTF_8} for string encoding.
      */
     public SHA1() {
         super(Encoding.UTF_8);

@@ -21,9 +21,9 @@ package cz.d1x.dxcrypto.encryption.crypto;
  *      .build();
  * </pre>
  * <p/>
- * For more information about the implementation, see {@link SymmetricAlgorithm}.
- * <p/>
  * Note that this builder is mutable but built instances are immutable and thus thread safe.
+ * <p/>
+ * For more information about the implementation (e.g. about initialization vectors), see {@link SymmetricAlgorithm}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see SymmetricAlgorithm
@@ -72,5 +72,10 @@ public class TripleDESBuilder extends SymmetricAlgorithmBuilder {
     @Override
     protected int getKeySize() {
         return 24 * 8;
+    }
+
+    @Override
+    protected int getBlockSize() {
+        return 8;
     }
 }

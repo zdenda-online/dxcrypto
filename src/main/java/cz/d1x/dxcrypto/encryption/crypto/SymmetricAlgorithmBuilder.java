@@ -1,6 +1,8 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
 import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithmBuilder;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
@@ -22,6 +24,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     private byte[] keyPassword;
     private byte[] keySalt;
     private int keyHashIterations;
+    private CombineAlgorithm combineAlgorithm;
     private String encoding;
 
     protected abstract String getAlgorithm();
@@ -29,6 +32,8 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     protected abstract String getShortAlgorithm();
 
     protected abstract int getKeySize();
+
+    protected abstract int getBlockSize();
 
     protected SymmetricAlgorithmBuilder(byte[] keyPassword) {
         this.keyPassword = keyPassword;
@@ -79,6 +84,17 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     }
 
     /**
+     * Sets algorithm combining IV and cipher text in output during encryption
+     * and splitting from input during decryption.
+     *
+     * @param combineAlgorithm combine algorithm for IV and cipher text
+     */
+    public SymmetricAlgorithmBuilder combineAlgorithm(CombineAlgorithm combineAlgorithm) {
+        this.combineAlgorithm = combineAlgorithm;
+        return this;
+    }
+
+    /**
      * Sets encoding for strings in input and output.
      *
      * @param encoding encoding to be set
@@ -94,6 +110,9 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
         if (encoding == null) {
             encoding = Encoding.UTF_8;
         }
+        if (combineAlgorithm == null) {
+            combineAlgorithm = new ConcatCombineAlgorithm(getBlockSize()); // default algorithm
+        }
 
         CryptoKeyFactory keyFactory;
         if (customKeyFactory != null) {
@@ -107,6 +126,6 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
             }
             keyFactory = new PBKDF2KeyFactory(getShortAlgorithm(), keyPassword, getKeySize(), keySalt, keyHashIterations);
         }
-        return new SymmetricAlgorithm(getAlgorithm(), keyFactory, encoding);
+        return new SymmetricAlgorithm(getAlgorithm(), keyFactory, combineAlgorithm, encoding);
     }
 }

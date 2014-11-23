@@ -28,12 +28,13 @@ import java.security.NoSuchAlgorithmException;
  */
 public class AsymmetricAlgorithm implements EncryptionAlgorithm {
 
-    private final String encoding;
+    private final String cipherName;
     private final Key publicKey;
     private final Key privateKey;
-    private final Cipher cipher;
+    private final String encoding;
 
-    protected AsymmetricAlgorithm(String cipherName, CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory, String encoding) {
+    protected AsymmetricAlgorithm(String cipherName, CryptoKeyFactory publicKeyFactory,
+                                  CryptoKeyFactory privateKeyFactory, String encoding) {
         Encoding.checkEncoding(encoding);
         if (publicKeyFactory == null && privateKeyFactory == null) {
             throw new EncryptionException("At least one (public/private) key factory must be set");
@@ -41,7 +42,8 @@ public class AsymmetricAlgorithm implements EncryptionAlgorithm {
 
         this.encoding = encoding;
         try {
-            this.cipher = Cipher.getInstance(cipherName);
+            Cipher.getInstance(cipherName); // find out if i can create instances
+            this.cipherName = cipherName;
             this.publicKey = publicKeyFactory != null ? publicKeyFactory.getKey() : null;
             this.privateKey = privateKeyFactory != null ? privateKeyFactory.getKey() : null;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -53,9 +55,9 @@ public class AsymmetricAlgorithm implements EncryptionAlgorithm {
     public byte[] encrypt(byte[] input) throws EncryptionException {
         checkKey(true);
         try {
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            Cipher cipher = initCipher(true);
             return cipher.doFinal(input);
-        } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to encrypt message", e);
         }
     }
@@ -71,9 +73,9 @@ public class AsymmetricAlgorithm implements EncryptionAlgorithm {
     public byte[] decrypt(byte[] input) throws EncryptionException {
         checkKey(false);
         try {
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            Cipher cipher = initCipher(false);
             return cipher.doFinal(input);
-        } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to decrypt message", e);
         }
     }
@@ -84,6 +86,18 @@ public class AsymmetricAlgorithm implements EncryptionAlgorithm {
         byte[] decryptedBytes = decrypt(textBytes);
         return Encoding.getString(decryptedBytes, encoding);
     }
+
+    private Cipher initCipher(boolean isEncrypt) throws EncryptionException {
+        try {
+            Cipher cipher = Cipher.getInstance(cipherName);
+            cipher.init(isEncrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
+                    isEncrypt ? publicKey : privateKey);
+            return cipher;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+            throw new EncryptionException("Unable to initialize cipher", e);
+        }
+    }
+
 
     private void checkKey(boolean isPublic) throws EncryptionException {
         if (isPublic && this.publicKey == null) {

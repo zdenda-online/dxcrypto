@@ -23,7 +23,7 @@ package cz.d1x.dxcrypto.encryption.crypto;
  * <p/>
  * Note that this builder is mutable but built instances are immutable and thus thread safe.
  * <p/>
- * For more information about the implementation, see {@link SymmetricAlgorithm}.
+ * For more information about the implementation (e.g. about initialization vectors), see {@link SymmetricAlgorithm}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see SymmetricAlgorithm
@@ -71,6 +71,11 @@ public class AESBuilder extends SymmetricAlgorithmBuilder {
 
     @Override
     protected int getKeySize() {
-        return 16 * 8;
+        return 8 * 16;
+    }
+
+    @Override
+    protected int getBlockSize() {
+        return 16;
     }
 }

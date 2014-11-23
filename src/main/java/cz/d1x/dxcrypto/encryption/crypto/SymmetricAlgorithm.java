@@ -1,6 +1,7 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
 import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.CombineAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
 
@@ -15,15 +16,18 @@ import java.security.*;
  * Main implementation of encryption algorithms that use symmetric key based on existing javax.crypto package.
  * <p/>
  * This base implementation generates a new random initialization vector for every message and includes it in
- * encrypted message. This allows you to use one instance for different messages (otherwise it would be dangerous to use
- * same combination of key and IV for every message).
+ * output. This allows to use one instance for different messages (otherwise it would be dangerous to use
+ * same combination of key and IV for every message). This combining of IV with the encrypted message implies that this
+ * implementation will be compatible primarily with itself (this library). If another tool (on the other end) will
+ * be used, you must pass information what {@link CombineAlgorithm} is used to that tool or implement new one which
+ * will be compatible with it. Inputs and outputs of String-based methods expect/provide strings in HEX format.
+ * <p/>
  * This base class also expects input to padded to the correct length, so it is not recommended to use NoPadding
  * variants of algorithm.
  * <p/>
  * Inputs and outputs from this encryption are bytes represented in HEX string.
  * <p/>
- * This class is immutable and can be considered thread safe. If you extend this class, it is recommended it
- * stays that way.
+ * This class is immutable and can be considered thread safe.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see AESBuilder
@@ -32,18 +36,23 @@ import java.security.*;
 public class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     private final SecureRandom random = new SecureRandom();
-    private final String encoding;
+    private final String cipherName;
+    private final int blockSize; // CBC
     private final Key key;
-    private final Cipher cipher;
+    private final CombineAlgorithm combineAlgorithm;
+    private final String encoding;
 
     /**
      * Creates a new instance of base algorithm.
      *
-     * @param keyFactory factory used for creation of encryption key
-     * @param encoding   encoding used for strings
+     * @param cipherName       name of crypto algorithm
+     * @param keyFactory       factory used for creation of encryption key
+     * @param combineAlgorithm algorithm for combining IV and cipher text
+     * @param encoding         encoding used for strings
      * @throws EncryptionException possible exception when algorithm cannot be created
      */
-    public SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, String encoding) throws EncryptionException {
+    public SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, CombineAlgorithm combineAlgorithm,
+                              String encoding) throws EncryptionException {
         Encoding.checkEncoding(encoding);
         if (keyFactory == null) {
             throw new EncryptionException("Key factory must be set");
@@ -51,11 +60,14 @@ public class SymmetricAlgorithm implements EncryptionAlgorithm {
 
         this.encoding = encoding;
         try {
-            this.cipher = Cipher.getInstance(cipherName);
+            Cipher cipher = Cipher.getInstance(cipherName); // find out if i can create instances and retrieve block size
+            this.cipherName = cipherName;
+            this.blockSize = cipher.getBlockSize();
             this.key = keyFactory.getKey();
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new EncryptionException("Invalid encryption algorithm", e);
         }
+        this.combineAlgorithm = combineAlgorithm;
     }
 
 
@@ -63,11 +75,11 @@ public class SymmetricAlgorithm implements EncryptionAlgorithm {
     public byte[] encrypt(byte[] input) throws EncryptionException {
         try {
             IvParameterSpec iv = generateIV();
-            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+            Cipher cipher = initCipher(iv, true);
             byte[] encryptedBytes = cipher.doFinal(input);
-            return combineIvAndCipherText(iv.getIV(), encryptedBytes);
-        } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new EncryptionException("Unable to encrypt message", e);
+            return combineAlgorithm.combine(iv.getIV(), encryptedBytes);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            throw new EncryptionException("Unable to encrypt input", e);
         }
     }
 
@@ -81,12 +93,12 @@ public class SymmetricAlgorithm implements EncryptionAlgorithm {
     @Override
     public byte[] decrypt(byte[] input) throws EncryptionException {
         try {
-            byte[][] ivAndCipherText = deriveIvAndCipherText(input);
+            byte[][] ivAndCipherText = combineAlgorithm.split(input);
             IvParameterSpec iv = new IvParameterSpec(ivAndCipherText[0]);
-            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+            Cipher cipher = initCipher(iv, false);
             return cipher.doFinal(ivAndCipherText[1]);
-        } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new EncryptionException("Unable to decrypt message", e);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            throw new EncryptionException("Unable to decrypt input", e);
         }
     }
 
@@ -103,43 +115,26 @@ public class SymmetricAlgorithm implements EncryptionAlgorithm {
      * @return random initialization vector
      */
     private IvParameterSpec generateIV() {
-        byte[] iv = new byte[cipher.getBlockSize()];
+        byte[] iv = new byte[blockSize];
         random.nextBytes(iv);
         return new IvParameterSpec(iv);
     }
 
     /**
-     * Combines IV and cipher text together. IV is at the beginning and cipher text is the rest.
+     * Initializes cipher with given initialization vector.
      *
-     * @param iv         initialization vector
-     * @param cipherText cipher text
-     * @return combined IV and cipher text
+     * @param iv        initialization vector
+     * @param isEncrypt flag whether cipher will be used for encryption (true) or decryption (false)
+     * @return initialized cipher
+     * @throws EncryptionException possible exception if cipher cannot be initialized
      */
-    private byte[] combineIvAndCipherText(byte[] iv, byte[] cipherText) {
-        byte[] out = new byte[iv.length + cipherText.length];
-        System.arraycopy(iv, 0, out, 0, iv.length);
-        System.arraycopy(cipherText, 0, out, iv.length, cipherText.length);
-        return out;
-    }
-
-    /**
-     * Derives IV and cipher text from given input. It is expected that IV is at the beginning (its size is cipher block
-     * size) and rest is cipher text.
-     *
-     * @param input input to be processed
-     * @return arrays of IV (output[0]) and cipher text (output[1])
-     */
-    private byte[][] deriveIvAndCipherText(byte[] input) {
-        if (input.length <= cipher.getBlockSize()) {
-            throw new EncryptionException("Given input is too short, probably it was not encrypted by this library?");
+    private Cipher initCipher(IvParameterSpec iv, boolean isEncrypt) throws EncryptionException {
+        try {
+            Cipher cipher = Cipher.getInstance(cipherName);
+            cipher.init(isEncrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, key, iv);
+            return cipher;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
+            throw new EncryptionException("Unable to initialize cipher", e);
         }
-        byte[][] out = new byte[2][];
-        byte[] iv = new byte[cipher.getBlockSize()];
-        byte[] cipherText = new byte[input.length - iv.length];
-        System.arraycopy(input, 0, iv, 0, iv.length);
-        System.arraycopy(input, iv.length, cipherText, 0, cipherText.length);
-        out[0] = iv;
-        out[1] = cipherText;
-        return out;
     }
 }

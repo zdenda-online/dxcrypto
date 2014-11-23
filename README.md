@@ -2,11 +2,11 @@ DXCrypto: Easy Java Cryptography
 ================================
 Simple Java library for cryptography (hashing and encryption) built purely on Java SE without transitive dependencies.
 
-I created this library because I was tired of object initializations of existing Java APIs.
-In many cases, a lot simplier API is needed. This library provides higher level abstraction over existing
-*java.security* and *javax.crypto* packages.
+I created this library because I was tired of object initializations of existing Java APIs and all those checked
+exceptions you have to take care of. In many cases, programmer needs simpler API, so this library provides higher
+level of abstraction over existing *java.security* and *javax.crypto* packages.
 
-If you find any issue or you would like to contribute, feel free to contact me.
+If you find any issue please contact me on my e-mail.
 
 Maven dependency (soon in Maven Central)
 ----------------
@@ -24,7 +24,8 @@ Features
 
 - Immutable structures of algorithms for thread safety
 
-- Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation)
+- Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation
+for encryption or custom concatenation of input text and salt before hashing)
 
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
@@ -36,22 +37,31 @@ String asString = sha256.hash("hello"); // String instances also accepted
 - Additional hashing operations like **repeated hashing** or **salting**
 
 ```java
-HashingAlgorithm alg = ...;
+HashingAlgorithm hashAlg = ...;
 
-HashingAlgorithm decorator = new RepeatingDecorator(alg, 27);
+// repeated hashing
+HashingAlgorithm decorator = new RepeatingDecorator(hashAlg, 27);
 String repeated = decorator.hash("hello"); // hash(hash("hello")) ~ 27x
 
-SaltingAdapter adapter = new SaltingAdapter(alg); // DefaultConcatStrategy
+// default salting
+SaltingAdapter adapter = new SaltingAdapter(hashAlg); // ConcatCombineAlgorithm
 String salted = adapter.hash("your input text", "your salt");
+
+// salting with custom combine algorithm
+CombineAlgorithm combineAlg = ...; // your implementation
+SaltingAdapter adapter = new SaltingAdapter(hashAlg, combineAlg); // ConcatCombineAlgorithm
 ```
 
-- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation
+- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
+Both algorithms generate a new random initialization vector for every message and combine it with cipher text to output,
+so instances are later able to derive this vector during decryption.
 
 ```java
 // fluent API for encryption algorithm builders
 EncryptionAlgorithm aes = new AESBuilder("secret")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
+    .combineAlgorithm(...) // optional
     .build();
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
@@ -65,7 +75,6 @@ EncryptionAlgorithm des = new TripleDESBuilder("secret")
 String asString = des.encrypt("hello");
 String andBack = des.decrypt(asString);
 ```
-
 
 - Asymmetric (key pair) encryption algorithm: **RSA** with ECB and OAEP padding
 
