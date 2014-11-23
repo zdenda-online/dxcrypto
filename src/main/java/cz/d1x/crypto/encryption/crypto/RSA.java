@@ -1,6 +1,6 @@
 package cz.d1x.crypto.encryption.crypto;
 
-import cz.d1x.crypto.TextUtil;
+import cz.d1x.crypto.Encoding;
 import cz.d1x.crypto.encryption.EncryptionException;
 
 import java.math.BigInteger;
@@ -16,15 +16,15 @@ import java.security.KeyPair;
  * </ul>
  * If you don't have key pair, you can generate some via {@link RSAKeysGenerator}.
  * <p/>
- * For more information about the implementation, see {@link CryptoAsymmetricKeyAlgorithm} from which this class extend.
+ * For more information about the implementation, see {@link CryptoAsymmetricAlgorithm} from which this class extend.
  * <p/>
  * This class is immutable and can be considered thread safe.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see CryptoAsymmetricKeyAlgorithm
+ * @see CryptoAsymmetricAlgorithm
  * @see RSAKeysGenerator
  */
-public class RSA extends CryptoAsymmetricKeyAlgorithm {
+public class RSA extends CryptoAsymmetricAlgorithm {
 
     /**
      * Creates a new RSA algorithm using given modulus and exponents.
@@ -34,7 +34,7 @@ public class RSA extends CryptoAsymmetricKeyAlgorithm {
      * @throws EncryptionException possible exception if algorithm cannot be initialized
      */
     public RSA(KeyPair keys) throws EncryptionException {
-        super(publicKey(keys), privateKey(keys), TextUtil.DEFAULT_ENCODING);
+        super(publicKey(keys), privateKey(keys), Encoding.DEFAULT_ENCODING);
     }
 
     /**
@@ -59,7 +59,7 @@ public class RSA extends CryptoAsymmetricKeyAlgorithm {
      * @throws EncryptionException possible exception if algorithm cannot be initialized
      */
     public RSA(BigInteger modulus, BigInteger exponent, boolean isPublic) throws EncryptionException {
-        super(isPublic ? publicKey(modulus, exponent) : null, isPublic ? null : privateKey(modulus, exponent), TextUtil.DEFAULT_ENCODING);
+        super(isPublic ? publicKey(modulus, exponent) : null, isPublic ? null : privateKey(modulus, exponent), Encoding.DEFAULT_ENCODING);
     }
 
     /**
@@ -85,7 +85,7 @@ public class RSA extends CryptoAsymmetricKeyAlgorithm {
      * @throws EncryptionException possible exception if algorithm cannot be initialized
      */
     public RSA(BigInteger modulus, BigInteger publicExponent, BigInteger privateExponent) throws EncryptionException {
-        super(publicKey(modulus, publicExponent), privateKey(modulus, privateExponent), TextUtil.DEFAULT_ENCODING);
+        super(publicKey(modulus, publicExponent), privateKey(modulus, privateExponent), Encoding.DEFAULT_ENCODING);
     }
 
     /**

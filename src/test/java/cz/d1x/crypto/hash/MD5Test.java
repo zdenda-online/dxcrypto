@@ -1,6 +1,6 @@
 package cz.d1x.crypto.hash;
 
-import cz.d1x.crypto.hash.impl.MD5;
+import cz.d1x.crypto.hash.digest.MD5;
 
 /**
  * Tests {@link MD5} implementation.

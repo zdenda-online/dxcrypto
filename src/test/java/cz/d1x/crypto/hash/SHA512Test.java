@@ -1,6 +1,6 @@
 package cz.d1x.crypto.hash;
 
-import cz.d1x.crypto.hash.impl.SHA512;
+import cz.d1x.crypto.hash.digest.SHA512;
 
 /**
  * Tests {@link SHA512} implementation.

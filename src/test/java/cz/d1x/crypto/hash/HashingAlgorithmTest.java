@@ -1,6 +1,5 @@
 package cz.d1x.crypto.hash;
 
-import cz.d1x.crypto.hash.impl.SimpleSaltingAdapter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,11 +93,11 @@ public abstract class HashingAlgorithmTest {
      * Tests usage of salt returns different hash for same input but different hash.
      */
     @Test
-    public void saltedHashing() {
-        SaltingAdapter saltingAdapter = new SimpleSaltingAdapter(algorithm);
+    public void saltingWithDefaultConcatStrategy() {
+        SaltingAdapter adapter = new SaltingAdapter(algorithm);
         String input = INPUTS[0];
-        String hash1 = saltingAdapter.hash(input, "s@Lt1");
-        String hash2 = saltingAdapter.hash(input, "s@Lt2");
+        String hash1 = adapter.hash(input, "s@Lt1");
+        String hash2 = adapter.hash(input, "s@Lt2");
         assertNotEquals("Same inputs with different salt must have different hash", hash1, hash2);
     }
 

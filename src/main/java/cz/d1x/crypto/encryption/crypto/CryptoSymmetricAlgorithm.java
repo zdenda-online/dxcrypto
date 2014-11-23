@@ -1,6 +1,6 @@
 package cz.d1x.crypto.encryption.crypto;
 
-import cz.d1x.crypto.TextUtil;
+import cz.d1x.crypto.Encoding;
 import cz.d1x.crypto.encryption.EncryptionAlgorithm;
 import cz.d1x.crypto.encryption.EncryptionException;
 
@@ -29,7 +29,7 @@ import java.security.*;
  * @see AES
  * @see TripleDES
  */
-public abstract class CryptoSymmetricKeyAlgorithm implements EncryptionAlgorithm {
+public abstract class CryptoSymmetricAlgorithm implements EncryptionAlgorithm {
 
     private final SecureRandom random = new SecureRandom();
     private final String encoding;
@@ -42,8 +42,8 @@ public abstract class CryptoSymmetricKeyAlgorithm implements EncryptionAlgorithm
      * @param keyFactory factory used for creation of encryption key
      * @param encoding   encoding used for strings
      */
-    protected CryptoSymmetricKeyAlgorithm(CryptoKeyFactory keyFactory, String encoding) {
-        TextUtil.checkEncoding(encoding);
+    protected CryptoSymmetricAlgorithm(CryptoKeyFactory keyFactory, String encoding) {
+        Encoding.checkEncoding(encoding);
         if (keyFactory == null) {
             throw new EncryptionException("Key factory must be set");
         }
@@ -80,9 +80,9 @@ public abstract class CryptoSymmetricKeyAlgorithm implements EncryptionAlgorithm
 
     @Override
     public String encrypt(String input) throws EncryptionException {
-        byte[] textBytes = TextUtil.getBytes(input, encoding);
+        byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] encryptedBytes = encrypt(textBytes);
-        return TextUtil.toHex(encryptedBytes);
+        return Encoding.toHex(encryptedBytes);
     }
 
     @Override
@@ -99,9 +99,9 @@ public abstract class CryptoSymmetricKeyAlgorithm implements EncryptionAlgorithm
 
     @Override
     public String decrypt(String input) throws EncryptionException {
-        byte[] textBytes = TextUtil.fromHex(input);
+        byte[] textBytes = Encoding.fromHex(input);
         byte[] decryptedBytes = decrypt(textBytes);
-        return TextUtil.getString(decryptedBytes, encoding);
+        return Encoding.getString(decryptedBytes, encoding);
     }
 
     /**

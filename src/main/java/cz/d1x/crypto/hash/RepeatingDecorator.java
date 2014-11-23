@@ -1,8 +1,15 @@
 package cz.d1x.crypto.hash;
 
 /**
- * Decorator for {@link HashingAlgorithm} implementations which repeats hashing algorithm multiple times.
- * E.g. hash(hash(hash(input)))
+ * Decorator for hashing algorithms which repeats hashing multiple times.
+ * E.g. 3 repeats results in hash(hash(hash(input)))
+ * <p/>
+ * Example:
+ * <pre>
+ *     HashingAlgorithm sha256 = new SHA256();
+ *     HashingAlgorithm decorator = new RepeatingDecorator(alg, 27);
+ *     decorator.hash("whateverYouWant");
+ * </pre>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */

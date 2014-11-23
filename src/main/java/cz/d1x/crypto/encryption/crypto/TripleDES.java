@@ -1,6 +1,6 @@
 package cz.d1x.crypto.encryption.crypto;
 
-import cz.d1x.crypto.TextUtil;
+import cz.d1x.crypto.Encoding;
 import cz.d1x.crypto.encryption.EncryptionException;
 
 /**
@@ -14,43 +14,43 @@ import cz.d1x.crypto.encryption.EncryptionException;
  * There is also a constructor that allows to use custom function for encryption key derivation if you don't want to
  * use default one (PBKDF2).
  * <p/>
- * For more information about the implementation, see {@link CryptoSymmetricKeyAlgorithm} from which this class extend.
+ * For more information about the implementation, see {@link CryptoSymmetricAlgorithm} from which this class extend.
  * <p/>
  * This class is immutable and can be considered thread safe.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see CryptoSymmetricKeyAlgorithm
+ * @see CryptoSymmetricAlgorithm
  */
-public class TripleDES extends CryptoSymmetricKeyAlgorithm {
+public class TripleDES extends CryptoSymmetricAlgorithm {
 
     /**
      * Creates a new instance of 3DES algorithm using given key.
-     * Default {@link TextUtil#DEFAULT_ENCODING} is used as encoding.
+     * Default {@link cz.d1x.crypto.Encoding#DEFAULT_ENCODING} is used as encoding.
      *
      * @param keyPassword password for encryption key derivation
      * @throws EncryptionException possible exception if algorithm cannot be initialized
      */
     public TripleDES(byte[] keyPassword) throws EncryptionException {
-        super(keyFactory(keyPassword), TextUtil.DEFAULT_ENCODING);
+        super(keyFactory(keyPassword), Encoding.DEFAULT_ENCODING);
     }
 
 
     /**
      * Creates a new instance of 3DES algorithm using given key password, and key salt.
-     * Default {@link TextUtil#DEFAULT_ENCODING} is used as encoding.
+     * Default {@link cz.d1x.crypto.Encoding#DEFAULT_ENCODING} is used as encoding.
      *
      * @param keyPassword password for encryption key derivation
      * @param keySalt     salt for encryption key derivation
      * @throws EncryptionException possible exception if algorithm cannot be initialized
      */
     public TripleDES(byte[] keyPassword, byte[] keySalt) throws EncryptionException {
-        super(keyFactory(keyPassword, keySalt), TextUtil.DEFAULT_ENCODING);
+        super(keyFactory(keyPassword, keySalt), Encoding.DEFAULT_ENCODING);
     }
 
 
     /**
      * Creates a new instance of 3DES algorithm using given key password, key salt and iteration count.
-     * Default {@link TextUtil#DEFAULT_ENCODING} is used as encoding.
+     * Default {@link cz.d1x.crypto.Encoding#DEFAULT_ENCODING} is used as encoding.
      *
      * @param keyPassword     password for encryption key derivation
      * @param keySalt         salt for encryption key derivation
@@ -58,7 +58,7 @@ public class TripleDES extends CryptoSymmetricKeyAlgorithm {
      * @throws EncryptionException possible exception if algorithm cannot be initialized
      */
     public TripleDES(byte[] keyPassword, byte[] keySalt, int iterationsCount) throws EncryptionException {
-        super(keyFactory(keyPassword, keySalt, iterationsCount), TextUtil.DEFAULT_ENCODING);
+        super(keyFactory(keyPassword, keySalt, iterationsCount), Encoding.DEFAULT_ENCODING);
     }
 
     /**

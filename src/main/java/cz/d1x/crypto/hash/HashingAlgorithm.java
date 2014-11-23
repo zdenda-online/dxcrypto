@@ -1,7 +1,7 @@
 package cz.d1x.crypto.hash;
 
-import cz.d1x.crypto.hash.impl.MD5;
-import cz.d1x.crypto.hash.impl.SHA256;
+import cz.d1x.crypto.hash.digest.MD5;
+import cz.d1x.crypto.hash.digest.SHA256;
 
 /**
  * Interface for algorithms that are able to create hash of given input.

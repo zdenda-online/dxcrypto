@@ -5,11 +5,11 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
- * Utilities for text operations, mostly with encoding.
+ * Utilities for internal operations with encoding.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class TextUtil {
+public class Encoding {
 
     public static final String DEFAULT_ENCODING = "UTF-8";
 

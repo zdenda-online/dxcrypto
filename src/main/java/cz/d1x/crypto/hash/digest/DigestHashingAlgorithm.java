@@ -1,6 +1,6 @@
-package cz.d1x.crypto.hash.impl;
+package cz.d1x.crypto.hash.digest;
 
-import cz.d1x.crypto.TextUtil;
+import cz.d1x.crypto.Encoding;
 import cz.d1x.crypto.hash.HashingAlgorithm;
 import cz.d1x.crypto.hash.HashingException;
 
@@ -19,19 +19,12 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
     protected final String encoding;
 
     /**
-     * Creates a new instance with default encoding.
-     */
-    protected DigestHashingAlgorithm() {
-        this(TextUtil.DEFAULT_ENCODING);
-    }
-
-    /**
      * Creates a new instance with given encoding.
      *
      * @param encoding encoding used for strings
      */
     protected DigestHashingAlgorithm(String encoding) {
-        TextUtil.checkEncoding(encoding);
+        Encoding.checkEncoding(encoding);
         this.encoding = encoding;
 
         try {
@@ -64,8 +57,8 @@ public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
         if (input == null) {
             throw new HashingException("Input data for hashing cannot be null");
         }
-        byte[] textBytes = TextUtil.getBytes(input, encoding);
+        byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] hash = hash(textBytes);
-        return TextUtil.toHex(hash);
+        return Encoding.toHex(hash);
     }
 }

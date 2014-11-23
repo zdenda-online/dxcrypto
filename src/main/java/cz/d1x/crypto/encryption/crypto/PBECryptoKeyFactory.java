@@ -1,6 +1,6 @@
 package cz.d1x.crypto.encryption.crypto;
 
-import cz.d1x.crypto.TextUtil;
+import cz.d1x.crypto.Encoding;
 import cz.d1x.crypto.encryption.EncryptionException;
 
 import javax.crypto.SecretKey;
@@ -18,7 +18,7 @@ import java.security.spec.InvalidKeySpecException;
  */
 public abstract class PBECryptoKeyFactory extends CryptoKeyFactory {
 
-    private static final byte[] DEFAULT_SALT = TextUtil.getBytes("s4lTTTT-us3d~bY_re4l_m3n5", TextUtil.DEFAULT_ENCODING);
+    private static final byte[] DEFAULT_SALT = Encoding.getBytes("s4lTTTT-us3d~bY_re4l_m3n5", Encoding.DEFAULT_ENCODING);
     private static final int DEFAULT_ITERATIONS = 27891;
 
     private final String algorithm;
@@ -53,7 +53,7 @@ public abstract class PBECryptoKeyFactory extends CryptoKeyFactory {
     @Override
     public Key getKey() throws EncryptionException {
         try {
-            char[] keyEncoded = TextUtil.getString(keyPassword, TextUtil.DEFAULT_ENCODING).toCharArray();
+            char[] keyEncoded = Encoding.getString(keyPassword, Encoding.DEFAULT_ENCODING).toCharArray();
             PBEKeySpec keySpec = new PBEKeySpec(keyEncoded, keySalt, iterationsCount, keyLength);
             SecretKey tmp = SecretKeyFactory.getInstance(getAlgorithmName()).generateSecret(keySpec);
             return new SecretKeySpec(tmp.getEncoded(), algorithm);

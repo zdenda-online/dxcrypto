@@ -6,9 +6,9 @@ I created this library because I was tired of object initializations of existing
 In many cases, a lot simplier API is needed. This library provides higher level abstraction over existing
 *java.security* and *javax.crypto* packages.
 
-If you find any issue or you would like to contribute, feel free to contact me (contact in POM).
+If you find any issue or you would like to contribute, feel free to contact me.
 
-Maven dependency (will be published to Central soon)
+Maven dependency (soon in Maven Central)
 ----------------
 
 ```xml
@@ -22,22 +22,28 @@ Maven dependency (will be published to Central soon)
 Features
 --------
 
-- Immutable structures (algorithm instances) for thread safety
+- Immutable structures for thread safety
 
 - Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation) 
 
-- Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**, decorator for **repeated hashing** and adapter for **salting**
+- Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
 ```java
-HashingAlgorithm sha256 = new SHA256(); // or SHA256("yourEncoding")
+HashingAlgorithm sha256 = new SHA256();
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
 String asString = sha256.hash("hello"); // 2cf24db...
+```
 
-HashingAlgorithm decorator = new RepeatingDecorator(sha256, 27);
-String repeated = decorator.hash("hello"); // sha256(sha256("hello")) ~ 27x
+- Additional hashing operations like **repeated hashing** or **salting**
 
-SaltingAdapter adapter = new SimpleSaltingAdapter(sha256);
-String withSalt = adapter.hash("hello", "s@lt");
+```java
+HashingAlgorithm alg = ...;
+
+HashingAlgorithm decorator = new RepeatingDecorator(alg, 27);
+String repeated = decorator.hash("hello"); // hash(hash("hello")) ~ 27x
+
+SaltingAdapter adapter = new SaltingAdapter(alg); // DefaultConcatStrategy
+String salted = adapter.hash("your input text", "your salt");
 ```
 
 - Symmetric key encryption algorithms: **AES** and **Triple DES** both using CBC with PKCS#5 padding

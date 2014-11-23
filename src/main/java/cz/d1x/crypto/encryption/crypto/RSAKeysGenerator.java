@@ -7,7 +7,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Generator that can provide key pair for RSA encryption.
+ * Generator that can provide key pair for RSA encryption with 1024 key size.
  * This generator can be re-used for multiple key pair generations.
  * <p/>
  * This class is immutable and can be considered thread safe.

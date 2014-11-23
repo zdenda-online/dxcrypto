@@ -1,6 +1,6 @@
 package cz.d1x.crypto.encryption.crypto;
 
-import cz.d1x.crypto.TextUtil;
+import cz.d1x.crypto.Encoding;
 import cz.d1x.crypto.encryption.EncryptionAlgorithm;
 import cz.d1x.crypto.encryption.EncryptionException;
 
@@ -27,15 +27,15 @@ import java.security.NoSuchAlgorithmException;
  * @see AES
  * @see TripleDES
  */
-public abstract class CryptoAsymmetricKeyAlgorithm implements EncryptionAlgorithm {
+public abstract class CryptoAsymmetricAlgorithm implements EncryptionAlgorithm {
 
     private final String encoding;
     private final Key publicKey;
     private final Key privateKey;
     private final Cipher cipher;
 
-    protected CryptoAsymmetricKeyAlgorithm(CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory, String encoding) {
-        TextUtil.checkEncoding(encoding);
+    protected CryptoAsymmetricAlgorithm(CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory, String encoding) {
+        Encoding.checkEncoding(encoding);
         if (publicKeyFactory == null && privateKeyFactory == null) {
             throw new EncryptionException("At least one (public/private) key factory must be set");
         }
@@ -71,9 +71,9 @@ public abstract class CryptoAsymmetricKeyAlgorithm implements EncryptionAlgorith
 
     @Override
     public String encrypt(String input) throws EncryptionException {
-        byte[] textBytes = TextUtil.getBytes(input, encoding);
+        byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] encryptedBytes = encrypt(textBytes);
-        return TextUtil.toHex(encryptedBytes);
+        return Encoding.toHex(encryptedBytes);
     }
 
     @Override
@@ -89,9 +89,9 @@ public abstract class CryptoAsymmetricKeyAlgorithm implements EncryptionAlgorith
 
     @Override
     public String decrypt(String input) throws EncryptionException {
-        byte[] textBytes = TextUtil.fromHex(input);
+        byte[] textBytes = Encoding.fromHex(input);
         byte[] decryptedBytes = decrypt(textBytes);
-        return TextUtil.getString(decryptedBytes, encoding);
+        return Encoding.getString(decryptedBytes, encoding);
     }
 
     private void checkKey(boolean isPublic) throws EncryptionException {

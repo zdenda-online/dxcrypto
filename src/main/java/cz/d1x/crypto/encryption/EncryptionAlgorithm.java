@@ -1,7 +1,6 @@
 package cz.d1x.crypto.encryption;
 
 import cz.d1x.crypto.encryption.crypto.AES;
-import cz.d1x.crypto.encryption.crypto.CryptoSymmetricKeyAlgorithm;
 import cz.d1x.crypto.encryption.crypto.TripleDES;
 
 /**
@@ -15,7 +14,7 @@ import cz.d1x.crypto.encryption.crypto.TripleDES;
  * <p/>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see CryptoSymmetricKeyAlgorithm
+ * @see cz.d1x.crypto.encryption.crypto.CryptoSymmetricAlgorithm
  * @see AES
  * @see TripleDES
  */
