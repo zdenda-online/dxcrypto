@@ -44,20 +44,20 @@ String asString = sha256.hash("hello"); // byte[] or String based methods
 
 ```java
 // repeated hashing
-HashingAlgorithm decorator = HashingAlgorithms.sha512()
+HashingAlgorithm repeatedSha512 = HashingAlgorithms.sha512()
     .repeated(27)
     .build();
-String repeated = decorator.hash("hello"); // hash(hash("hello")) ~ 27x
+String repeated = repeatedSha512.hash("hello"); // hash(hash("hello")) ~ 27x
 
 // default salting with ConcatCombineAlgorithm
-SaltingAdapter adapter = HashingAlgorithms.sha256()
+SaltingAdapter saltedSha256 = HashingAlgorithms.sha256()
     .salted()
     .build();
-String salted = adapter.hash("your input text", "your salt");
+String salted = saltedSha256.hash("your input text", "your salt");
 
 // salting with custom combining of input text and salt
 CombineAlgorithm combineAlg = ...; // your implementation
-SaltingAdapter adapter = HashingAlgorithms.sha256()
+SaltingAdapter saltedSha256 = HashingAlgorithms.sha256()
     .salted()
     .combineAlgorithm(combineAlg)
     .build();
