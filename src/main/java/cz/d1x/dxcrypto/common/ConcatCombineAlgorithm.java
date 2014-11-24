@@ -11,7 +11,7 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  * <p/>
  * Note that this class is immutable so when this first input length is once set, then all first inputs needs to have
  * this length if split operation will be used. Otherwise unpredictable outputs or {@link IllegalArgumentException}
- * may occur during split (combine operation will work always).
+ * may occur during split (combine operation will always work).
  * <p/>
  * This requirement is not a problem for (input + salt) usage before hashing because it is not expected to split these
  * values later on. Also it is not a problem for (IV + cipher text) during CBC because first input (IV) has always

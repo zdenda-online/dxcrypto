@@ -64,13 +64,14 @@ SaltingAdapter adapter = HashingAlgorithms.sha256()
 ```
 
 - Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
-Both algorithms generate a new random initialization vector for every message and combine it with cipher text into the output.
+Both algorithms generate a new random initialization vector for every message and combine it with cipher text into the output
+(combine algorithm can be customized).
 
 ```java
 EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secret")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
-    .combineAlgorithm(...) // optional
+    .combineAlgorithm(...) // optional, how to combine IV + cipherText
     .build();
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
