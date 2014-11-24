@@ -1,6 +1,7 @@
 package cz.d1x.dxcrypto.hash.digest;
 
 import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.CombineAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
 import cz.d1x.dxcrypto.hash.HashingAlgorithm;
 import cz.d1x.dxcrypto.hash.HashingAlgorithmBuilder;
@@ -39,20 +40,36 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
     }
 
     /**
-     * Builds a hashing algorithm and wraps it into salting adapter builder.
+     * Builds a hashing algorithm and wraps it by salting adapter builder.
+     * Salting adapter automatically gets the same encoding as hashing algorithm.
      *
-     * @return salting adapter
+     * @return salting adapter builder
      */
     public SaltingAdapterBuilder salted() {
         HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg, encoding);
+        return new SaltingAdapterBuilder(alg, encoding)
+                .encoding(encoding);
+    }
+
+    /**
+     * Builds a hashing algorithm and wraps it by salting adapter builder with custom combine algorithm.
+     * Salting adapter automatically gets the same encoding as hashing algorithm.
+     *
+     * @param combineAlgorithm combine algorithm for input text and salt
+     * @return salting adapter builder
+     */
+    public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
+        HashingAlgorithm alg = build();
+        return new SaltingAdapterBuilder(alg, encoding)
+                .combineAlgorithm(combineAlgorithm)
+                .encoding(encoding);
     }
 
     /**
      * Builds a hashing algorithm and wraps it into repeating decorator builder.
      *
      * @param repeats count of repeats
-     * @return repeating decorator
+     * @return repeating decorator builder
      */
     public RepeatingDecoratorBuilder repeated(int repeats) {
         HashingAlgorithm alg = build();
