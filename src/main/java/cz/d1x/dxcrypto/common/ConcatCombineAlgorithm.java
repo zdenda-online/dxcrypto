@@ -5,19 +5,24 @@ import cz.d1x.dxcrypto.encryption.crypto.SymmetricAlgorithm;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
- * Simplest implementation of combine algorithm. It combines inputs by concatenation of two values together:<br/>
- * [first input + second input]. It implies that this algorithm needs to know length of first input if split operation
- * will be used.
+ * Simplest implementation of combine algorithm. It combines inputs consecutively (simple concatenation).
+ * It implies that this algorithm needs to know length of first input if {@link #split(byte[])} will be used.
+ * <p/>
+ * <ul>
+ * <li>If you expect to use only {@link #combine(byte[], byte[])}, there is no need to provide the length of first input, so
+ * you can use {@link #ConcatCombineAlgorithm()} constructor.</li>
+ * <li>If you expect to use both {@link #combine(byte[], byte[])} and {@link #split(byte[])}, you must provide expected
+ * length of first input, so you should use {@link #ConcatCombineAlgorithm(int)} constructor.</li>
+ * </ul>
  * <p/>
  * Note that this class is immutable so when this first input length is once set, then all first inputs needs to have
- * this length if split operation will be used. Otherwise unpredictable outputs or {@link IllegalArgumentException}
- * may occur during split (combine operation will always work).
+ * this length, otherwise {@link IllegalArgumentException} may occur.
  * <p/>
- * This requirement is not a problem for (input + salt) usage before hashing because it is not expected to split these
- * values later on. Also it is not a problem for (IV + cipher text) during CBC because first input (IV) has always
- * fixed length equal to cipher block size.
+ * This algorithm is sufficient for most cases. It is not a problem for (input + salt) usage before hashing because only
+ * combine is used (split is not needed). Also it is not a problem for (IV + cipher text) during CBC because first input
+ * (IV) has always fixed length equal to cipher block size.
  * <p/>
- * On the other hand, if you need split operation and expect dynamic size of both inputs, you must create new instance
+ * On the other hand, if you need {@link #split(byte[])} and expect dynamic size of both inputs, you must create new instance
  * every time you want to combine and split.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
@@ -26,19 +31,22 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  */
 public class ConcatCombineAlgorithm implements CombineAlgorithm {
 
+    private static final int INPUT_LENGTH_NOT_SET = -1;
     private final int input1Length;
 
     /**
      * Creates a new instance of combine algorithm.
-     * Use this constructor if you expect only to combine inputs but not splitting back.
+     * Use this constructor if you expect use only to {@link #combine(byte[], byte[])} inputs but <strong>not</strong>
+     * {@link #split(byte[])}.
      */
     public ConcatCombineAlgorithm() {
-        this.input1Length = -1;
+        this.input1Length = INPUT_LENGTH_NOT_SET;
     }
 
     /**
      * Creates a new instance of combine algorithm.
-     * Use this constructor if you expect both combine and splitting back of inputs.
+     * Use this constructor if you expect to use both {@link #combine(byte[], byte[])} and {@link #split(byte[])}.
+     * You as a client are responsible to provide first input
      *
      * @param input1Length expected length of first inputs
      */
@@ -51,6 +59,9 @@ public class ConcatCombineAlgorithm implements CombineAlgorithm {
 
     @Override
     public byte[] combine(byte[] input1, byte[] input2) {
+        if (input1Length != INPUT_LENGTH_NOT_SET && input1Length != input1.length) { // only if input1Length is set
+            throw new IllegalArgumentException("Length of first input must be " + input1Length);
+        }
         byte[] out = new byte[input1.length + input2.length];
         System.arraycopy(input1, 0, out, 0, input1.length);
         System.arraycopy(input2, 0, out, input1.length, input2.length);
@@ -59,7 +70,7 @@ public class ConcatCombineAlgorithm implements CombineAlgorithm {
 
     @Override
     public byte[][] split(byte[] combined) {
-        if (input1Length == -1) {
+        if (input1Length == INPUT_LENGTH_NOT_SET) {
             throw new EncryptionException("Input length was not specified (wrong constructor), unable to split input");
         }
         if (combined.length <= input1Length) {
