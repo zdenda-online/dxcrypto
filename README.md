@@ -3,7 +3,7 @@ DXCrypto: Easy Java Cryptography
 Simple Java library for cryptography (hashing and encryption) built purely on Java SE without transitive dependencies.
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
-exceptions you have to take care of. In many cases, programmer needs simpler API, so this library provides higher
+exceptions it uses. In many cases, programmer needs simpler API, so this library provides higher
 level of abstraction over existing *java.security* and *javax.crypto* packages.
 
 This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
@@ -38,7 +38,7 @@ HashingAlgorithm sha256 = HashingAlgorithms.sha256()
     .encoding(Encoding.UTF_8); // optional
     .build();
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
-String asString = sha256.hash("hello"); // Strings also supported
+String asString = sha256.hash("hello"); // byte[] or String based methods
 ```
 - Additional hashing operations like **repeated hashing** or **salting**
 
@@ -61,12 +61,10 @@ SaltingAdapter adapter = HashingAlgorithms.sha256()
     .salted()
     .combineAlgorithm(combineAlg)
     .build();
-;
 ```
 
 - Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
-Both algorithms generate a new random initialization vector for every message and combine it with cipher text to output,
-so instances are later able to derive this vector during decryption.
+Both algorithms generate a new random initialization vector for every message and combine it with cipher text into the output.
 
 ```java
 EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secret")
