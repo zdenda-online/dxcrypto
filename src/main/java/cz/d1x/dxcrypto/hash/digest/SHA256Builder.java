@@ -1,14 +1,13 @@
 package cz.d1x.dxcrypto.hash.digest;
 
-import cz.d1x.dxcrypto.Encoding;
 import cz.d1x.dxcrypto.hash.RepeatingDecorator;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
- * SHA-256 hashing algorithm.
+ * Builder for SHA-256 hashing algorithm.
  * <p/>
  * This algorithm should be sufficient for many cases (e.g. password hashing).
- * If slightly higher execution time is not an issue for you, you can also use {@link SHA512}.
+ * If slightly higher execution time is not an issue for you, you can also use {@link SHA512Builder}.
  * <p/>
  * You can make potential attacks harder if you use salt (e.g. by using {@link SaltingAdapter}).
  * You can also do repeated hashing by using {@link RepeatingDecorator} if higher execution time is not an issue for you.
@@ -17,28 +16,16 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class SHA256 extends DigestHashingAlgorithm {
-    /**
-     * Creates a new instance that uses {@link Encoding#UTF_8} for string encoding.
-     */
-    public SHA256() {
-        super(Encoding.UTF_8);
-    }
+public class SHA256Builder extends DigestAlgorithmBuilder {
 
     /**
-     * Creates a new instance that uses given encoding for strings.
-     *
-     * @param encoding encoding to be used
+     * Creates a new builder for MD5 hashing algorithm.
      */
-    public SHA256(String encoding) {
-        super(encoding);
+    public SHA256Builder() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected String getDigestName() {
+    protected String getAlgorithm() {
         return "SHA-256";
     }
 }

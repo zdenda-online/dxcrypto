@@ -1,11 +1,10 @@
 package cz.d1x.dxcrypto.hash.digest;
 
-import cz.d1x.dxcrypto.Encoding;
 import cz.d1x.dxcrypto.hash.RepeatingDecorator;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
- * MD5 hashing algorithm.
+ * Builder for MD5 hashing algorithm.
  * <p/>
  * More than 10 years, it is <strong>NOT</strong> recommended to use this algorithm.
  * If you can choose, go with some stronger function (e.g. SHA-256 or SHA-512).
@@ -17,29 +16,16 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class MD5 extends DigestHashingAlgorithm {
+public class MD5Builder extends DigestAlgorithmBuilder {
 
     /**
-     * Creates a new instance that uses {@link Encoding#UTF_8} for string encoding.
+     * Creates a new builder for MD5 hashing algorithm.
      */
-    public MD5() {
-        super(Encoding.UTF_8);
+    public MD5Builder() {
     }
 
-    /**
-     * Creates a new instance that uses given encoding for strings.
-     *
-     * @param encoding encoding to be used
-     */
-    public MD5(String encoding) {
-        super(encoding);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected String getDigestName() {
+    protected String getAlgorithm() {
         return "MD5";
     }
 }

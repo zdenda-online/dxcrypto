@@ -24,7 +24,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      * @param hashingAlgorithm algorithm to be repeated
      * @param repeatsCount     number of repeats of hashing
      */
-    public RepeatingDecorator(HashingAlgorithm hashingAlgorithm, int repeatsCount) {
+    protected RepeatingDecorator(HashingAlgorithm hashingAlgorithm, int repeatsCount) {
         if (hashingAlgorithm == null) {
             throw new IllegalArgumentException("Expecting non-null decorated algorithm");
         }

@@ -26,44 +26,10 @@ import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
  */
 public class SaltingAdapter {
 
-    private static final CombineAlgorithm DEFAULT_COMBINE_ALGORITHM = new ConcatCombineAlgorithm();
 
     private final HashingAlgorithm hashingAlgorithm;
     private final CombineAlgorithm combineAlgorithm;
     private final String encoding;
-
-    /**
-     * Creates a new salting adapter.
-     * {@link ConcatCombineAlgorithm} will be used for input text and salt combining.
-     * {@link Encoding#UTF_8} will be used for strings.
-     *
-     * @param hashingAlgorithm algorithm used for hashing
-     */
-    public SaltingAdapter(HashingAlgorithm hashingAlgorithm) {
-        this(hashingAlgorithm, DEFAULT_COMBINE_ALGORITHM, Encoding.UTF_8);
-    }
-
-    /**
-     * Creates a new salting adapter.
-     * {@link ConcatCombineAlgorithm} will be used for input text and salt combining.
-     *
-     * @param hashingAlgorithm algorithm used for hashing
-     * @param encoding         encoding used for strings
-     */
-    public SaltingAdapter(HashingAlgorithm hashingAlgorithm, String encoding) {
-        this(hashingAlgorithm, DEFAULT_COMBINE_ALGORITHM, encoding);
-    }
-
-    /**
-     * Creates a new salting adapter.
-     * {@link Encoding#UTF_8} will be used for strings.
-     *
-     * @param hashingAlgorithm algorithm for hashing
-     * @param combineAlgorithm strategy how to combine input text and salt
-     */
-    public SaltingAdapter(HashingAlgorithm hashingAlgorithm, CombineAlgorithm combineAlgorithm) {
-        this(hashingAlgorithm, combineAlgorithm, Encoding.UTF_8);
-    }
 
     /**
      * Creates a new salting adapter.
@@ -72,9 +38,9 @@ public class SaltingAdapter {
      * @param combineAlgorithm strategy how to combine input text and salt
      * @param encoding         encoding for used strings
      */
-    public SaltingAdapter(HashingAlgorithm hashingAlgorithm, CombineAlgorithm combineAlgorithm, String encoding) {
+    protected SaltingAdapter(HashingAlgorithm hashingAlgorithm, CombineAlgorithm combineAlgorithm, String encoding) {
         if (hashingAlgorithm == null) {
-            throw new IllegalArgumentException("Expecting non-null decorated algorithm");
+            throw new IllegalArgumentException("Expecting non-null adapted algorithm");
         }
         this.hashingAlgorithm = hashingAlgorithm;
 

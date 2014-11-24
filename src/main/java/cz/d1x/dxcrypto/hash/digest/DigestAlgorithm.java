@@ -13,40 +13,38 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public abstract class DigestHashingAlgorithm implements HashingAlgorithm {
+public class DigestAlgorithm implements HashingAlgorithm {
 
-    protected final MessageDigest digest;
-    protected final String encoding;
+    private final String digestName;
+    private final String encoding;
 
     /**
      * Creates a new instance with given encoding.
      *
      * @param encoding encoding used for strings
      */
-    protected DigestHashingAlgorithm(String encoding) {
+    protected DigestAlgorithm(String digestName, String encoding) {
         Encoding.checkEncoding(encoding);
         this.encoding = encoding;
 
         try {
-            String digestName = getDigestName();
-            this.digest = MessageDigest.getInstance(digestName);
+            MessageDigest.getInstance(digestName); // check whether it can be created
+            this.digestName = digestName;
         } catch (NoSuchAlgorithmException ex) {
             throw new HashingException(ex);
         }
     }
 
-    /**
-     * Gets name of concrete digest used for its initialization.
-     * This name is used for {@link java.security.MessageDigest#getInstance(String)})
-     *
-     * @return name of the digest
-     */
-    protected abstract String getDigestName();
-
     @Override
     public byte[] hash(byte[] input) throws HashingException {
         if (input == null) {
             throw new HashingException("Input data for hashing cannot be null");
+        }
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance(digestName);
+        } catch (NoSuchAlgorithmException e) {
+            throw new HashingException("Unable to get instance of digest " + digestName, e);
         }
         digest.reset();
         return digest.digest(input);

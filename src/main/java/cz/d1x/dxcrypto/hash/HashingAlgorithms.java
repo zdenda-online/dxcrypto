@@ -1,10 +1,9 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.Encoding;
-import cz.d1x.dxcrypto.hash.digest.MD5;
-import cz.d1x.dxcrypto.hash.digest.SHA1;
-import cz.d1x.dxcrypto.hash.digest.SHA256;
-import cz.d1x.dxcrypto.hash.digest.SHA512;
+import cz.d1x.dxcrypto.hash.digest.MD5Builder;
+import cz.d1x.dxcrypto.hash.digest.SHA1Builder;
+import cz.d1x.dxcrypto.hash.digest.SHA256Builder;
+import cz.d1x.dxcrypto.hash.digest.SHA512Builder;
 
 /**
  * Factory that provides available hashing algorithms.
@@ -14,58 +13,30 @@ import cz.d1x.dxcrypto.hash.digest.SHA512;
 public class HashingAlgorithms {
 
     /**
-     * Creates a new MD5 algorithm that uses {@link Encoding#UTF_8} for string encoding.
+     * Creates a new builder for MD5 hashing algorithm.
      */
-    public static MD5 md5() {
-        return new MD5();
+    public static MD5Builder md5() {
+        return new MD5Builder();
     }
 
     /**
-     * Creates a new instance that uses given encoding for strings.
+     * Creates a new builder for SHA-1 hashing algorithm.
      */
-    public static MD5 md5(String encoding) {
-        return new MD5(encoding);
+    public static SHA1Builder sha1() {
+        return new SHA1Builder();
     }
 
     /**
-     * Creates a new SHA-1 algorithm that uses {@link Encoding#UTF_8} for string encoding.
+     * Creates a new builder for SHA-256 hashing algorithm.
      */
-    public static SHA1 sha1() {
-        return new SHA1();
+    public static SHA256Builder sha256() {
+        return new SHA256Builder();
     }
 
     /**
-     * Creates a new SHA-1 algorithm that uses given encoding for strings.
+     * Creates a new builder for SHA-512 hashing algorithm.
      */
-    public static SHA1 sha1(String encoding) {
-        return new SHA1(encoding);
-    }
-
-    /**
-     * Creates a new SHA-256 algorithm that uses {@link Encoding#UTF_8} for string encoding.
-     */
-    public static SHA256 sha256() {
-        return new SHA256();
-    }
-
-    /**
-     * Creates a new SHA-256 algorithm that uses given encoding for strings.
-     */
-    public static SHA256 sha256(String encoding) {
-        return new SHA256(encoding);
-    }
-
-    /**
-     * Creates a new SHA-512 algorithm that uses {@link Encoding#UTF_8} for string encoding.
-     */
-    public static SHA512 sha512() {
-        return new SHA512();
-    }
-
-    /**
-     * Creates a new SHA-512 algorithm that uses given encoding for strings.
-     */
-    public static SHA512 sha512(String encoding) {
-        return new SHA512(encoding);
+    public static SHA512Builder sha512() {
+        return new SHA512Builder();
     }
 }

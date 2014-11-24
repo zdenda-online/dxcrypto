@@ -15,7 +15,7 @@ import cz.d1x.dxcrypto.encryption.EncryptionException;
  */
 public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBuilder {
 
-    private static final byte[] DEFAULT_KEY_SALT = new byte[]{0x27, 0x11, 0x65, 0x35,
+    private static final byte[] DEFAULT_KEY_SALT = new byte[] {0x27, 0x11, 0x65, 0x35,
             0x13, 0x77, 0x33, 0x21,
             0x40, 0x43, 0x18, 0x65};
     private static final int DEFAULT_KEY_HASH_ITERATIONS = 4096;
@@ -27,12 +27,32 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     private CombineAlgorithm combineAlgorithm;
     private String encoding;
 
+    /**
+     * Gets a name of algorithm supported by crypto.
+     *
+     * @return algorithm name
+     */
     protected abstract String getAlgorithm();
 
+    /**
+     * Gets a short name of algorithm supported by crypto keys.
+     *
+     * @return algorithm name
+     */
     protected abstract String getShortAlgorithm();
 
+    /**
+     * Gets size of the key.
+     *
+     * @return size of key
+     */
     protected abstract int getKeySize();
 
+    /**
+     * Gets a block size of cipher (for CBC).
+     *
+     * @return cipher block size
+     */
     protected abstract int getBlockSize();
 
     protected SymmetricAlgorithmBuilder(byte[] keyPassword) {

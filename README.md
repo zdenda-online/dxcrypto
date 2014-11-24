@@ -33,26 +33,35 @@ for encryption or custom combination of input text and salt prior to hashing)
 - Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
 
 ```java
-HashingAlgorithm sha256 = HashingAlgorithms.sha256(); // or new SHA256()
+// fluent API of algorithm builders
+HashingAlgorithm sha256 = HashingAlgorithms.sha256()
+    .encoding(Encoding.UTF_8); // optional
+    .build();
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
 String asString = sha256.hash("hello"); // Strings also supported
 ```
 - Additional hashing operations like **repeated hashing** or **salting**
 
 ```java
-HashingAlgorithm hashAlg = ...;
-
 // repeated hashing
-HashingAlgorithm decorator = new RepeatingDecorator(hashAlg, 27);
+HashingAlgorithm decorator = HashingAlgorithms.sha512()
+    .repeated(27)
+    .build();
 String repeated = decorator.hash("hello"); // hash(hash("hello")) ~ 27x
 
-// default salting
-SaltingAdapter adapter = new SaltingAdapter(hashAlg);
+// default salting with ConcatCombineAlgorithm
+SaltingAdapter adapter = HashingAlgorithms.sha256()
+    .salted()
+    .build();
 String salted = adapter.hash("your input text", "your salt");
 
 // salting with custom combining of input text and salt
 CombineAlgorithm combineAlg = ...; // your implementation
-SaltingAdapter adapter = new SaltingAdapter(hashAlg, combineAlg);
+SaltingAdapter adapter = HashingAlgorithms.sha256()
+    .salted()
+    .combineAlgorithm(combineAlg)
+    .build();
+;
 ```
 
 - Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
@@ -60,7 +69,6 @@ Both algorithms generate a new random initialization vector for every message an
 so instances are later able to derive this vector during decryption.
 
 ```java
-// fluent API for encryption algorithm builders
 EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secret")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional

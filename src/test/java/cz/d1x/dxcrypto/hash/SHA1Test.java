@@ -1,9 +1,9 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.hash.digest.SHA1;
+import cz.d1x.dxcrypto.hash.digest.SHA1Builder;
 
 /**
- * Tests {@link SHA1} implementation.
+ * Tests {@link cz.d1x.dxcrypto.hash.digest.SHA1Builder} implementation.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
@@ -11,7 +11,7 @@ public class SHA1Test extends HashingAlgorithmTest {
 
     @Override
     protected HashingAlgorithm getAlgorithm() {
-        return new SHA1();
+        return new SHA1Builder().build();
     }
 
     @Override

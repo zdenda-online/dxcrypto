@@ -1,9 +1,9 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.hash.digest.MD5;
+import cz.d1x.dxcrypto.hash.digest.MD5Builder;
 
 /**
- * Tests {@link MD5} implementation.
+ * Tests {@link cz.d1x.dxcrypto.hash.digest.MD5Builder} implementation.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
@@ -11,7 +11,7 @@ public class MD5Test extends HashingAlgorithmTest {
 
     @Override
     protected HashingAlgorithm getAlgorithm() {
-        return new MD5();
+        return new MD5Builder().build();
     }
 
     @Override

@@ -21,6 +21,11 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
     private CryptoKeyFactory privateKeyFactory;
     private String encoding;
 
+    /**
+     * Gets a name of algorithm supported by crypto.
+     *
+     * @return algorithm name
+     */
     protected abstract String getAlgorithm();
 
     protected AsymmetricAlgorithmBuilder() {

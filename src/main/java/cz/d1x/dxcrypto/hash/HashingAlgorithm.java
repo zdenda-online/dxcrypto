@@ -1,14 +1,11 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.hash.digest.MD5;
-import cz.d1x.dxcrypto.hash.digest.SHA256;
-
 /**
  * Interface for algorithms that are able to create hash of given input.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see MD5
- * @see SHA256
+ * @see cz.d1x.dxcrypto.hash.digest.MD5Builder
+ * @see cz.d1x.dxcrypto.hash.digest.SHA256Builder
  */
 public interface HashingAlgorithm {
 

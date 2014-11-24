@@ -1,9 +1,9 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.hash.digest.SHA512;
+import cz.d1x.dxcrypto.hash.digest.SHA512Builder;
 
 /**
- * Tests {@link SHA512} implementation.
+ * Tests {@link cz.d1x.dxcrypto.hash.digest.SHA512Builder} implementation.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
@@ -11,7 +11,7 @@ public class SHA512Test extends HashingAlgorithmTest {
 
     @Override
     protected HashingAlgorithm getAlgorithm() {
-        return new SHA512();
+        return new SHA512Builder().build();
     }
 
     @Override

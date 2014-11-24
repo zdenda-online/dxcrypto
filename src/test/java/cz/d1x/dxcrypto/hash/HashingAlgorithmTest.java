@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public abstract class HashingAlgorithmTest {
 
     protected static final int REPEATS_COUNT = 3;
-    protected static final String[] INPUTS = new String[]{
+    protected static final String[] INPUTS = new String[] {
             "Toto-jePrvni.vstupPro_h@sh",
             "0111111111101101111111111111111111111",
             ""
@@ -79,7 +79,9 @@ public abstract class HashingAlgorithmTest {
      */
     @Test
     public void repeatingHashing() {
-        HashingAlgorithm repeatedAlgorithm = new RepeatingDecorator(algorithm, REPEATS_COUNT);
+        HashingAlgorithm repeatedAlgorithm = new RepeatingDecoratorBuilder(algorithm)
+                .repeats(REPEATS_COUNT)
+                .build();
         String[] expected = getRepeatedOutputs();
         Assert.assertEquals("Expected outputs must have same length as inputs", INPUTS.length, expected.length);
         int i = 0;
@@ -94,7 +96,8 @@ public abstract class HashingAlgorithmTest {
      */
     @Test
     public void saltingWithDefaultConcatStrategy() {
-        SaltingAdapter adapter = new SaltingAdapter(algorithm);
+        SaltingAdapter adapter = new SaltingAdapterBuilder(algorithm)
+                .build();
         String input = INPUTS[0];
         String hash1 = adapter.hash(input, "s@Lt1");
         String hash2 = adapter.hash(input, "s@Lt2");

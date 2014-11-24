@@ -1,13 +1,12 @@
 package cz.d1x.dxcrypto.hash.digest;
 
-import cz.d1x.dxcrypto.Encoding;
 import cz.d1x.dxcrypto.hash.RepeatingDecorator;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
- * SHA-1 hashing algorithm.
+ * Builder for SHA-1 hashing algorithm.
  * <p/>
- * Even when this algorithm is stronger than {@link MD5}, it has also its weaknesses.
+ * Even when this algorithm is stronger than {@link MD5Builder}, it has also its weaknesses.
  * If you can choose, go with some stronger function (e.g. SHA-256 or SHA-512).
  * <p/>
  * You can make potential attacks harder if you use salt (e.g. by using {@link SaltingAdapter}).
@@ -17,29 +16,16 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class SHA1 extends DigestHashingAlgorithm {
+public class SHA1Builder extends DigestAlgorithmBuilder {
 
     /**
-     * Creates a new instance that uses {@link Encoding#UTF_8} for string encoding.
+     * Creates a new builder for MD5 hashing algorithm.
      */
-    public SHA1() {
-        super(Encoding.UTF_8);
+    public SHA1Builder() {
     }
 
-    /**
-     * Creates a new instance that uses given encoding for strings.
-     *
-     * @param encoding encoding to be used
-     */
-    public SHA1(String encoding) {
-        super(encoding);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected String getDigestName() {
+    protected String getAlgorithm() {
         return "SHA-1";
     }
 }
