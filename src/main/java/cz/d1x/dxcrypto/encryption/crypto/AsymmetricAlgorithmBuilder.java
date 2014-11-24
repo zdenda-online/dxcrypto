@@ -123,7 +123,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
     @Override
     public EncryptionAlgorithm build() throws EncryptionException {
         if (encoding == null) {
-            encoding = Encoding.UTF_8;
+            encoding = Encoding.DEFAULT;
         }
         return new AsymmetricAlgorithm(getAlgorithm(), publicKeyFactory, privateKeyFactory, encoding);
     }

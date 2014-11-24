@@ -65,7 +65,7 @@ public class SaltingAdapterBuilder {
      */
     public SaltingAdapter build() {
         if (encoding == null) {
-            encoding = Encoding.UTF_8;
+            encoding = Encoding.DEFAULT;
         }
         if (combineAlgorithm == null) {
             combineAlgorithm = DEFAULT_COMBINE_ALGORITHM;

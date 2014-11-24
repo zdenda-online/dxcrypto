@@ -80,7 +80,7 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
     @Override
     public HashingAlgorithm build() throws EncryptionException {
         if (encoding == null) {
-            encoding = Encoding.UTF_8;
+            encoding = Encoding.DEFAULT;
         }
         return new DigestAlgorithm(getAlgorithm(), encoding);
     }

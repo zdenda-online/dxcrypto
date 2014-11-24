@@ -128,7 +128,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     @Override
     public EncryptionAlgorithm build() throws EncryptionException {
         if (encoding == null) {
-            encoding = Encoding.UTF_8;
+            encoding = Encoding.DEFAULT;
         }
         if (combineAlgorithm == null) {
             combineAlgorithm = new ConcatCombineAlgorithm(getBlockSize()); // default algorithm

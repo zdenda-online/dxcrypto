@@ -35,7 +35,7 @@ for encryption or custom combination of input text and salt prior to hashing)
 ```java
 // fluent API of algorithm builders
 HashingAlgorithm sha256 = HashingAlgorithms.sha256()
-    .encoding(Encoding.UTF_8); // optional, defaults to UTF-8 if not specified
+    .encoding("UTF-8"); // optional, defaults to UTF-8 if not specified
     .build();
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
 String asString = sha256.hash("hello"); // byte[] or String based methods
