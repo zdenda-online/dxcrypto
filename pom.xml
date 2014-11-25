@@ -35,11 +35,13 @@
     </scm>
 
     <properties>
+        <project.build.encoding>UTF-8</project.build.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <java.version>1.7</java.version>
 
         <junit.version>4.11</junit.version>
+        <mvn.compiler.version>3.1</mvn.compiler.version>
         <mvn.source.version>2.2.1</mvn.source.version>
         <mvn.javadoc.version>2.9.1</mvn.javadoc.version>
         <mvn.gpg.version>1.5</mvn.gpg.version>
@@ -71,13 +73,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>${mvn.compiler.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
