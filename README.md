@@ -9,7 +9,7 @@ level of abstraction over existing *java.security* and *javax.crypto* packages.
 This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
 If you find any issue please contact me on my e-mail.
 
-Maven dependency (soon in Maven Central)
+Maven dependency
 ----------------
 
 ```xml
