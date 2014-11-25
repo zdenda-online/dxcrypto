@@ -47,7 +47,7 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      */
     public SaltingAdapterBuilder salted() {
         HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg, encoding)
+        return new SaltingAdapterBuilder(alg)
                 .encoding(encoding);
     }
 
@@ -60,7 +60,7 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      */
     public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
         HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg, encoding)
+        return new SaltingAdapterBuilder(alg)
                 .combineAlgorithm(combineAlgorithm)
                 .encoding(encoding);
     }

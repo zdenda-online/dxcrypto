@@ -6,7 +6,7 @@
 
     <groupId>cz.d1x</groupId>
     <artifactId>dxcrypto</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>DXCrypto</name>
@@ -20,7 +20,7 @@
             <organizationUrl>https://github.com/d1x</organizationUrl>
         </developer>
     </developers>
-    
+
     <licenses>
         <license>
             <name>MIT License</name>

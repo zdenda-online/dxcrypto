@@ -1,5 +1,7 @@
 package cz.d1x.dxcrypto.hash;
 
+import cz.d1x.dxcrypto.common.CombineAlgorithm;
+
 /**
  * Builder for repeating decorator over existing hashing algorithms.
  *
@@ -30,6 +32,28 @@ public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
         }
         this.repeats = repeats;
         return this;
+    }
+
+    /**
+     * Builds a repeating decorator and wraps it by salting adapter builder.
+     *
+     * @return salting adapter builder
+     */
+    public SaltingAdapterBuilder salted() {
+        HashingAlgorithm alg = build();
+        return new SaltingAdapterBuilder(alg);
+    }
+
+    /**
+     * Builds a repeating decorator and wraps it by salting adapter builder with custom combine algorithm.
+     *
+     * @param combineAlgorithm combine algorithm for input text and salt
+     * @return salting adapter builder
+     */
+    public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
+        HashingAlgorithm alg = build();
+        return new SaltingAdapterBuilder(alg)
+                .combineAlgorithm(combineAlgorithm);
     }
 
     @Override

@@ -27,17 +27,6 @@ public class SaltingAdapterBuilder {
     }
 
     /**
-     * Creates a new builder for salting adapter with given hashing algorithm and encoding.
-     *
-     * @param hashingAlgorithm hashing algorithm to be set
-     * @param encoding         encoding to be set
-     */
-    public SaltingAdapterBuilder(HashingAlgorithm hashingAlgorithm, String encoding) {
-        this.hashingAlgorithm = hashingAlgorithm;
-        this.encoding = encoding;
-    }
-
-    /**
      * Sets a custom algorithm for combining input text and salt.
      *
      * @return combine algorithm
