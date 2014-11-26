@@ -9,11 +9,13 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Abstract class for hashing algorithm which uses {@link java.security.MessageDigest} for hashing.
- * This class is immutable and can be considered thread safe.
+ * <p/>
+ * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
+ * that way.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class DigestAlgorithm implements HashingAlgorithm {
+public final class DigestAlgorithm implements HashingAlgorithm {
 
     private final String digestName;
     private final String encoding;

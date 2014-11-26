@@ -27,13 +27,14 @@ import java.security.*;
  * <p/>
  * Inputs and outputs from this encryption are bytes represented in HEX string.
  * <p/>
- * This class is immutable and can be considered thread safe.
+ * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
+ * that way.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see AESBuilder
  * @see TripleDESBuilder
  */
-public class SymmetricAlgorithm implements EncryptionAlgorithm {
+public final class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     private final SecureRandom random = new SecureRandom();
     private final String cipherName;

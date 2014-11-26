@@ -20,13 +20,13 @@ import java.security.NoSuchAlgorithmException;
  * <p/>
  * Inputs and outputs from this encryption are bytes represented in HEX string.
  * <p/>
- * This class is immutable and can be considered thread safe. If you extend this class, it is recommended it
- * stays that way.
+ * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
+ * that way.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see RSABuilder
  */
-public class AsymmetricAlgorithm implements EncryptionAlgorithm {
+public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
 
     private final String cipherName;
     private final Key publicKey;
