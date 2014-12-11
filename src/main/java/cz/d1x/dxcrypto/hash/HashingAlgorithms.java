@@ -6,7 +6,9 @@ import cz.d1x.dxcrypto.hash.digest.SHA256Builder;
 import cz.d1x.dxcrypto.hash.digest.SHA512Builder;
 
 /**
- * Factory that provides available hashing algorithms.
+ * Factory that provides builders for available hashing algorithms.
+ * Create a new builder and when you are done with parameters, call {@link HashingAlgorithmBuilder#build()}
+ * to retrieve {@link HashingAlgorithm} instance.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */

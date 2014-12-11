@@ -8,6 +8,7 @@ import cz.d1x.dxcrypto.encryption.crypto.TripleDESBuilder;
 /**
  * Factory that provides builders for available encryption algorithms.
  * Create a new builder and when you are done with parameters, call {@link EncryptionAlgorithmBuilder#build()}
+ * to retrieve {@link EncryptionAlgorithm} instance.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
