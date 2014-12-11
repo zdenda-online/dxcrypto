@@ -4,6 +4,9 @@ import cz.d1x.dxcrypto.props.SecureProperties;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.StringWriter;
+
 /**
  * Tests encrypted properties extension
  *
@@ -64,5 +67,19 @@ public class SecurePropertiesTest {
         String actual = props.getProperty("foo");
         Assert.assertNotNull("Value under foo must not be null", actual);
         Assert.assertEquals("bar", actual);
+    }
+
+    @Test
+    public void validateItIsReallyEncryptedInside() throws IOException {
+        SecureProperties props = new SecureProperties(algorithm, "--myPrefix");
+        props.setEncryptedProperty("foo", "bar");
+
+        StringWriter sw = new StringWriter();
+        props.store(sw, null);
+        String[] propsStrings = sw.toString().split("\n");
+        Assert.assertTrue(propsStrings.length >= 2);
+        Assert.assertTrue(propsStrings[1].startsWith("foo=--myPrefix"));
+        String encryptedValue = propsStrings[1].substring("foo=--myPrefix".length());
+        Assert.assertEquals(64, encryptedValue.length()); // 32 bytes of data
     }
 }

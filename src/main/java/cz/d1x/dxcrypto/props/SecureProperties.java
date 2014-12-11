@@ -10,13 +10,13 @@ import java.util.Properties;
 
 /**
  * Extension of {@link java.util.Properties} that allows storing and reading encrypted values by given encryption
- * algorithm. Also contains methods for verification of hashed values.
+ * algorithm.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
 public class SecureProperties extends Properties {
 
-    private static final String DEFAULT_ENCRYPTED_PREFIX = "*3nc*";
+    private static final String DEFAULT_ENCRYPTED_PREFIX = "b3e856";
 
     private final EncryptionAlgorithm encryptionAlgorithm;
     private final String encryptedPropertyPrefix;
@@ -119,7 +119,7 @@ public class SecureProperties extends Properties {
 
     private String getEncrypted(String value) {
         if (value != null && value.startsWith(encryptedPropertyPrefix)) {
-            String withoutPrefix = value.substring(encryptedPropertyPrefix.length(), value.length());
+            String withoutPrefix = value.substring(encryptedPropertyPrefix.length());
             return encryptionAlgorithm.decrypt(withoutPrefix);
         } else {
             return value;
