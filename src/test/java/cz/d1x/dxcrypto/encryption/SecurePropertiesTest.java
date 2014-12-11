@@ -44,7 +44,7 @@ public class SecurePropertiesTest {
 
     @Test
     public void nonEncryptedPropertyCustomPrefix() {
-        SecureProperties props = new SecureProperties(algorithm, "--myPrefix");
+        SecureProperties props = new SecureProperties(algorithm, "--mySuffix");
         props.setProperty("foo", "bar");
         String actual = props.getProperty("foo");
         Assert.assertNotNull("Value under foo must not be null", actual);
@@ -53,16 +53,18 @@ public class SecurePropertiesTest {
 
     @Test
     public void encryptedPropertyDefaultPrefix() {
+        EncryptionAlgorithm algorithm = this.algorithm;
         SecureProperties props = new SecureProperties(algorithm);
-        props.setEncryptedProperty("foo", "bar");
-        String actual = props.getProperty("foo");
+        props.setEncryptedProperty("foo", "bar"); // bar value is stored encrypted
+        String actual = props.getProperty("foo"); // if property is encrypted, it gets automatically decrypted
+        // actual == "bar"
         Assert.assertNotNull("Value under foo must not be null", actual);
         Assert.assertEquals("bar", actual);
     }
 
     @Test
     public void encryptedPropertyCustomPrefix() {
-        SecureProperties props = new SecureProperties(algorithm, "--myPrefix");
+        SecureProperties props = new SecureProperties(algorithm, "--mySuffix");
         props.setEncryptedProperty("foo", "bar");
         String actual = props.getProperty("foo");
         Assert.assertNotNull("Value under foo must not be null", actual);
@@ -70,16 +72,26 @@ public class SecurePropertiesTest {
     }
 
     @Test
-    public void validateItIsReallyEncryptedInside() throws IOException {
-        SecureProperties props = new SecureProperties(algorithm, "--myPrefix");
+    public void validateItIsEncryptedInside() {
+        SecureProperties props = new SecureProperties(algorithm, "--mySuffix");
+        props.setEncryptedProperty("foo", "bar");
+        String encryptedValue = props.getOriginalProperty("foo");
+        Assert.assertTrue(encryptedValue.endsWith("--mySuffix"));
+        String encryptedValueNoSuffix = encryptedValue.substring(0, encryptedValue.length() - "--mySuffix".length());
+        Assert.assertEquals(64, encryptedValueNoSuffix.length()); // 32 bytes of data
+    }
+
+    @Test
+    public void validateItIsEncryptedWhenStored() throws IOException {
+        SecureProperties props = new SecureProperties(algorithm, "--mySuffix");
         props.setEncryptedProperty("foo", "bar");
 
         StringWriter sw = new StringWriter();
         props.store(sw, null);
         String[] propsStrings = sw.toString().split("\n");
         Assert.assertTrue(propsStrings.length >= 2);
-        Assert.assertTrue(propsStrings[1].startsWith("foo=--myPrefix"));
-        String encryptedValue = propsStrings[1].substring("foo=--myPrefix".length());
+        Assert.assertTrue(propsStrings[1].endsWith("--mySuffix"));
+        String encryptedValue = propsStrings[1].substring(0, propsStrings[1].length() - "foo=--mySuffix".length());
         Assert.assertEquals(64, encryptedValue.length()); // 32 bytes of data
     }
 }

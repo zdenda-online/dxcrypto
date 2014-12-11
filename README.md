@@ -4,7 +4,8 @@ Simple Java library for cryptography (hashing and encryption) built purely on Ja
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
 exceptions it uses. In many cases, programmer needs simpler API, so this library provides higher
-level of abstraction over existing *java.security* and *javax.crypto* packages.
+level of abstraction over existing *java.security* and *javax.crypto* packages. It also provides few utility classes
+like SecureProperties that extend existing java.util.Properties for use of encrypted properties.
 
 This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
 If you find any issue please contact me on my e-mail.
@@ -106,3 +107,14 @@ EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
         .keyPair(keys)
         .build();
 ```
+
+- SecureProperties (will be in 1.1) that extend java.util.Properties by adding possibility to store/read encrypted values
+
+```java
+EncryptionAlgorithm algorithm = ...; // your algorithm
+SecureProperties props = new SecureProperties(algorithm);
+props.setEncryptedProperty("foo", "bar"); // bar value is stored encrypted
+String decrypted = props.getProperty("foo"); // "foo", if property is encrypted, it gets automatically decrypted
+String encrypted = props.getOriginalProperty("foo"); // if you want to see how your encrypted value looks like
+```
+
