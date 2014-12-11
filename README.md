@@ -113,7 +113,15 @@ EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
 ```java
 EncryptionAlgorithm algorithm = ...; // your algorithm
 SecureProperties props = new SecureProperties(algorithm);
-props.setEncryptedProperty("foo", "bar"); //
-String decrypted = props.getProperty("foo"); // "foo" (automatically decrypted)
+props.setProperty("plainProperty", "imGoodBoy");
+props.setEncryptedProperty("encryptedProperty", "myDirtySecret");
+
+props.store(...);
+// plainProperty=imGoodBoy
+// encryptedProperty=bf165faf5067...
+
+// automatic decryption of values
+String decrypted = props.getProperty("encryptedProperty"); // "myDirtySecret"
+String original = props.getOriginalProperty("encryptedProperty"); // bf165...
 ```
 
