@@ -71,7 +71,7 @@ public class AESBuilder extends SymmetricAlgorithmBuilder {
 
     @Override
     protected int getKeySize() {
-        return 8 * 16;
+        return 128;
     }
 
     @Override

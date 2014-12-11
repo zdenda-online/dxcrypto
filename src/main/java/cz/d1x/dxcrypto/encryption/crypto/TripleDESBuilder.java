@@ -71,8 +71,8 @@ public class TripleDESBuilder extends SymmetricAlgorithmBuilder {
 
     @Override
     protected int getKeySize() {
-        return 24 * 8;
-    }
+        return (3 * 8) * 8;
+    } // crypto uses multiples of 24 (even 3DES uses 56 bytes keys)
 
     @Override
     protected int getBlockSize() {
