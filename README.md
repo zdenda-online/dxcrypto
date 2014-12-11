@@ -108,13 +108,12 @@ EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
         .build();
 ```
 
-- SecureProperties (will be in 1.1) that extend java.util.Properties by adding possibility to store/read encrypted values
+- SecureProperties that extend java.util.Properties by adding possibility to store/read encrypted values
 
 ```java
 EncryptionAlgorithm algorithm = ...; // your algorithm
 SecureProperties props = new SecureProperties(algorithm);
-props.setEncryptedProperty("foo", "bar"); // bar value is stored encrypted
-String decrypted = props.getProperty("foo"); // "foo", if property is encrypted, it gets automatically decrypted
-String encrypted = props.getOriginalProperty("foo"); // if you want to see how your encrypted value looks like
+props.setEncryptedProperty("foo", "bar"); //
+String decrypted = props.getProperty("foo"); // "foo" (automatically decrypted)
 ```
 
