@@ -1,11 +1,14 @@
 package cz.d1x.dxcrypto.hash;
 
+import cz.d1x.dxcrypto.hash.digest.MD5Builder;
+import cz.d1x.dxcrypto.hash.digest.SHA256Builder;
+
 /**
  * Interface for algorithms that are able to create hash of given input.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see cz.d1x.dxcrypto.hash.digest.MD5Builder
- * @see cz.d1x.dxcrypto.hash.digest.SHA256Builder
+ * @see MD5Builder
+ * @see SHA256Builder
  */
 public interface HashingAlgorithm {
 
@@ -19,7 +22,7 @@ public interface HashingAlgorithm {
     String hash(String input) throws HashingException;
 
     /**
-     * Creates a hash from input input.
+     * Creates a hash from input bytes.
      *
      * @param input input to be hashed
      * @return hashed text in input

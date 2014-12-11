@@ -13,15 +13,17 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * <p>
  * Main implementation of encryption algorithms that use asymmetric key pair based on existing javax.crypto package.
- * <p/>
+ * </p><p>
  * This implementation can provide both encoding and decoding or only one of these functions depending on what key
  * was provided during instantiation. Public key is needed for encryption, private key for decryption.
- * <p/>
+ * </p><p>
  * Inputs and outputs from this encryption are bytes represented in HEX string.
- * <p/>
+ * </p><p>
  * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
  * that way.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see RSABuilder

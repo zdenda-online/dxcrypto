@@ -29,7 +29,8 @@ public class SaltingAdapterBuilder {
     /**
      * Sets a custom algorithm for combining input text and salt.
      *
-     * @return combine algorithm
+     * @param combineAlgorithm combine algorithm
+     * @return this instance
      */
     public SaltingAdapterBuilder combineAlgorithm(CombineAlgorithm combineAlgorithm) {
         this.combineAlgorithm = combineAlgorithm;

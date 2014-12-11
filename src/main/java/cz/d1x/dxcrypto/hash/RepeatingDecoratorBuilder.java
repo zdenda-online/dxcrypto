@@ -25,6 +25,7 @@ public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
      * Sets repeats for repeating decorator.
      *
      * @param repeats repeats to be set
+     * @return this instance
      */
     public RepeatingDecoratorBuilder repeats(int repeats) {
         if (repeats < 1) {

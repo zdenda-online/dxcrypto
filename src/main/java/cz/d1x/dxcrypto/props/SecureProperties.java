@@ -73,6 +73,10 @@ public class SecureProperties extends Properties {
      * Have the same functionality as {@link #setProperty(String, String)} but the value gets encrypted before it gets
      * stored within properties. The value gets automatically decrypted when {@link #getProperty(String)} or
      * {@link #getProperty(String, String)} is called.
+     *
+     * @param key   key of the property to be set
+     * @param value value to be encrypted and set
+     * @return previous value of property if was set
      */
     public synchronized Object setEncryptedProperty(String key, String value) {
         String encryptedValue = encryptionAlgorithm.encrypt(value) + encryptedPropertySuffix;
@@ -93,10 +97,14 @@ public class SecureProperties extends Properties {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * If the property ends with given suffix (specified in constructor or default), it gets decrypted by defined
      * encryption algorithm. Note that {@link EncryptionException} can be thrown if encrypted property cannot be
      * decrypted by given algorithm.
+     * </p>
+     *
+     * @param key key of the property to be read
+     * @return property value or null if not ste
      */
     @Override
     public String getProperty(String key) {
@@ -105,10 +113,15 @@ public class SecureProperties extends Properties {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * If the property ends with given suffix (specified in constructor or default), it gets decrypted by defined
      * encryption algorithm. Note that {@link EncryptionException} can be thrown if encrypted property cannot be
      * decrypted by given algorithm.
+     * </p>
+     *
+     * @param key          key of the property to be read
+     * @param defaultValue default value if property is not set
+     * @return property value or default if not set
      */
     @Override
     public String getProperty(String key, String defaultValue) {

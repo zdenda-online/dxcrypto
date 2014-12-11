@@ -5,25 +5,27 @@ import cz.d1x.dxcrypto.encryption.crypto.SymmetricAlgorithm;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
+ * <p>
  * Simplest implementation of combine algorithm. It combines inputs consecutively (simple concatenation).
  * It implies that this algorithm needs to know length of first input if {@link #split(byte[])} will be used.
- * <p/>
+ * </p>
  * <ul>
  * <li>If you expect to use only {@link #combine(byte[], byte[])}, there is no need to provide the length of first input, so
  * you can use {@link #ConcatCombineAlgorithm()} constructor.</li>
  * <li>If you expect to use both {@link #combine(byte[], byte[])} and {@link #split(byte[])}, you must provide expected
  * length of first input, so you should use {@link #ConcatCombineAlgorithm(int)} constructor.</li>
  * </ul>
- * <p/>
+ * <p>
  * Note that this class is immutable so when this first input length is once set, then all first inputs needs to have
  * this length, otherwise {@link IllegalArgumentException} may occur.
- * <p/>
+ * </p><p>
  * This algorithm is sufficient for most cases. It is not a problem for (input + salt) usage before hashing because only
  * combine is used (split is not needed). Also it is not a problem for (IV + cipher text) during CBC because first input
  * (IV) has always fixed length equal to cipher block size.
- * <p/>
+ * </p><p>
  * On the other hand, if you need {@link #split(byte[])} and expect dynamic size of both inputs, you must create new instance
  * every time you want to combine and split.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see SaltingAdapter

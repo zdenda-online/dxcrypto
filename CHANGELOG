@@ -1,5 +1,8 @@
 Whats new in latest versions
 
-Version 1.1 (not released yet)
+Version 1.2 (not released yet)
+* tba
+
+Version 1.1
 * Added SecureProperties that extend java.util.Properties and allow storing/reading encrypted properties
 * Added possibility to add salting to repeating decorator

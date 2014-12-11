@@ -5,9 +5,10 @@ import cz.d1x.dxcrypto.common.CombineAlgorithm;
 import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
 
 /**
+ * <p>
  * Adapter for hashing algorithms that combines input text and salt before it is processed by adapted algorithm.
  * For combination, you can implement your own {@link CombineAlgorithm} or you can use default one.
- * <p/>
+ * </p>
  * Example:
  * <pre>
  *     HashingAlgorithm sha256 = new SHA256();
@@ -18,8 +19,9 @@ import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
  *     CombineAlgorithm combineAlg = ...; // your implementation
  *     SaltingAdapter adapter = new SaltingAdapter(alg, combineAlg); // ConcatCombineAlgorithm
  * </pre>
- * <p/>
+ * <p>
  * Be sure to store the salt along with the hash for future checks.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see ConcatCombineAlgorithm

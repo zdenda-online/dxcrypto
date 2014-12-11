@@ -18,6 +18,7 @@ public class EncryptionAlgorithms {
      * Creates a new builder for AES encryption algorithm.
      *
      * @param keyPassword password for key derivation
+     * @return builder for AES encryption
      */
     public static AESBuilder aes(byte[] keyPassword) {
         return new AESBuilder(keyPassword);
@@ -27,6 +28,7 @@ public class EncryptionAlgorithms {
      * Creates a new builder for AES encryption algorithm.
      *
      * @param keyPassword password for key derivation
+     * @return builder for AES encryption
      */
     public static AESBuilder aes(String keyPassword) {
         return new AESBuilder(keyPassword);
@@ -37,6 +39,7 @@ public class EncryptionAlgorithms {
      * Use this if you want override default PBKDF2 for key derivation.
      *
      * @param customKeyFactory custom factory for encryption key
+     * @return builder for AES encryption
      */
     public static AESBuilder aes(CryptoKeyFactory customKeyFactory) {
         return new AESBuilder(customKeyFactory);
@@ -46,6 +49,7 @@ public class EncryptionAlgorithms {
      * Creates a new builder for 3DES encryption algorithm.
      *
      * @param keyPassword password for key derivation
+     * @return builder for 3DES encryption
      */
     public static TripleDESBuilder tripleDes(byte[] keyPassword) {
         return new TripleDESBuilder(keyPassword);
@@ -55,6 +59,7 @@ public class EncryptionAlgorithms {
      * Creates a new builder for 3DES encryption algorithm.
      *
      * @param keyPassword password for key derivation
+     * @return builder for 3DES encryption
      */
     public static TripleDESBuilder tripleDes(String keyPassword) {
         return new TripleDESBuilder(keyPassword);
@@ -65,6 +70,7 @@ public class EncryptionAlgorithms {
      * Use this constructor if you want override default PBKDF2 for key derivation.
      *
      * @param customKeyFactory custom factory for encryption key
+     * @return builder for 3DES encryption
      */
     public static TripleDESBuilder tripleDes(CryptoKeyFactory customKeyFactory) {
         return new TripleDESBuilder(customKeyFactory);
@@ -72,6 +78,8 @@ public class EncryptionAlgorithms {
 
     /**
      * Creates a new builder for RSA encryption algorithm.
+     *
+     * @return builder for RSA encryption
      */
     public static RSABuilder rsa() {
         return new RSABuilder();

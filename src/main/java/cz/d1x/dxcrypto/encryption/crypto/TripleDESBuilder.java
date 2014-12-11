@@ -8,11 +8,11 @@ package cz.d1x.dxcrypto.encryption.crypto;
  * <li>Input padding: PKCS#5</li>
  * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation (can be overridden)</li>
  * </ul>
- * <p/>
+ * <p>
  * By default, PBKDF2 is used for key derivation. You can provide salt and iterations count for it.
  * If you want custom encryption key derivation, you can use {@link #TripleDESBuilder(CryptoKeyFactory)}
  * constructor to specify custom factory for the key.
- * <p/>
+ * </p>
  * Recommended usage:
  * <pre>
  * EncryptionAlgorithm des = new TripleDESBuilder("secret")
@@ -20,10 +20,10 @@ package cz.d1x.dxcrypto.encryption.crypto;
  *      .iterations(4096) // optional
  *      .build();
  * </pre>
- * <p/>
+ * <p>
  * Note that this builder is mutable but built instances are immutable and thus thread safe.
- * <p/>
  * For more information about the implementation (e.g. about initialization vectors), see {@link SymmetricAlgorithm}.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see SymmetricAlgorithm

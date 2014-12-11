@@ -16,6 +16,8 @@ public class HashingAlgorithms {
 
     /**
      * Creates a new builder for MD5 hashing algorithm.
+     *
+     * @return builder for MD5
      */
     public static MD5Builder md5() {
         return new MD5Builder();
@@ -23,6 +25,8 @@ public class HashingAlgorithms {
 
     /**
      * Creates a new builder for SHA-1 hashing algorithm.
+     *
+     * @return builder for SHA-1
      */
     public static SHA1Builder sha1() {
         return new SHA1Builder();
@@ -30,6 +34,8 @@ public class HashingAlgorithms {
 
     /**
      * Creates a new builder for SHA-256 hashing algorithm.
+     *
+     * @return builder for SHA-256
      */
     public static SHA256Builder sha256() {
         return new SHA256Builder();
@@ -37,6 +43,8 @@ public class HashingAlgorithms {
 
     /**
      * Creates a new builder for SHA-512 hashing algorithm.
+     *
+     * @return builder for SHA-512
      */
     public static SHA512Builder sha512() {
         return new SHA512Builder();

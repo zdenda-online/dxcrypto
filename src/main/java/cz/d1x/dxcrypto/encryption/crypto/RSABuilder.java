@@ -8,7 +8,6 @@ package cz.d1x.dxcrypto.encryption.crypto;
  * <li>Input padding: OAEP with SHA-256 (MGF1 for masks)</li>
  * </ul>
  * If you don't have key pair, you can generate some via {@link RSAKeysGenerator}.
- * <p/>
  * Recommended usage:
  * <pre>
  *     BigInteger modulus =
@@ -17,10 +16,10 @@ package cz.d1x.dxcrypto.encryption.crypto;
  *                                    .iterations(27) // optional
  *                                    .build();
  * </pre>
- * <p/>
+ * <p>
  * Note that this builder is mutable but built instances are immutable and thus thread safe.
- * <p/>
  * For more information about the implementation, see {@link SymmetricAlgorithm}.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see AsymmetricAlgorithm

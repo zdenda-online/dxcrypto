@@ -4,15 +4,17 @@ import cz.d1x.dxcrypto.hash.RepeatingDecorator;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
+ * <p>
  * Builder for SHA-1 hashing algorithm.
- * <p/>
+ * </p><p>
  * Even when this algorithm is stronger than {@link MD5Builder}, it has also its weaknesses.
  * If you can choose, go with some stronger function (e.g. SHA-256 or SHA-512).
- * <p/>
+ * </p><p>
  * You can make potential attacks harder if you use salt (e.g. by using {@link SaltingAdapter}).
  * You can also do repeated hashing by using {@link RepeatingDecorator} if higher execution time is not an issue for you.
- * <p/>
+ * </p><p>
  * This class is immutable and can be considered thread safe.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */

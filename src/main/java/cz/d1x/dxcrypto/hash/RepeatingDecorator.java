@@ -1,9 +1,10 @@
 package cz.d1x.dxcrypto.hash;
 
 /**
+ * <p>
  * Decorator for hashing algorithms which repeats hashing multiple times.
  * E.g. 3 repeats results in hash(hash(hash(input)))
- * <p/>
+ * </p>
  * Example:
  * <pre>
  *     HashingAlgorithm sha256 = new SHA256();
@@ -38,8 +39,9 @@ public class RepeatingDecorator implements HashingAlgorithm {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * Repeats algorithm by specified number of times.
+     * </p>
      */
     @Override
     public String hash(String input) throws HashingException {
@@ -48,8 +50,9 @@ public class RepeatingDecorator implements HashingAlgorithm {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * Repeats algorithm by specified number of times.
+     * </p>
      */
     @Override
     public byte[] hash(byte[] input) throws HashingException {

@@ -8,10 +8,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * <p>
  * Abstract class for hashing algorithm which uses {@link java.security.MessageDigest} for hashing.
- * <p/>
+ * </p><p>
  * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
  * that way.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
@@ -23,7 +25,8 @@ public final class DigestAlgorithm implements HashingAlgorithm {
     /**
      * Creates a new instance with given encoding.
      *
-     * @param encoding encoding used for strings
+     * @param digestName name of the digest
+     * @param encoding   encoding used for strings
      */
     protected DigestAlgorithm(String digestName, String encoding) {
         Encoding.checkEncoding(encoding);

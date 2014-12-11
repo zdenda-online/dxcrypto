@@ -15,7 +15,7 @@ import cz.d1x.dxcrypto.encryption.EncryptionException;
  */
 public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBuilder {
 
-    private static final byte[] DEFAULT_KEY_SALT = new byte[] {0x27, 0x11, 0x65, 0x35,
+    private static final byte[] DEFAULT_KEY_SALT = new byte[]{0x27, 0x11, 0x65, 0x35,
             0x13, 0x77, 0x33, 0x21,
             0x40, 0x43, 0x18, 0x65};
     private static final int DEFAULT_KEY_HASH_ITERATIONS = 4096;
@@ -108,6 +108,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * and splitting from input during decryption.
      *
      * @param combineAlgorithm combine algorithm for IV and cipher text
+     * @return this instance
      */
     public SymmetricAlgorithmBuilder combineAlgorithm(CombineAlgorithm combineAlgorithm) {
         this.combineAlgorithm = combineAlgorithm;

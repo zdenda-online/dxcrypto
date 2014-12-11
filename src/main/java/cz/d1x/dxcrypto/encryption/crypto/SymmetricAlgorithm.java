@@ -13,22 +13,24 @@ import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
 
 /**
+ * <p>
  * Main implementation of encryption algorithms that use symmetric key based on existing javax.crypto package.
- * <p/>
+ * </p><p>
  * This base implementation generates a new random initialization vector for every message and includes it in
  * output. This allows to use one instance for different messages (otherwise it would be dangerous to use
  * same combination of key and IV for every message). This combining of IV with the encrypted message implies that this
  * implementation will be compatible primarily with itself (this library). If another tool (on the other end) will
  * be used, you must pass information what {@link CombineAlgorithm} is used to that tool or implement new one which
  * will be compatible with it. Inputs and outputs of String-based methods expect/provide strings in HEX format.
- * <p/>
+ * </p><p>
  * This base class also expects input to padded to the correct length, so it is not recommended to use NoPadding
  * variants of algorithm.
- * <p/>
+ * </p><p>
  * Inputs and outputs from this encryption are bytes represented in HEX string.
- * <p/>
+ * </p><p>
  * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
  * that way.
+ * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see AESBuilder
