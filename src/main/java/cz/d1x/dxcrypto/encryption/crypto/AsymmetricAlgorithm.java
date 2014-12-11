@@ -28,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
 
-    private final String cipherName;
+    private final Cipher cipher;
     private final Key publicKey;
     private final Key privateKey;
     private final String encoding;
@@ -42,8 +42,7 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
 
         this.encoding = encoding;
         try {
-            Cipher.getInstance(cipherName); // find out if i can create instances
-            this.cipherName = cipherName;
+            this.cipher = Cipher.getInstance(cipherName);
             this.publicKey = publicKeyFactory != null ? publicKeyFactory.getKey() : null;
             this.privateKey = privateKeyFactory != null ? privateKeyFactory.getKey() : null;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -55,7 +54,7 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
     public byte[] encrypt(byte[] input) throws EncryptionException {
         checkKey(true);
         try {
-            Cipher cipher = initCipher(true);
+            initCipher(true);
             return cipher.doFinal(input);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to encrypt message", e);
@@ -73,7 +72,7 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
     public byte[] decrypt(byte[] input) throws EncryptionException {
         checkKey(false);
         try {
-            Cipher cipher = initCipher(false);
+            initCipher(false);
             return cipher.doFinal(input);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to decrypt message", e);
@@ -87,13 +86,10 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
         return Encoding.getString(decryptedBytes, encoding);
     }
 
-    private Cipher initCipher(boolean isEncrypt) throws EncryptionException {
+    private void initCipher(boolean isEncrypt) throws EncryptionException {
         try {
-            Cipher cipher = Cipher.getInstance(cipherName);
-            cipher.init(isEncrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
-                    isEncrypt ? publicKey : privateKey);
-            return cipher;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+            cipher.init(isEncrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, isEncrypt ? publicKey : privateKey);
+        } catch (InvalidKeyException e) {
             throw new EncryptionException("Unable to initialize cipher", e);
         }
     }

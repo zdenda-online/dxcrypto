@@ -100,7 +100,7 @@ public class SecureProperties extends Properties {
      */
     @Override
     public String getProperty(String key) {
-        return getEncrypted(super.getProperty(key));
+        return getPlainOrEncrypted(key, super.getProperty(key));
     }
 
     /**
@@ -112,7 +112,19 @@ public class SecureProperties extends Properties {
      */
     @Override
     public String getProperty(String key, String defaultValue) {
-        return getEncrypted(super.getProperty(key, defaultValue));
+        return getPlainOrEncrypted(key, super.getProperty(key, defaultValue));
+    }
+
+    /**
+     * Checks whether property under given key is encrypted.
+     *
+     * @param key key of property to be checked
+     * @return true if property under given key is encrypted (unset properties are considered as not encrypted),
+     * otherwise false
+     */
+    public boolean isEncrypted(String key) {
+        String propertyValue = super.getProperty(key);
+        return propertyValue != null && propertyValue.endsWith(encryptedPropertySuffix);
     }
 
     /**
@@ -127,8 +139,8 @@ public class SecureProperties extends Properties {
         return (propertyValue != null) ? propertyValue.equals(expectedValue) : (expectedValue == null);
     }
 
-    private String getEncrypted(String value) {
-        if (value != null && value.endsWith(encryptedPropertySuffix)) {
+    private String getPlainOrEncrypted(String key, String value) {
+        if (isEncrypted(key)) {
             String withoutSuffix = value.substring(0, value.length() - encryptedPropertySuffix.length());
             return encryptionAlgorithm.decrypt(withoutSuffix);
         } else {

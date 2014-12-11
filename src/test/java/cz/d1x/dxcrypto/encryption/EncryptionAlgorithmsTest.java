@@ -1,6 +1,7 @@
 package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.encryption.crypto.RSAKeysGenerator;
+import cz.d1x.dxcrypto.encryption.crypto.SymmetricAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class EncryptionAlgorithmsTest {
      * Tests encryption and decryption of byte methods.
      */
     @Test
-    public void bytesEncryption() throws UnsupportedEncodingException {
+    public void byteBasedEncryption() throws UnsupportedEncodingException {
         String plain = "th1s_is_something inter3sting -*";
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
             byte[] plainBytes = plain.getBytes("UTF-8");
@@ -53,7 +54,7 @@ public class EncryptionAlgorithmsTest {
      * Tests encryption and decryption of string methods.
      */
     @Test
-    public void stringEncryption() throws UnsupportedEncodingException {
+    public void stringBasedEncryption() throws UnsupportedEncodingException {
         String plain = "th1s_is_something inter3sting -*";
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
             String encrypted = encryptionAlgorithm.encrypt(plain);
@@ -67,7 +68,7 @@ public class EncryptionAlgorithmsTest {
      * Tests whether encryption and decryption works if different instances with same key are used for each operation.
      */
     @Test
-    public void sameKeyDifferentInstance() throws UnsupportedEncodingException {
+    public void differentInstanceWithSameKeyGiveSameResults() throws UnsupportedEncodingException {
         List<EncryptionAlgorithm> encryptionAlgorithms1 = getImplementationsToTest();
         List<EncryptionAlgorithm> encryptionAlgorithms2 = getImplementationsToTest();
 
@@ -84,11 +85,31 @@ public class EncryptionAlgorithmsTest {
     }
 
     /**
+     * Tests whether encryption via symmetric algorithm gives different result for same input (thanks to IV).
+     */
+    @Test
+    public void sameInputsGiveDifferentResultsForSymmetricAlgorithms() throws UnsupportedEncodingException {
+        String plain = "th1s_is_something inter3sting -*";
+        for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
+            if (!(encryptionAlgorithm instanceof SymmetricAlgorithm)) {
+                continue; // test only symmetric algorithms
+            }
+            String encrypted1 = encryptionAlgorithm.encrypt(plain);
+            String encrypted2 = encryptionAlgorithm.encrypt(plain);
+            Assert.assertNotEquals(encrypted1, encrypted2);
+
+            String encrypted1End = encrypted1.substring(40);
+            String encrypted2End = encrypted2.substring(40);
+            Assert.assertNotEquals(encrypted1End, encrypted2End);
+        }
+    }
+
+    /**
      * Tests compatibility between byte and string methods.
      * To be precise when encryption is made using byte method and decryption by string method.
      */
     @Test
-    public void sameInstanceDifferentMethod() throws UnsupportedEncodingException {
+    public void byteAndStringBasedMethodsGiveSameOutput() throws UnsupportedEncodingException {
         String plainString = "Som3 T@";
         byte[] plainBytes = new byte[]{'S', 'o', 'm', '3', ' ', 'T', '@'};
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {

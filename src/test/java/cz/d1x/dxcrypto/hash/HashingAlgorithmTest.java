@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public abstract class HashingAlgorithmTest {
 
     protected static final int REPEATS_COUNT = 3;
-    protected static final String[] INPUTS = new String[] {
+    protected static final String[] INPUTS = new String[]{
             "Toto-jePrvni.vstupPro_h@sh",
             "0111111111101101111111111111111111111",
             ""
@@ -56,8 +56,7 @@ public abstract class HashingAlgorithmTest {
      */
     @Test(expected = HashingException.class)
     public void nullHashing() {
-        String str = null;
-        algorithm.hash(str);
+        algorithm.hash((String) null);
     }
 
     /**
@@ -95,7 +94,7 @@ public abstract class HashingAlgorithmTest {
      * Tests usage of salt returns different hash for same input but different hash.
      */
     @Test
-    public void saltingWithDefaultConcatStrategy() {
+    public void saltingWithDefaultCombineStrategy() {
         SaltingAdapter adapter = new SaltingAdapterBuilder(algorithm)
                 .build();
         String input = INPUTS[0];
