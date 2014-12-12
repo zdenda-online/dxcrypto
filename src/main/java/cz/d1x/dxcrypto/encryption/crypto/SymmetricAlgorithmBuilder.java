@@ -1,8 +1,6 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
-import cz.d1x.dxcrypto.Encoding;
-import cz.d1x.dxcrypto.common.CombineAlgorithm;
-import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
+import cz.d1x.dxcrypto.common.*;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithmBuilder;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
@@ -22,10 +20,11 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
 
     private CryptoKeyFactory customKeyFactory;
     private byte[] keyPassword;
-    private byte[] keySalt;
-    private int keyHashIterations;
-    private CombineAlgorithm combineAlgorithm;
-    private String encoding;
+    private byte[] keySalt = DEFAULT_KEY_SALT;
+    private int keyHashIterations = DEFAULT_KEY_HASH_ITERATIONS;
+    private CombineAlgorithm combineAlgorithm = new ConcatCombineAlgorithm(getBlockSize());
+    private BytesRepresentation bytesRepresentation = new HexRepresentation();
+    private String encoding = Encoding.DEFAULT;
 
     /**
      * Gets a name of algorithm supported by crypto.
@@ -116,6 +115,17 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     }
 
     /**
+     * Sets how byte arrays will be represented in strings. By default {@link HexRepresentation} is used.
+     *
+     * @param bytesRepresentation byte array representation strategy
+     * @return this instance
+     */
+    public SymmetricAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+        this.bytesRepresentation = bytesRepresentation;
+        return this;
+    }
+
+    /**
      * Sets encoding for strings in input and output.
      *
      * @param encoding encoding to be set
@@ -128,25 +138,12 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
 
     @Override
     public EncryptionAlgorithm build() throws EncryptionException {
-        if (encoding == null) {
-            encoding = Encoding.DEFAULT;
-        }
-        if (combineAlgorithm == null) {
-            combineAlgorithm = new ConcatCombineAlgorithm(getBlockSize()); // default algorithm
-        }
-
         CryptoKeyFactory keyFactory;
         if (customKeyFactory != null) {
             keyFactory = customKeyFactory;
         } else {
-            if (keySalt == null) {
-                keySalt = DEFAULT_KEY_SALT;
-            }
-            if (keyHashIterations == 0) {
-                keyHashIterations = DEFAULT_KEY_HASH_ITERATIONS;
-            }
             keyFactory = new PBKDF2KeyFactory(getShortAlgorithm(), keyPassword, getKeySize(), keySalt, keyHashIterations);
         }
-        return new SymmetricAlgorithm(getAlgorithm(), keyFactory, combineAlgorithm, encoding);
+        return new SymmetricAlgorithm(getAlgorithm(), keyFactory, combineAlgorithm, bytesRepresentation, encoding);
     }
 }

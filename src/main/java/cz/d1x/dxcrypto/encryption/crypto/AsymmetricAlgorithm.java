@@ -1,6 +1,7 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
-import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.BytesRepresentation;
+import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
 
@@ -33,15 +34,26 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
     private final Cipher cipher;
     private final Key publicKey;
     private final Key privateKey;
+    private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
-    protected AsymmetricAlgorithm(String cipherName, CryptoKeyFactory publicKeyFactory,
-                                  CryptoKeyFactory privateKeyFactory, String encoding) {
+    /**
+     * Creates a new instance of base asymmetric algorithm.
+     *
+     * @param cipherName          name of crypto algorithm
+     * @param publicKeyFactory    factory used for creation of public encryption key
+     * @param privateKeyFactory   factory used for creation of privte encryption key
+     * @param bytesRepresentation representation of byte arrays in String
+     * @param encoding            encoding used for strings
+     * @throws EncryptionException possible exception when algorithm cannot be created
+     */
+    protected AsymmetricAlgorithm(String cipherName, CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory,
+                                  BytesRepresentation bytesRepresentation, String encoding) {
         Encoding.checkEncoding(encoding);
         if (publicKeyFactory == null && privateKeyFactory == null) {
             throw new EncryptionException("At least one (public/private) key factory must be set");
         }
-
+        this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
         try {
             this.cipher = Cipher.getInstance(cipherName);
@@ -67,7 +79,7 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
     public String encrypt(String input) throws EncryptionException {
         byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] encryptedBytes = encrypt(textBytes);
-        return Encoding.toHex(encryptedBytes);
+        return bytesRepresentation.toString(encryptedBytes);
     }
 
     @Override
@@ -83,7 +95,7 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public String decrypt(String input) throws EncryptionException {
-        byte[] textBytes = Encoding.fromHex(input);
+        byte[] textBytes = bytesRepresentation.toBytes(input);
         byte[] decryptedBytes = decrypt(textBytes);
         return Encoding.getString(decryptedBytes, encoding);
     }

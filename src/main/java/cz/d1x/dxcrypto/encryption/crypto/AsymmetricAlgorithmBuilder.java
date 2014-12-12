@@ -1,6 +1,8 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
-import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.BytesRepresentation;
+import cz.d1x.dxcrypto.common.Encoding;
+import cz.d1x.dxcrypto.common.HexRepresentation;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithmBuilder;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
@@ -19,7 +21,8 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
 
     private CryptoKeyFactory publicKeyFactory;
     private CryptoKeyFactory privateKeyFactory;
-    private String encoding;
+    private BytesRepresentation bytesRepresentation = new HexRepresentation();
+    private String encoding = Encoding.DEFAULT;
 
     /**
      * Gets a name of algorithm supported by crypto.
@@ -110,6 +113,17 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
     }
 
     /**
+     * Sets how byte arrays will be represented in strings. By default {@link HexRepresentation} is used.
+     *
+     * @param bytesRepresentation byte array representation strategy
+     * @return this instance
+     */
+    public AsymmetricAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+        this.bytesRepresentation = bytesRepresentation;
+        return this;
+    }
+
+    /**
      * Sets encoding for strings in input and output.
      *
      * @param encoding encoding to be set
@@ -122,9 +136,6 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
 
     @Override
     public EncryptionAlgorithm build() throws EncryptionException {
-        if (encoding == null) {
-            encoding = Encoding.DEFAULT;
-        }
-        return new AsymmetricAlgorithm(getAlgorithm(), publicKeyFactory, privateKeyFactory, encoding);
+        return new AsymmetricAlgorithm(getAlgorithm(), publicKeyFactory, privateKeyFactory, bytesRepresentation, encoding);
     }
 }

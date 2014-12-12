@@ -17,7 +17,7 @@ Maven dependency
 <dependency>
    <groupId>cz.d1x</groupId>
    <artifactId>dxcrypto</artifactId>
-   <version>1.0</version>
+   <version>1.1</version>
 </dependency>
 ```
 
@@ -36,10 +36,13 @@ for encryption or custom combination of input text and salt prior to hashing)
 ```java
 // fluent API of algorithm builders
 HashingAlgorithm sha256 = HashingAlgorithms.sha256()
-    .encoding("UTF-8"); // optional, defaults to UTF-8 if not specified
+    .encoding("UTF-8") // optional, defaults to UTF-8
+    .bytesRepresentation(...) // optional, defaults to lower-cased HEX
     .build();
+
+// byte[] or String based methods
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
-String asString = sha256.hash("hello"); // byte[] or String based methods
+String asString = sha256.hash("hello"); // 2cf24dba5fb0a...
 ```
 - Additional hashing operations like **repeated hashing** or **salting**
 
@@ -72,6 +75,7 @@ EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secret")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
     .combineAlgorithm(...) // optional, how to combine IV + cipherText
+    .bytesRepresentation(...) // optional, defaults to lower-cased HEX
     .build();
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});

@@ -1,7 +1,8 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
-import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
 
@@ -43,24 +44,24 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
     private final int blockSize; // CBC
     private final Key key;
     private final CombineAlgorithm combineAlgorithm;
+    private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
     /**
-     * Creates a new instance of base algorithm.
+     * Creates a new instance of base symmetric algorithm.
      *
-     * @param cipherName       name of crypto algorithm
-     * @param keyFactory       factory used for creation of encryption key
-     * @param combineAlgorithm algorithm for combining IV and cipher text
-     * @param encoding         encoding used for strings
+     * @param cipherName          name of crypto algorithm
+     * @param keyFactory          factory used for creation of encryption key
+     * @param combineAlgorithm    algorithm for combining IV and cipher text
+     * @param bytesRepresentation representation of byte arrays in String
+     * @param encoding            encoding used for strings
      * @throws EncryptionException possible exception when algorithm cannot be created
      */
-    public SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, CombineAlgorithm combineAlgorithm,
-                              String encoding) throws EncryptionException {
+    protected SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, CombineAlgorithm combineAlgorithm,
+                                 BytesRepresentation bytesRepresentation, String encoding) throws EncryptionException {
         Encoding.checkEncoding(encoding);
-        if (keyFactory == null) {
-            throw new EncryptionException("Key factory must be set");
-        }
-
+        this.combineAlgorithm = combineAlgorithm;
+        this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
         try {
             cipher = Cipher.getInstance(cipherName); // find out if i can create instances and retrieve block size
@@ -69,7 +70,6 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new EncryptionException("Invalid encryption algorithm", e);
         }
-        this.combineAlgorithm = combineAlgorithm;
     }
 
 
@@ -89,7 +89,7 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
     public String encrypt(String input) throws EncryptionException {
         byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] encryptedBytes = encrypt(textBytes);
-        return Encoding.toHex(encryptedBytes);
+        return bytesRepresentation.toString(encryptedBytes);
     }
 
     @Override
@@ -106,7 +106,7 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public String decrypt(String input) throws EncryptionException {
-        byte[] textBytes = Encoding.fromHex(input);
+        byte[] textBytes = bytesRepresentation.toBytes(input);
         byte[] decryptedBytes = decrypt(textBytes);
         return Encoding.getString(decryptedBytes, encoding);
     }

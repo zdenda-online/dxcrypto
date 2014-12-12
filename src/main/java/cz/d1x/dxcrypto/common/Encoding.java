@@ -1,6 +1,5 @@
-package cz.d1x.dxcrypto;
+package cz.d1x.dxcrypto.common;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
@@ -12,42 +11,6 @@ import java.nio.charset.Charset;
 public class Encoding {
 
     public static final String DEFAULT = "UTF-8";
-
-    /**
-     * Converts given byte array into {@link String} in HEX representation.
-     *
-     * @param bytes bytes to be converted
-     * @return HEX representation (lower case characters)
-     * @throws IllegalArgumentException possible exception if input is null or cannot be converted
-     */
-    public static String toHex(byte[] bytes) throws IllegalArgumentException {
-        if (bytes == null) {
-            throw new IllegalArgumentException("Input bytes cannot be null when converted to HEX format");
-        }
-        try {
-            return DatatypeConverter.printHexBinary(bytes).toLowerCase();
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Input HEX cannot be converted to bytes", e);
-        }
-    }
-
-    /**
-     * Converts given {@link String} in HEX representation to byte array representation.
-     *
-     * @param hex HEX string input to be converted
-     * @return byte array representation
-     * @throws IllegalArgumentException possible exception if input is null or cannot be converted
-     */
-    public static byte[] fromHex(String hex) throws IllegalArgumentException {
-        if (hex == null) {
-            throw new IllegalArgumentException("Input HEX cannot be null when converted to bytes");
-        }
-        try {
-            return DatatypeConverter.parseHexBinary(hex.toLowerCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Input HEX cannot be converted to bytes", e);
-        }
-    }
 
     /**
      * Checks whether given encoding (name) is supported.

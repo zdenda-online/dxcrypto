@@ -1,6 +1,6 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
-import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
 
 import javax.crypto.SecretKey;

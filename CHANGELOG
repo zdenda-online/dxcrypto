@@ -1,7 +1,7 @@
 Whats new in latest versions
 
 Version 1.2 (not released yet)
-* tba
+* Added BytesRepresentation and incorporated into both hashing and encryption algorithms
 
 Version 1.1
 * Added SecureProperties that extend java.util.Properties and allow storing/reading encrypted properties

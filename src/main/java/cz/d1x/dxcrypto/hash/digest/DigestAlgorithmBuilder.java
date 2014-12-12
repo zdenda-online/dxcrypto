@@ -1,7 +1,9 @@
 package cz.d1x.dxcrypto.hash.digest;
 
-import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.Encoding;
+import cz.d1x.dxcrypto.common.HexRepresentation;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
 import cz.d1x.dxcrypto.hash.HashingAlgorithm;
 import cz.d1x.dxcrypto.hash.HashingAlgorithmBuilder;
@@ -16,7 +18,8 @@ import cz.d1x.dxcrypto.hash.SaltingAdapterBuilder;
  */
 public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder {
 
-    private String encoding;
+    private BytesRepresentation bytesRepresentation = new HexRepresentation();
+    private String encoding = Encoding.DEFAULT;
 
     protected DigestAlgorithmBuilder() {
     }
@@ -27,6 +30,17 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      * @return algorithm name
      */
     protected abstract String getAlgorithm();
+
+    /**
+     * Sets how byte arrays will be represented in strings. By default {@link HexRepresentation} is used.
+     *
+     * @param bytesRepresentation byte array representation strategy
+     * @return this instance
+     */
+    public DigestAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+        this.bytesRepresentation = bytesRepresentation;
+        return this;
+    }
 
     /**
      * Sets encoding for strings in input and output.
@@ -79,9 +93,6 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
 
     @Override
     public HashingAlgorithm build() throws EncryptionException {
-        if (encoding == null) {
-            encoding = Encoding.DEFAULT;
-        }
-        return new DigestAlgorithm(getAlgorithm(), encoding);
+        return new DigestAlgorithm(getAlgorithm(), bytesRepresentation, encoding);
     }
 }

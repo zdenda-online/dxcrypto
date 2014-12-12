@@ -1,6 +1,7 @@
 package cz.d1x.dxcrypto.hash.digest;
 
-import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.BytesRepresentation;
+import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.hash.HashingAlgorithm;
 import cz.d1x.dxcrypto.hash.HashingException;
 
@@ -20,16 +21,19 @@ import java.security.NoSuchAlgorithmException;
 public final class DigestAlgorithm implements HashingAlgorithm {
 
     private final String digestName;
+    private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
     /**
      * Creates a new instance with given encoding.
      *
-     * @param digestName name of the digest
-     * @param encoding   encoding used for strings
+     * @param digestName          name of the digest
+     * @param bytesRepresentation representation of byte arrays in String
+     * @param encoding            encoding used for strings
      */
-    protected DigestAlgorithm(String digestName, String encoding) {
+    protected DigestAlgorithm(String digestName, BytesRepresentation bytesRepresentation, String encoding) {
         Encoding.checkEncoding(encoding);
+        this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
 
         try {
@@ -62,6 +66,6 @@ public final class DigestAlgorithm implements HashingAlgorithm {
         }
         byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] hash = hash(textBytes);
-        return Encoding.toHex(hash);
+        return bytesRepresentation.toString(hash);
     }
 }

@@ -1,6 +1,6 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.Encoding;
+import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
 import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
 
