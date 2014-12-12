@@ -27,7 +27,7 @@ Features
 - Immutable structures of algorithms for thread safety
 
 - Extensible for custom implementations of algorithms or only specific parts of existing ones (e.g. key derivation
-for encryption or custom combination of input text and salt prior to hashing)
+for encryption, custom combination of input text and salt prior to hashing...etc)
 
 - Detailed javadoc for understanding what is happening under the hood
 
@@ -71,7 +71,7 @@ Both algorithms generate a new random initialization vector for every message an
 (combine algorithm can be customized).
 
 ```java
-EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secret")
+EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
     .combineAlgorithm(...) // optional, how to combine IV + cipherText

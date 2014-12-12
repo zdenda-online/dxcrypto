@@ -3,7 +3,8 @@ package cz.d1x.dxcrypto.common;
 import javax.xml.bind.DatatypeConverter;
 
 /**
- * Implementation that represents bytes in HEX form.
+ * Implementation that represents byte arrays in HEX form.
+ * That means every byte is simply converted to string. E.g. 0x3a => "3a"...
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */

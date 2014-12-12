@@ -3,7 +3,7 @@ package cz.d1x.dxcrypto.common;
 import javax.xml.bind.DatatypeConverter;
 
 /**
- * Implementation that represents bytes in Base64 form.
+ * Implementation that represents byte arrays in Base64 form.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
