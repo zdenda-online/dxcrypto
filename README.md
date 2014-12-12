@@ -5,7 +5,7 @@ Simple Java library for cryptography (hashing and encryption) built purely on Ja
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
 exceptions it uses. In many cases, programmer needs simpler API, so this library provides higher
 level of abstraction over existing *java.security* and *javax.crypto* packages. It also provides few utility classes
-like SecureProperties that extend existing java.util.Properties for use of encrypted properties.
+like SecureProperties that extend existing *java.util.Properties* with encrypted properties.
 
 This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
 If you find any issue please contact me on my e-mail.
