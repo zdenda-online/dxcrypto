@@ -112,7 +112,7 @@ EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
         .build();
 ```
 
-- **SecureProperties** that extend java.util.Properties by adding possibility to store/read encrypted values
+- **SecureProperties** that extend *java.util.Properties* by adding possibility to store/read encrypted values
 
 ```java
 EncryptionAlgorithm algorithm = ...; // your algorithm
@@ -128,4 +128,3 @@ props.store(...);
 String decrypted = props.getProperty("encryptedProperty"); // "myDirtySecret"
 String original = props.getOriginalProperty("encryptedProperty"); // bf165...
 ```
-
