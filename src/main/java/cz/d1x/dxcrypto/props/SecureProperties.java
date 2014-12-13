@@ -7,14 +7,14 @@ import java.util.Properties;
 
 /**
  * Extension of {@link java.util.Properties} that allows storing and reading encrypted values by given encryption
- * algorithm. For recognition whether value is encrypted or not, default or given suffix is added to the end of
+ * algorithm. For recognition whether value is encrypted or not, default or given suffix is added at the end of
  * encrypted value.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
 public class SecureProperties extends Properties {
 
-    private static final String DEFAULT_ENCRYPTED_SUFFIX = "b3e856";
+    private static final String DEFAULT_ENCRYPTED_SUFFIX = "xa3s"; // is unambiguous, "x" never appears in HEX/Base64 representation
 
     private final EncryptionAlgorithm encryptionAlgorithm;
     private final String encryptedPropertySuffix;
