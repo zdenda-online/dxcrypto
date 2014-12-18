@@ -1,6 +1,6 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.common.Encoding;
+import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
 import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
 
@@ -14,16 +14,22 @@ public class SaltingAdapterBuilder {
     private static final CombineAlgorithm DEFAULT_COMBINE_ALGORITHM = new ConcatCombineAlgorithm();
 
     private final HashingAlgorithm hashingAlgorithm;
+    private final BytesRepresentation bytesRepresentation;
+    private final String encoding;
+
     private CombineAlgorithm combineAlgorithm;
-    private String encoding;
 
     /**
      * Creates a new builder for salting adapter with given hashing algorithm.
      *
-     * @param hashingAlgorithm hashing algorithm to be set
+     * @param hashingAlgorithm    hashing algorithm to be set
+     * @param bytesRepresentation bytes representation of adapted hashing algorithm
+     * @param encoding            encoding of adapted hashing algorithm
      */
-    public SaltingAdapterBuilder(HashingAlgorithm hashingAlgorithm) {
+    public SaltingAdapterBuilder(HashingAlgorithm hashingAlgorithm, BytesRepresentation bytesRepresentation, String encoding) {
         this.hashingAlgorithm = hashingAlgorithm;
+        this.bytesRepresentation = bytesRepresentation;
+        this.encoding = encoding;
     }
 
     /**
@@ -38,28 +44,14 @@ public class SaltingAdapterBuilder {
     }
 
     /**
-     * Sets encoding for strings in input and output.
-     *
-     * @param encoding encoding to be set
-     * @return this instance
-     */
-    public SaltingAdapterBuilder encoding(String encoding) {
-        this.encoding = encoding;
-        return this;
-    }
-
-    /**
      * Builds a salting adapter with hashing algorithm inside.
      *
      * @return salting adapter
      */
     public SaltingAdapter build() {
-        if (encoding == null) {
-            encoding = Encoding.DEFAULT;
-        }
         if (combineAlgorithm == null) {
             combineAlgorithm = DEFAULT_COMBINE_ALGORITHM;
         }
-        return new SaltingAdapter(hashingAlgorithm, combineAlgorithm, encoding);
+        return new SaltingAdapter(hashingAlgorithm, bytesRepresentation, combineAlgorithm, encoding);
     }
 }

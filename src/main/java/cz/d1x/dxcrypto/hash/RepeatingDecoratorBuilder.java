@@ -1,5 +1,6 @@
 package cz.d1x.dxcrypto.hash;
 
+import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
 
 /**
@@ -10,15 +11,21 @@ import cz.d1x.dxcrypto.common.CombineAlgorithm;
 public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
 
     private final HashingAlgorithm hashingAlgorithm;
+    private final BytesRepresentation bytesRepresentation;
+    private final String encoding;
     private int repeats = -1;
 
     /**
      * Creates a new builder for repeating decorator with given hashing algorithm.
      *
-     * @param hashingAlgorithm hashing algorithm to be set
+     * @param hashingAlgorithm    hashing algorithm to be set
+     * @param bytesRepresentation bytes representation of adapted hashing algorithm
+     * @param encoding            encoding of adapted hashing algorithm
      */
-    public RepeatingDecoratorBuilder(HashingAlgorithm hashingAlgorithm) {
+    public RepeatingDecoratorBuilder(HashingAlgorithm hashingAlgorithm, BytesRepresentation bytesRepresentation, String encoding) {
         this.hashingAlgorithm = hashingAlgorithm;
+        this.bytesRepresentation = bytesRepresentation;
+        this.encoding = encoding;
     }
 
     /**
@@ -41,8 +48,8 @@ public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
      * @return salting adapter builder
      */
     public SaltingAdapterBuilder salted() {
-        HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg);
+        HashingAlgorithm repeatingDecorator = build();
+        return new SaltingAdapterBuilder(repeatingDecorator, bytesRepresentation, encoding);
     }
 
     /**
@@ -52,8 +59,8 @@ public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
      * @return salting adapter builder
      */
     public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
-        HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg)
+        HashingAlgorithm repeatingDecorator = build();
+        return new SaltingAdapterBuilder(repeatingDecorator, bytesRepresentation, encoding)
                 .combineAlgorithm(combineAlgorithm);
     }
 

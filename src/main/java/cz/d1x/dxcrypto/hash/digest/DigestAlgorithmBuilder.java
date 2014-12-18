@@ -61,8 +61,7 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      */
     public SaltingAdapterBuilder salted() {
         HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg)
-                .encoding(encoding);
+        return new SaltingAdapterBuilder(alg, bytesRepresentation, encoding);
     }
 
     /**
@@ -74,9 +73,7 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      */
     public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
         HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg)
-                .combineAlgorithm(combineAlgorithm)
-                .encoding(encoding);
+        return new SaltingAdapterBuilder(alg, bytesRepresentation, encoding);
     }
 
     /**
@@ -87,7 +84,7 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      */
     public RepeatingDecoratorBuilder repeated(int repeats) {
         HashingAlgorithm alg = build();
-        return new RepeatingDecoratorBuilder(alg)
+        return new RepeatingDecoratorBuilder(alg, bytesRepresentation, encoding)
                 .repeats(repeats);
     }
 

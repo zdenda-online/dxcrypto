@@ -1,5 +1,7 @@
 package cz.d1x.dxcrypto.hash;
 
+import cz.d1x.dxcrypto.common.Encoding;
+import cz.d1x.dxcrypto.common.HexRepresentation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +80,8 @@ public abstract class HashingAlgorithmTest {
      */
     @Test
     public void repeatingHashing() {
-        HashingAlgorithm repeatedAlgorithm = new RepeatingDecoratorBuilder(algorithm)
+        // in "normal" world it is not recommended to use this builder but rather HashingAlgorithms factory for these builders
+        HashingAlgorithm repeatedAlgorithm = new RepeatingDecoratorBuilder(algorithm, new HexRepresentation(), Encoding.DEFAULT)
                 .repeats(REPEATS_COUNT)
                 .build();
         String[] expected = getRepeatedOutputs();
@@ -95,7 +98,8 @@ public abstract class HashingAlgorithmTest {
      */
     @Test
     public void saltingWithDefaultCombineStrategy() {
-        SaltingAdapter adapter = new SaltingAdapterBuilder(algorithm)
+        // in "normal" world it is not recommended to use this builder but rather HashingAlgorithms factory for these builders
+        SaltingAdapter adapter = new SaltingAdapterBuilder(algorithm, new HexRepresentation(), Encoding.DEFAULT)
                 .build();
         String input = INPUTS[0];
         String hash1 = adapter.hash(input, "s@Lt1");

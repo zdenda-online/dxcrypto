@@ -1,8 +1,9 @@
 package cz.d1x.dxcrypto.hash;
 
-import cz.d1x.dxcrypto.common.Encoding;
+import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
 import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
+import cz.d1x.dxcrypto.common.Encoding;
 
 /**
  * <p>
@@ -28,19 +29,21 @@ import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
  */
 public class SaltingAdapter {
 
-
     private final HashingAlgorithm hashingAlgorithm;
     private final CombineAlgorithm combineAlgorithm;
+    private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
     /**
      * Creates a new salting adapter.
      *
-     * @param hashingAlgorithm algorithm for hashing
-     * @param combineAlgorithm strategy how to combine input text and salt
-     * @param encoding         encoding for used strings
+     * @param hashingAlgorithm    algorithm for hashing
+     * @param bytesRepresentation representation of bytes
+     * @param combineAlgorithm    strategy how to combine input text and salt
+     * @param encoding            encoding for used strings
      */
-    protected SaltingAdapter(HashingAlgorithm hashingAlgorithm, CombineAlgorithm combineAlgorithm, String encoding) {
+    protected SaltingAdapter(HashingAlgorithm hashingAlgorithm, BytesRepresentation bytesRepresentation,
+                             CombineAlgorithm combineAlgorithm, String encoding) {
         if (hashingAlgorithm == null) {
             throw new IllegalArgumentException("Expecting non-null adapted algorithm");
         }
@@ -50,6 +53,7 @@ public class SaltingAdapter {
             throw new IllegalArgumentException("Expecting non-null combine strategy");
         }
         this.combineAlgorithm = combineAlgorithm;
+        this.bytesRepresentation = bytesRepresentation;
 
         Encoding.checkEncoding(encoding);
         this.encoding = encoding;
@@ -67,8 +71,8 @@ public class SaltingAdapter {
     public String hash(String input, String salt) throws HashingException {
         byte[] inputBytes = Encoding.getBytes(input, encoding);
         byte[] saltBytes = Encoding.getBytes(salt, encoding);
-        byte[] toHash = combineAlgorithm.combine(inputBytes, saltBytes);
-        return Encoding.getString(hashingAlgorithm.hash(toHash), encoding);
+        byte[] hashed = hash(inputBytes, saltBytes);
+        return bytesRepresentation.toString(hashed);
     }
 
     /**
