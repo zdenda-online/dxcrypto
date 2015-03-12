@@ -20,7 +20,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class DigestAlgorithm implements HashingAlgorithm {
 
-    private final String digestName;
+    private final MessageDigest digest;
     private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
@@ -37,8 +37,7 @@ public final class DigestAlgorithm implements HashingAlgorithm {
         this.encoding = encoding;
 
         try {
-            MessageDigest.getInstance(digestName); // check whether it can be created
-            this.digestName = digestName;
+            this.digest = MessageDigest.getInstance(digestName);
         } catch (NoSuchAlgorithmException ex) {
             throw new HashingException(ex);
         }
@@ -48,12 +47,6 @@ public final class DigestAlgorithm implements HashingAlgorithm {
     public byte[] hash(byte[] input) throws HashingException {
         if (input == null) {
             throw new HashingException("Input data for hashing cannot be null");
-        }
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance(digestName);
-        } catch (NoSuchAlgorithmException e) {
-            throw new HashingException("Unable to get instance of digest " + digestName, e);
         }
         digest.reset();
         return digest.digest(input);
