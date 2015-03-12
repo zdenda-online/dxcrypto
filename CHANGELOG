@@ -1,5 +1,8 @@
 Whats new in latest versions
 
+Version 1.4 (Not yet released)
+* Slightly improved performance of hashing algorithms
+
 Version 1.3
 * Fixed bytes representation for salting adapter
 * Removed encoding for salting adapter builder (uses encoding of adapted algorithm)
