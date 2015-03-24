@@ -4,8 +4,11 @@ Simple Java library for cryptography (hashing and encryption) built purely on Ja
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
 exceptions it uses. In many cases, programmer needs simpler API, so this library provides higher
-level of abstraction over existing *java.security* and *javax.crypto* packages. It also provides few utility classes
-like SecureProperties that extend existing *java.util.Properties* with encrypted properties.
+level of abstraction over existing *java.security* and *javax.crypto* packages. Basically you can be sure it uses
+implementations of cryptographic functions from JDK.
+
+It also provides few utility classes like SecureProperties that extend existing *java.util.Properties* with
+encrypted properties.
 
 This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
 If you find any issue please contact me on my e-mail.
@@ -54,14 +57,14 @@ HashingAlgorithm repeatedSha512 = HashingAlgorithms.sha512()
 String repeated = repeatedSha512.hash("hello"); // hash(hash("hello")) ~ 27x
 
 // default salting with ConcatCombineAlgorithm
-SaltingAdapter saltedSha256 = HashingAlgorithms.sha256()
+SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
     .salted()
     .build();
 String salted = saltedSha256.hash("your input text", "your salt");
 
 // salting with custom combining of input text and salt
 CombineAlgorithm combineAlg = ...; // your implementation
-SaltingAdapter saltedSha256 = HashingAlgorithms.sha256()
+SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
     .salted(combineAlg)
     .build();
 ```

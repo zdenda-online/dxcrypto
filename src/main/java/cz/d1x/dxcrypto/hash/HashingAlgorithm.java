@@ -4,7 +4,7 @@ import cz.d1x.dxcrypto.hash.digest.MD5Builder;
 import cz.d1x.dxcrypto.hash.digest.SHA256Builder;
 
 /**
- * Interface for algorithms that are able to create hash of given input.
+ * Interface for algorithms that are able to create hash from given input.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see MD5Builder

@@ -20,8 +20,8 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  * this length, otherwise {@link IllegalArgumentException} may occur.
  * </p><p>
  * This algorithm is sufficient for most cases. It is not a problem for (input + salt) usage before hashing because only
- * combine is used (split is not needed). Also it is not a problem for (IV + cipher text) during CBC because first input
- * (IV) has always fixed length equal to cipher block size.
+ * combine operation is used (split is not needed). Also it is not a problem for (IV + cipher text) during CBC because
+ * first input (IV) has always fixed length equal to cipher block size.
  * </p><p>
  * On the other hand, if you need {@link #split(byte[])} and expect dynamic size of both inputs, you must create new instance
  * every time you want to combine and split.

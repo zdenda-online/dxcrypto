@@ -6,7 +6,7 @@
 
     <groupId>cz.d1x</groupId>
     <artifactId>dxcrypto</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
     <packaging>jar</packaging>
 
     <name>DXCrypto</name>

@@ -27,7 +27,7 @@ import cz.d1x.dxcrypto.common.Encoding;
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see ConcatCombineAlgorithm
  */
-public class SaltingAdapter {
+public class SaltingAdapter implements SaltedHashingAlgorithm {
 
     private final HashingAlgorithm hashingAlgorithm;
     private final CombineAlgorithm combineAlgorithm;
@@ -59,15 +59,7 @@ public class SaltingAdapter {
         this.encoding = encoding;
     }
 
-
-    /**
-     * Hashes given input with given salt using adapted hashing algorithm.
-     *
-     * @param input input to be hashed
-     * @param salt  salt to be added to input
-     * @return hashed input
-     * @throws HashingException possible exception during hashing
-     */
+    @Override
     public String hash(String input, String salt) throws HashingException {
         byte[] inputBytes = Encoding.getBytes(input, encoding);
         byte[] saltBytes = Encoding.getBytes(salt, encoding);
@@ -75,14 +67,7 @@ public class SaltingAdapter {
         return bytesRepresentation.toString(hashed);
     }
 
-    /**
-     * Hashes given input with given salt using adapted hashing algorithm.
-     *
-     * @param input input to be hashed
-     * @param salt  salt to be added to input
-     * @return hashed input
-     * @throws HashingException possible exception during hashing
-     */
+    @Override
     public byte[] hash(byte[] input, byte[] salt) throws HashingException {
         byte[] toHash = combineAlgorithm.combine(input, salt);
         return hashingAlgorithm.hash(toHash);

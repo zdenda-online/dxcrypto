@@ -99,7 +99,7 @@ public abstract class HashingAlgorithmTest {
     @Test
     public void saltingWithDefaultCombineStrategy() {
         // in "normal" world it is not recommended to use this builder but rather HashingAlgorithms factory for these builders
-        SaltingAdapter adapter = new SaltingAdapterBuilder(algorithm, new HexRepresentation(), Encoding.DEFAULT)
+        SaltedHashingAlgorithm adapter = new SaltingAdapterBuilder(algorithm, new HexRepresentation(), Encoding.DEFAULT)
                 .build();
         String input = INPUTS[0];
         String hash1 = adapter.hash(input, "s@Lt1");

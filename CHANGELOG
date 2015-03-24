@@ -1,7 +1,11 @@
 Whats new in latest versions
 
-Version 1.4 (Not yet released)
+Version 1.5 (not released yet)
+* <no changes yet>
+
+Version 1.4
 * Slightly improved performance of hashing algorithms
+* Added SaltedHashingAlgorithm interface that is implemented by SaltingAdapter
 
 Version 1.3
 * Fixed bytes representation for salting adapter
