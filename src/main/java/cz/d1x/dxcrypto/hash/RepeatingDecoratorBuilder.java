@@ -33,10 +33,11 @@ public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
      *
      * @param repeats repeats to be set
      * @return this instance
+     * @throws IllegalArgumentException exception if passed repeats are lower than 1
      */
     public RepeatingDecoratorBuilder repeats(int repeats) {
         if (repeats < 1) {
-            throw new IllegalArgumentException("Expecting at least 1 repeat");
+            throw new IllegalArgumentException("You must provide repeats >= 1!");
         }
         this.repeats = repeats;
         return this;
@@ -57,8 +58,12 @@ public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
      *
      * @param combineAlgorithm combine algorithm for input text and salt
      * @return salting adapter builder
+     * @throws IllegalArgumentException exception if passed CombineAlgorithm is null
      */
     public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
+        if (combineAlgorithm == null) {
+            throw new IllegalArgumentException("You must provide non-null CombineAlgorithm!");
+        }
         HashingAlgorithm repeatingDecorator = build();
         return new SaltingAdapterBuilder(repeatingDecorator, bytesRepresentation, encoding)
                 .combineAlgorithm(combineAlgorithm);

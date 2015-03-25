@@ -1,7 +1,7 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
-import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.CombineSplitAlgorithm;
 import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
@@ -21,11 +21,11 @@ import java.security.*;
  * output. This allows to use one instance for different messages (otherwise it would be dangerous to use
  * same combination of key and IV for every message). This combining of IV with the encrypted message implies that this
  * implementation will be compatible primarily with itself (this library). If another tool (on the other end) will
- * be used, you must pass information what {@link CombineAlgorithm} is used to that tool or implement new one which
+ * be used, you must pass information what {@link CombineSplitAlgorithm} is used to that tool or implement new one which
  * will be compatible with it. Inputs and outputs of String-based methods expect/provide strings in HEX format.
  * </p><p>
- * This base class also expects input to padded to the correct length, so it is not recommended to use NoPadding
- * variants of algorithm.
+ * This base class also expects input to padded to the correct length, so it is <strong>not</strong> recommended to use
+ * NoPadding variants of algorithm.
  * </p><p>
  * Inputs and outputs from this encryption are bytes represented in HEX string.
  * </p><p>
@@ -43,24 +43,23 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
     private final Cipher cipher;
     private final int blockSize; // CBC
     private final Key key;
-    private final CombineAlgorithm combineAlgorithm;
+    private final CombineSplitAlgorithm combineSplitAlgorithm;
     private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
     /**
      * Creates a new instance of base symmetric algorithm.
      *
-     * @param cipherName          name of crypto algorithm
-     * @param keyFactory          factory used for creation of encryption key
-     * @param combineAlgorithm    algorithm for combining IV and cipher text
-     * @param bytesRepresentation representation of byte arrays in String
-     * @param encoding            encoding used for strings
+     * @param cipherName            name of crypto algorithm
+     * @param keyFactory            factory used for creation of encryption key
+     * @param combineSplitAlgorithm algorithm for combining/splitting IV and cipher text
+     * @param bytesRepresentation   representation of byte arrays in String
+     * @param encoding              encoding used for strings
      * @throws EncryptionException possible exception when algorithm cannot be created
      */
-    protected SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, CombineAlgorithm combineAlgorithm,
+    protected SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, CombineSplitAlgorithm combineSplitAlgorithm,
                                  BytesRepresentation bytesRepresentation, String encoding) throws EncryptionException {
-        Encoding.checkEncoding(encoding);
-        this.combineAlgorithm = combineAlgorithm;
+        this.combineSplitAlgorithm = combineSplitAlgorithm;
         this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
         try {
@@ -75,11 +74,14 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public byte[] encrypt(byte[] input) throws EncryptionException {
+        if (input == null) {
+            throw new EncryptionException("Given input for encryption cannot be null!");
+        }
         try {
             IvParameterSpec iv = generateIV();
             initCipher(iv, true);
             byte[] encryptedBytes = cipher.doFinal(input);
-            return combineAlgorithm.combine(iv.getIV(), encryptedBytes);
+            return combineSplitAlgorithm.combine(iv.getIV(), encryptedBytes);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to encrypt input", e);
         }
@@ -95,7 +97,11 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
     @Override
     public byte[] decrypt(byte[] input) throws EncryptionException {
         try {
-            byte[][] ivAndCipherText = combineAlgorithm.split(input);
+            byte[][] ivAndCipherText = combineSplitAlgorithm.split(input);
+            if (ivAndCipherText == null || ivAndCipherText.length != 2) {
+                throw new EncryptionException("Splitting of input into two parts during decryption produced wrong " +
+                        "number of parts. Is the input or used implementation of CombineSplitAlgorithm correct?");
+            }
             IvParameterSpec iv = new IvParameterSpec(ivAndCipherText[0]);
             initCipher(iv, false);
             return cipher.doFinal(ivAndCipherText[1]);

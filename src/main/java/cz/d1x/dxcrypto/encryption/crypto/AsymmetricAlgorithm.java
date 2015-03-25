@@ -42,14 +42,13 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
      *
      * @param cipherName          name of crypto algorithm
      * @param publicKeyFactory    factory used for creation of public encryption key
-     * @param privateKeyFactory   factory used for creation of privte encryption key
+     * @param privateKeyFactory   factory used for creation of private encryption key
      * @param bytesRepresentation representation of byte arrays in String
      * @param encoding            encoding used for strings
      * @throws EncryptionException possible exception when algorithm cannot be created
      */
     protected AsymmetricAlgorithm(String cipherName, CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory,
                                   BytesRepresentation bytesRepresentation, String encoding) {
-        Encoding.checkEncoding(encoding);
         if (publicKeyFactory == null && privateKeyFactory == null) {
             throw new EncryptionException("At least one (public/private) key factory must be set");
         }

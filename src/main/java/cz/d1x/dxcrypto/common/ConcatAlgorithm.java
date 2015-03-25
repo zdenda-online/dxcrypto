@@ -6,14 +6,14 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
  * <p>
- * Simplest implementation of combine algorithm. It combines inputs consecutively (simple concatenation).
+ * Simplest implementation of combine/split algorithm. It combines inputs consecutively (simple concatenation).
  * It implies that this algorithm needs to know length of first input if {@link #split(byte[])} will be used.
  * </p>
  * <ul>
  * <li>If you expect to use only {@link #combine(byte[], byte[])}, there is no need to provide the length of first input, so
- * you can use {@link #ConcatCombineAlgorithm()} constructor.</li>
+ * you can use {@link #ConcatAlgorithm()} constructor.</li>
  * <li>If you expect to use both {@link #combine(byte[], byte[])} and {@link #split(byte[])}, you must provide expected
- * length of first input, so you should use {@link #ConcatCombineAlgorithm(int)} constructor.</li>
+ * length of first input, so you should use {@link #ConcatAlgorithm(int)} constructor.</li>
  * </ul>
  * <p>
  * Note that this class is immutable so when this first input length is once set, then all first inputs needs to have
@@ -31,7 +31,7 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  * @see SaltingAdapter
  * @see SymmetricAlgorithm
  */
-public class ConcatCombineAlgorithm implements CombineAlgorithm {
+public class ConcatAlgorithm implements CombineSplitAlgorithm {
 
     private static final int INPUT_LENGTH_NOT_SET = -1;
     private final int input1Length;
@@ -41,7 +41,7 @@ public class ConcatCombineAlgorithm implements CombineAlgorithm {
      * Use this constructor if you expect use only to {@link #combine(byte[], byte[])} inputs but <strong>not</strong>
      * {@link #split(byte[])}.
      */
-    public ConcatCombineAlgorithm() {
+    public ConcatAlgorithm() {
         this.input1Length = INPUT_LENGTH_NOT_SET;
     }
 
@@ -52,7 +52,7 @@ public class ConcatCombineAlgorithm implements CombineAlgorithm {
      *
      * @param input1Length expected length of first inputs
      */
-    public ConcatCombineAlgorithm(int input1Length) {
+    public ConcatAlgorithm(int input1Length) {
         if (input1Length < 0) {
             throw new IllegalArgumentException("Input length must be greater than 0");
         }

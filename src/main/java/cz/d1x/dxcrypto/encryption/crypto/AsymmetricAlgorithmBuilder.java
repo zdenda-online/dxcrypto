@@ -43,7 +43,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      */
     public AsymmetricAlgorithmBuilder publicKey(BigInteger modulus, BigInteger exponent) {
         if (modulus == null || exponent == null) {
-            throw new EncryptionException("You must provide both modulus and exponent for public key");
+            throw new EncryptionException("You must provide non-null both modulus and exponent for public key!");
         }
         this.publicKeyFactory = new RSAPublicKeyFactory(modulus, exponent);
         return this;
@@ -56,6 +56,9 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @return this instance
      */
     public AsymmetricAlgorithmBuilder publicKey(CryptoKeyFactory publicKeyFactory) {
+        if (publicKeyFactory == null) {
+            throw new EncryptionException("You must provide non-null key factory!");
+        }
         this.publicKeyFactory = publicKeyFactory;
         return this;
     }
@@ -66,10 +69,11 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @param modulus  modulus of key
      * @param exponent exponent of private key
      * @return this instance
+     * @throws IllegalArgumentException exception if passed modulus or exponent is null
      */
     public AsymmetricAlgorithmBuilder privateKey(BigInteger modulus, BigInteger exponent) {
         if (modulus == null || exponent == null) {
-            throw new EncryptionException("You must provide both modulus and exponent for private key");
+            throw new IllegalArgumentException("You must provide non-null both modulus and exponent for private key");
         }
         this.privateKeyFactory = new RSAPrivateKeyFactory(modulus, exponent);
         return this;
@@ -80,8 +84,12 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      *
      * @param privateKeyFactory factory of private key
      * @return this instance
+     * @throws IllegalArgumentException exception if passed factory is null
      */
     public AsymmetricAlgorithmBuilder privateKey(CryptoKeyFactory privateKeyFactory) {
+        if (privateKeyFactory == null) {
+            throw new IllegalArgumentException("You must provide non-null private key factory!");
+        }
         this.privateKeyFactory = privateKeyFactory;
         return this;
     }
@@ -91,10 +99,11 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      *
      * @param keyPair key pair
      * @return this instance
+     * @throws IllegalArgumentException exception if passed key pair is null
      */
     public AsymmetricAlgorithmBuilder keyPair(final KeyPair keyPair) {
         if (keyPair == null) {
-            throw new EncryptionException("You must provide non-null key pair");
+            throw new IllegalArgumentException("You must provide non-null key pair");
         }
         this.publicKeyFactory = new CryptoKeyFactory() {
             @Override
@@ -117,8 +126,12 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      *
      * @param bytesRepresentation byte array representation strategy
      * @return this instance
+     * @throws IllegalArgumentException exception if passed BytesRepresentation is null
      */
     public AsymmetricAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+        if (bytesRepresentation == null) {
+            throw new IllegalArgumentException("You must provide non-null BytesRepresentation!");
+        }
         this.bytesRepresentation = bytesRepresentation;
         return this;
     }
@@ -128,8 +141,13 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      *
      * @param encoding encoding to be set
      * @return this instance
+     * @throws IllegalArgumentException exception if given encoding is null or not supported
      */
     public AsymmetricAlgorithmBuilder encoding(String encoding) {
+        if (encoding == null) {
+            throw new IllegalArgumentException("You must provide non-null encoding!");
+        }
+        Encoding.checkEncoding(encoding);
         this.encoding = encoding;
         return this;
     }

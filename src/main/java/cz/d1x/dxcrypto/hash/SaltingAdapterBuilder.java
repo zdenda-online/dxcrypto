@@ -2,7 +2,7 @@ package cz.d1x.dxcrypto.hash;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
-import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
+import cz.d1x.dxcrypto.common.ConcatAlgorithm;
 
 /**
  * Builder for salting adapter over existing hashing algorithms.
@@ -11,13 +11,11 @@ import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
  */
 public class SaltingAdapterBuilder {
 
-    private static final CombineAlgorithm DEFAULT_COMBINE_ALGORITHM = new ConcatCombineAlgorithm();
-
     private final HashingAlgorithm hashingAlgorithm;
     private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
-    private CombineAlgorithm combineAlgorithm;
+    private CombineAlgorithm combineAlgorithm = new ConcatAlgorithm();
 
     /**
      * Creates a new builder for salting adapter with given hashing algorithm.
@@ -37,8 +35,12 @@ public class SaltingAdapterBuilder {
      *
      * @param combineAlgorithm combine algorithm
      * @return this instance
+     * @throws IllegalArgumentException exception if passed CombineAlgorithm is null
      */
     public SaltingAdapterBuilder combineAlgorithm(CombineAlgorithm combineAlgorithm) {
+        if (combineAlgorithm == null) {
+            throw new IllegalArgumentException("You must provide non-null CombineAlgorithm!");
+        }
         this.combineAlgorithm = combineAlgorithm;
         return this;
     }
@@ -49,9 +51,6 @@ public class SaltingAdapterBuilder {
      * @return salting adapter
      */
     public SaltingAdapter build() {
-        if (combineAlgorithm == null) {
-            combineAlgorithm = DEFAULT_COMBINE_ALGORITHM;
-        }
         return new SaltingAdapter(hashingAlgorithm, bytesRepresentation, combineAlgorithm, encoding);
     }
 }

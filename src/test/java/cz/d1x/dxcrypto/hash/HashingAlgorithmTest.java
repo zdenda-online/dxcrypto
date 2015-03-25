@@ -16,14 +16,14 @@ import static org.junit.Assert.*;
  */
 public abstract class HashingAlgorithmTest {
 
-    protected static final int REPEATS_COUNT = 3;
-    protected static final String[] INPUTS = new String[]{
+    private static final int REPEATS_COUNT = 3;
+    private static final String[] INPUTS = new String[]{
             "Toto-jePrvni.vstupPro_h@sh",
             "0111111111101101111111111111111111111",
             ""
     };
 
-    protected HashingAlgorithm algorithm;
+    private HashingAlgorithm algorithm;
 
     /**
      * Gets a hashing algorithm that will be tested.

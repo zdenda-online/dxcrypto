@@ -1,7 +1,10 @@
 Whats new in latest versions
 
 Version 1.5 (not released yet)
-* <no changes yet>
+* Changed CombineAlgorithm interface, added SplitAlgorithm and CombineSplitAlgorithm interfaces
+* Added input checks in all builders
+* Fixed DigestAlgorithmBuilder.salted(CombineAlgorithm) builder method
+* Few javadoc updates (misspelling...etc.)
 
 Version 1.4
 * Slightly improved performance of hashing algorithms

@@ -26,14 +26,7 @@ public class RepeatingDecorator implements HashingAlgorithm {
      * @param repeatsCount     number of repeats of hashing
      */
     protected RepeatingDecorator(HashingAlgorithm hashingAlgorithm, int repeatsCount) {
-        if (hashingAlgorithm == null) {
-            throw new IllegalArgumentException("Expecting non-null decorated algorithm");
-        }
         this.hashingAlgorithm = hashingAlgorithm;
-
-        if (repeatsCount < 1) {
-            throw new IllegalArgumentException("Expecting at least 1 repeat");
-        }
         this.repeatsCount = repeatsCount;
     }
 

@@ -2,7 +2,6 @@ package cz.d1x.dxcrypto.hash;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineAlgorithm;
-import cz.d1x.dxcrypto.common.ConcatCombineAlgorithm;
 import cz.d1x.dxcrypto.common.Encoding;
 
 /**
@@ -25,7 +24,7 @@ import cz.d1x.dxcrypto.common.Encoding;
  * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see ConcatCombineAlgorithm
+ * @see cz.d1x.dxcrypto.common.ConcatAlgorithm
  */
 public class SaltingAdapter implements SaltedHashingAlgorithm {
 

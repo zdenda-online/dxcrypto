@@ -22,7 +22,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     private byte[] keyPassword;
     private byte[] keySalt = DEFAULT_KEY_SALT;
     private int keyHashIterations = DEFAULT_KEY_HASH_ITERATIONS;
-    private CombineAlgorithm combineAlgorithm = new ConcatCombineAlgorithm(getBlockSize());
+    private CombineSplitAlgorithm combineSplitAlgorithm = new ConcatAlgorithm(getBlockSize());
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
 
@@ -55,14 +55,23 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
     protected abstract int getBlockSize();
 
     protected SymmetricAlgorithmBuilder(byte[] keyPassword) {
+        if (keyPassword == null) {
+            throw new IllegalArgumentException("You must provide non-null key password!");
+        }
         this.keyPassword = keyPassword;
     }
 
     protected SymmetricAlgorithmBuilder(String keyPassword) {
+        if (keyPassword == null) {
+            throw new IllegalArgumentException("You must provide non-null key password!");
+        }
         this.keyPassword = Encoding.getBytes(keyPassword);
     }
 
     protected SymmetricAlgorithmBuilder(CryptoKeyFactory customKeyFactory) {
+        if (customKeyFactory == null) {
+            throw new IllegalArgumentException("You must provide non-null key factory!");
+        }
         this.customKeyFactory = customKeyFactory;
     }
 
@@ -72,8 +81,12 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      *
      * @param keySalt salt to be set
      * @return this instance
+     * @throws IllegalArgumentException exception if passed key salt is null
      */
     public SymmetricAlgorithmBuilder keySalt(byte[] keySalt) {
+        if (keySalt == null) {
+            throw new IllegalArgumentException("You must provide non-null key salt!");
+        }
         this.keySalt = keySalt;
         return this;
     }
@@ -84,10 +97,13 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      *
      * @param keySalt salt to be set
      * @return this instance
+     * @throws IllegalArgumentException exception if passed key salt is null
      */
     public SymmetricAlgorithmBuilder keySalt(String keySalt) {
-        this.keySalt = Encoding.getBytes(keySalt);
-        return this;
+        if (keySalt == null) {
+            throw new IllegalArgumentException("You must provide non-null key salt!");
+        }
+        return keySalt(Encoding.getBytes(keySalt));
     }
 
     /**
@@ -96,8 +112,12 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      *
      * @param keyHashIterations number of keyHashIterations
      * @return this instance
+     * @throws IllegalArgumentException exception if passed iterations are lower than 1
      */
     public SymmetricAlgorithmBuilder keyHashIterations(int keyHashIterations) {
+        if (keyHashIterations < 1) {
+            throw new IllegalArgumentException("You must provide iterations for key hashing >= 1!");
+        }
         this.keyHashIterations = keyHashIterations;
         return this;
     }
@@ -106,11 +126,15 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * Sets algorithm combining IV and cipher text in output during encryption
      * and splitting from input during decryption.
      *
-     * @param combineAlgorithm combine algorithm for IV and cipher text
+     * @param combineSplitAlgorithm combine/split algorithm for IV and cipher text
      * @return this instance
+     * @throws IllegalArgumentException exception if passed CombineSplitAlgorithm is null
      */
-    public SymmetricAlgorithmBuilder combineAlgorithm(CombineAlgorithm combineAlgorithm) {
-        this.combineAlgorithm = combineAlgorithm;
+    public SymmetricAlgorithmBuilder combineSplitAlgorithm(CombineSplitAlgorithm combineSplitAlgorithm) {
+        if (combineSplitAlgorithm == null) {
+            throw new IllegalArgumentException("You must provide non-null CombineSplitAlgorithm!");
+        }
+        this.combineSplitAlgorithm = combineSplitAlgorithm;
         return this;
     }
 
@@ -119,8 +143,12 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      *
      * @param bytesRepresentation byte array representation strategy
      * @return this instance
+     * @throws IllegalArgumentException exception if passed BytesRepresentation is null
      */
     public SymmetricAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+        if (bytesRepresentation == null) {
+            throw new IllegalArgumentException("You must provide non-null BytesRepresentation!");
+        }
         this.bytesRepresentation = bytesRepresentation;
         return this;
     }
@@ -130,8 +158,13 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      *
      * @param encoding encoding to be set
      * @return this instance
+     * @throws IllegalArgumentException exception if given encoding is null or not supported
      */
     public SymmetricAlgorithmBuilder encoding(String encoding) {
+        if (encoding == null) {
+            throw new IllegalArgumentException("You must provide non-null encoding!");
+        }
+        Encoding.checkEncoding(encoding);
         this.encoding = encoding;
         return this;
     }
@@ -144,6 +177,6 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
         } else {
             keyFactory = new PBKDF2KeyFactory(getShortAlgorithm(), keyPassword, getKeySize(), keySalt, keyHashIterations);
         }
-        return new SymmetricAlgorithm(getAlgorithm(), keyFactory, combineAlgorithm, bytesRepresentation, encoding);
+        return new SymmetricAlgorithm(getAlgorithm(), keyFactory, combineSplitAlgorithm, bytesRepresentation, encoding);
     }
 }

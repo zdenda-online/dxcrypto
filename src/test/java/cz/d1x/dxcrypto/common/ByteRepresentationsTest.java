@@ -39,7 +39,7 @@ public class ByteRepresentationsTest {
     /**
      * This conversion is very slow but will do fine for testing whether algorithm works well.
      */
-    public static String slowConvert(byte[] bytes) {
+    private static String slowConvert(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
         for (byte b : bytes) {
             sb.append(String.format("%02x", b & 0xff));

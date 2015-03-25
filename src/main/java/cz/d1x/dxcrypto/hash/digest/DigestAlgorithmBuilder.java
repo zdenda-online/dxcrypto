@@ -36,8 +36,12 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      *
      * @param bytesRepresentation byte array representation strategy
      * @return this instance
+     * @throws IllegalArgumentException exception if passed key BytesRepresentation is null
      */
     public DigestAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+        if (bytesRepresentation == null) {
+            throw new IllegalArgumentException("You must provide non-null BytesRepresentation!");
+        }
         this.bytesRepresentation = bytesRepresentation;
         return this;
     }
@@ -47,8 +51,13 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      *
      * @param encoding encoding to be set
      * @return this instance
+     * @throws IllegalArgumentException exception if given encoding is null or not supported
      */
     public DigestAlgorithmBuilder encoding(String encoding) {
+        if (encoding == null) {
+            throw new IllegalArgumentException("You must provide non-null encoding!");
+        }
+        Encoding.checkEncoding(encoding);
         this.encoding = encoding;
         return this;
     }
@@ -70,10 +79,15 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      *
      * @param combineAlgorithm combine algorithm for input text and salt
      * @return salting adapter builder
+     * @throws IllegalArgumentException exception if passed key CombineAlgorithm is null
      */
     public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
+        if (combineAlgorithm == null) {
+            throw new IllegalArgumentException("You must provide non-null CombineAlgorithm!");
+        }
         HashingAlgorithm alg = build();
-        return new SaltingAdapterBuilder(alg, bytesRepresentation, encoding);
+        return new SaltingAdapterBuilder(alg, bytesRepresentation, encoding)
+                .combineAlgorithm(combineAlgorithm);
     }
 
     /**
@@ -81,8 +95,12 @@ public abstract class DigestAlgorithmBuilder implements HashingAlgorithmBuilder 
      *
      * @param repeats count of repeats
      * @return repeating decorator builder
+     * @throws IllegalArgumentException exception if passed repeats are lower than 1
      */
     public RepeatingDecoratorBuilder repeated(int repeats) {
+        if (repeats < 1) {
+            throw new IllegalArgumentException("You must provide repeats >= 1!");
+        }
         HashingAlgorithm alg = build();
         return new RepeatingDecoratorBuilder(alg, bytesRepresentation, encoding)
                 .repeats(repeats);
