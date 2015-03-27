@@ -34,20 +34,20 @@ for encryption, custom combination of input text and salt prior to hashing...etc
 
 - Detailed javadoc for understanding what is happening under the hood
 
-- Hashing algorithms: **MD5**, **SHA1**, **SHA256**, **SHA512** and additional hashing operations like 
-**repeated hashing** or **salting** 
+- Hashing algorithms **MD5**, **SHA1**, **SHA256**, **SHA512** and additional operations of **repeated hashing** 
+and **salting** 
 
-- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
-Both algorithms generate a new random initialization vector for every message and combine it with cipher text into the output
-(combine/split algorithm can be customized).
+- Symmetric encryption algorithms **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
+Both algorithms generate a new random initialization vector for every message and combine it with cipher text
+into the output.
 
-- Asymmetric (key pair) encryption algorithm: **RSA** with ECB and OAEP padding
+- Asymmetric encryption algorithm **RSA** with ECB and OAEP padding
 
 - **SecureProperties** that extend *java.util.Properties* by adding possibility to store/read encrypted values
 
 Examples
 --------
-Hashing
+**Hashing**
 ```java
 HashingAlgorithm sha256 = HashingAlgorithms.sha256()
     .encoding("UTF-8") // optional, defaults to UTF-8
@@ -64,7 +64,7 @@ HashingAlgorithm repeatedSha512 = HashingAlgorithms.sha512()
     .build();
 String repeated = repeatedSha512.hash("hello"); // hash(hash("hello")) ~ 27x
 
-// default salting with ConcatAlgorithm
+// salting (with default combining of input text and salt)
 SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
     .salted()
     .build();
@@ -77,7 +77,7 @@ SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
     .build();
 ```
 
-Symmetric Encryption
+**Symmetric Encryption**
 ```java
 // AES
 EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
@@ -98,7 +98,7 @@ String asString = des.encrypt("hello");
 String andBack = des.decrypt(asString);
 ```
 
-Asymmetric Encryption
+**Asymmetric Encryption**
 ```java
 // custom keys
 BigInteger modulus = ...; // your modulus (n)
@@ -117,7 +117,7 @@ EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
         .build();
 ```
 
-Secure Properties
+**Secure Properties**
 ```java
 EncryptionAlgorithm algorithm = ...; // your algorithm
 SecureProperties props = new SecureProperties(algorithm);

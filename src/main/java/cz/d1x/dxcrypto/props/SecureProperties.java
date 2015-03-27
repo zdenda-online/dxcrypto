@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class SecureProperties extends Properties {
 
-    private static final String DEFAULT_ENCRYPTED_SUFFIX = "xa3s"; // is unambiguous, "x" never appears in HEX/Base64 representation
+    private static final String DEFAULT_ENCRYPTED_SUFFIX = "xa3s"; // is unambiguous for HEX representation, "x" never appears
 
     private final EncryptionAlgorithm encryptionAlgorithm;
     private final String encryptedPropertySuffix;
