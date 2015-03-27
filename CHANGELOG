@@ -1,6 +1,6 @@
 Whats new in latest versions
 
-Version 1.5 (not released yet)
+Version 1.5
 * Changed CombineAlgorithm interface, added SplitAlgorithm and CombineSplitAlgorithm interfaces
 * Added input checks in all builders
 * Fixed DigestAlgorithmBuilder.salted(CombineAlgorithm) builder method

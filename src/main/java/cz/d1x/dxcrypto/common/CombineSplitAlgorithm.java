@@ -7,8 +7,8 @@ package cz.d1x.dxcrypto.common;
  * In formula:
  * <pre>split(combine([input1, input2])) == [input1, input2]</pre>
  * </p><p>
- * These algorithms are used for combining initialization vector and cipher text during encryption so IV is part
- * of final output and splitting back during decryption.
+ * Typical usage is for combining initialization vector and cipher text during encryption and splitting back
+ * during decryption.
  * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com

@@ -4,14 +4,14 @@ Simple Java library for cryptography (hashing and encryption) built purely on Ja
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
 exceptions it uses. In many cases, programmer needs simpler API, so this library provides higher
-level of abstraction over existing *java.security* and *javax.crypto* packages. Basically you can be sure it uses
-implementations of cryptographic functions from JDK.
+level of abstraction over existing *java.security* and *javax.crypto* packages. You can be sure it uses implementations
+of cryptographic functions from JDK. In other words if you trust implementations in JDK, you can trust this library.
 
 It also provides few utility classes like SecureProperties that extend existing *java.util.Properties* with
 encrypted properties.
 
 This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
-If you find any issue please contact me on my e-mail.
+If you find any issue, please contact me on my e-mail.
 
 Maven dependency
 ----------------
@@ -20,7 +20,7 @@ Maven dependency
 <dependency>
    <groupId>cz.d1x</groupId>
    <artifactId>dxcrypto</artifactId>
-   <version>1.4</version>
+   <version>1.5</version>
 </dependency>
 ```
 
@@ -34,8 +34,20 @@ for encryption, custom combination of input text and salt prior to hashing...etc
 
 - Detailed javadoc for understanding what is happening under the hood
 
-- Hashing algorithms: **MD5**, **SHA1**, **SHA256** and **SHA512**
+- Hashing algorithms: **MD5**, **SHA1**, **SHA256**, **SHA512** and additional hashing operations like 
+**repeated hashing** or **salting** 
 
+- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
+Both algorithms generate a new random initialization vector for every message and combine it with cipher text into the output
+(combine/split algorithm can be customized).
+
+- Asymmetric (key pair) encryption algorithm: **RSA** with ECB and OAEP padding
+
+- **SecureProperties** that extend *java.util.Properties* by adding possibility to store/read encrypted values
+
+Examples
+--------
+Hashing
 ```java
 // fluent API of algorithm builders
 HashingAlgorithm sha256 = HashingAlgorithms.sha256()
@@ -46,17 +58,14 @@ HashingAlgorithm sha256 = HashingAlgorithms.sha256()
 // byte[] or String based methods
 byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
 String asString = sha256.hash("hello"); // 2cf24dba5fb0a...
-```
-- Additional hashing operations like **repeated hashing** or **salting**
 
-```java
 // repeated hashing
 HashingAlgorithm repeatedSha512 = HashingAlgorithms.sha512()
     .repeated(27)
     .build();
 String repeated = repeatedSha512.hash("hello"); // hash(hash("hello")) ~ 27x
 
-// default salting with ConcatCombineAlgorithm
+// default salting with ConcatAlgorithm
 SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
     .salted()
     .build();
@@ -69,54 +78,47 @@ SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
     .build();
 ```
 
-- Symmetric key encryption algorithms: **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
-Both algorithms generate a new random initialization vector for every message and combine it with cipher text into the output
-(combine algorithm can be customized).
-
+Symmetric Encryption
 ```java
+// AES
 EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
-    .combineAlgorithm(...) // optional, how to combine IV + cipherText
+    .combineSplitAlgorithm(...) // optional, how to combine/split IV and cipherText
     .bytesRepresentation(...) // optional, defaults to lower-cased HEX
     .build();
 
 byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
 byte[] andBack = aes.decrypt(asBytes);
-```
 
-```java
+// DES
 EncryptionAlgorithm des = EncryptionAlgorithms.tripleDes("secret")
-    .build(); // default key salt, iterations count and combine alg.
+    .build(); // default key salt, iterations count and combine/split alg.
 
 String asString = des.encrypt("hello");
 String andBack = des.decrypt(asString);
 ```
 
-- Asymmetric (key pair) encryption algorithm: **RSA** with ECB and OAEP padding
-
+Asymmetric Encryption
 ```java
 // custom keys
 BigInteger modulus = ...; // your modulus (n)
 BigInteger publicExponent = ...; // your public exponent (e)
 BigInteger privateExponent = ...; // your private exponent (d)
-EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
+EncryptionAlgorithm customRsa = EncryptionAlgorithms.rsa()
         .publicKey(modulus, publicExponent)
         .privateKey(modulus, privateExponent)
         .build();
-```
-
-```java
+        
 // generated keys
 RSAKeysGenerator keysGen = new RSAKeysGenerator();
 KeyPair keys = keysGen.generateKeys();
-EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
+EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
         .keyPair(keys)
         .build();
 ```
 
-- **SecureProperties** that extend *java.util.Properties* by adding possibility to store/read encrypted values
-
+Secure Properties
 ```java
 EncryptionAlgorithm algorithm = ...; // your algorithm
 SecureProperties props = new SecureProperties(algorithm);

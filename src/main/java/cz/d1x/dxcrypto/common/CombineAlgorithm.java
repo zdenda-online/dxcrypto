@@ -4,8 +4,8 @@ package cz.d1x.dxcrypto.common;
  * <p>
  * Algorithm that is able to combine two inputs into one.
  * </p><p>
- * These algorithms are used for combining an input text and salt before it is processed by hashing algorithm.
- * Also it is used for combining initialization vector and cipher text during encryption so IV is part of final output.
+ * Typical usage is for combining an input text and salt before it is processed by hashing algorithm.
+ * Also it is used for combining initialization vector and cipher text during encryption.
  * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
