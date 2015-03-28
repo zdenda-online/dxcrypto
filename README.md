@@ -83,7 +83,7 @@ SaltedHashingAlgorithm customSaltedSha256 = HashingAlgorithms.sha256()
 EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
-    .combineSplitAlgorithm(...) // optional, how to combine/split IV and cipherText
+    .combineSplitAlgorithm(...) // optional, how to combine/split IV and input
     .bytesRepresentation(...) // optional, defaults to lower-cased HEX
     .build();
 
