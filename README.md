@@ -72,7 +72,7 @@ String salted = saltedSha256.hash("your input text", "your salt");
 
 // salting with custom combining of input text and salt
 CombineAlgorithm combineAlg = ...; // your implementation
-SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
+SaltedHashingAlgorithm customSaltedSha256 = HashingAlgorithms.sha256()
     .salted(combineAlg)
     .build();
 ```

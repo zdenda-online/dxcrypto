@@ -1,17 +1,11 @@
 package cz.d1x.dxcrypto.encryption;
 
-import cz.d1x.dxcrypto.encryption.crypto.AESBuilder;
-import cz.d1x.dxcrypto.encryption.crypto.RSABuilder;
-import cz.d1x.dxcrypto.encryption.crypto.TripleDESBuilder;
-
 /**
  * Interface for algorithms that are able to encrypt given input and decrypt it afterwards.
- * Note that it is strongly recommended that implementations will be <strong>immutable</strong>.
+ * To create them, it is recommended to use {@link EncryptionAlgorithms} factory class.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see AESBuilder
- * @see TripleDESBuilder
- * @see RSABuilder
+ * @see EncryptionAlgorithms
  */
 public interface EncryptionAlgorithm {
 

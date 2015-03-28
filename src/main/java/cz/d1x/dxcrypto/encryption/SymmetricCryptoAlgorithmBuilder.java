@@ -1,78 +1,64 @@
-package cz.d1x.dxcrypto.encryption.crypto;
+package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.*;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithmBuilder;
-import cz.d1x.dxcrypto.encryption.EncryptionException;
+
+import java.security.Key;
 
 /**
- * Base builder for symmetric key algorithms.
+ * Base builder for symmetric key algorithms based on {@link SymmetricCryptoAlgorithm}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see SymmetricAlgorithm
+ * @see SymmetricCryptoAlgorithm
  */
-public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBuilder {
+public final class SymmetricCryptoAlgorithmBuilder {
 
     private static final byte[] DEFAULT_KEY_SALT = new byte[]{0x27, 0x11, 0x65, 0x35,
             0x13, 0x77, 0x33, 0x21,
             0x40, 0x43, 0x18, 0x65};
     private static final int DEFAULT_KEY_HASH_ITERATIONS = 4096;
 
-    private CryptoKeyFactory customKeyFactory;
-    private byte[] keyPassword;
+    private final String algorithmName;
+    private final String shortAlgorithmName;
+    private final int keySize;
+
+    // one these must be set via constructor
+    private final KeyFactory<Key> keyFactory;
+    private final byte[] keyPassword;
+
     private byte[] keySalt = DEFAULT_KEY_SALT;
     private int keyHashIterations = DEFAULT_KEY_HASH_ITERATIONS;
-    private CombineSplitAlgorithm combineSplitAlgorithm = new ConcatAlgorithm(getBlockSize());
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
+    private CombineSplitAlgorithm combineSplitAlgorithm; // initialize default in constructor!
 
-    /**
-     * Gets a name of algorithm supported by crypto.
-     *
-     * @return algorithm name
-     */
-    protected abstract String getAlgorithm();
-
-    /**
-     * Gets a short name of algorithm supported by crypto keys.
-     *
-     * @return algorithm name
-     */
-    protected abstract String getShortAlgorithm();
-
-    /**
-     * Gets size of the key.
-     *
-     * @return size of key
-     */
-    protected abstract int getKeySize();
-
-    /**
-     * Gets a block size of cipher (for CBC).
-     *
-     * @return cipher block size
-     */
-    protected abstract int getBlockSize();
-
-    protected SymmetricAlgorithmBuilder(byte[] keyPassword) {
+    protected SymmetricCryptoAlgorithmBuilder(byte[] keyPassword,
+                                              String algorithmName, String shortAlgorithmName,
+                                              int keySize, int blockSize) {
         if (keyPassword == null) {
             throw new IllegalArgumentException("You must provide non-null key password!");
         }
         this.keyPassword = keyPassword;
+        this.keySize = keySize;
+        this.keyFactory = null;
+
+        this.algorithmName = algorithmName;
+        this.shortAlgorithmName = shortAlgorithmName;
+        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize);
     }
 
-    protected SymmetricAlgorithmBuilder(String keyPassword) {
-        if (keyPassword == null) {
-            throw new IllegalArgumentException("You must provide non-null key password!");
-        }
-        this.keyPassword = Encoding.getBytes(keyPassword);
-    }
-
-    protected SymmetricAlgorithmBuilder(CryptoKeyFactory customKeyFactory) {
-        if (customKeyFactory == null) {
+    protected SymmetricCryptoAlgorithmBuilder(KeyFactory<Key> keyFactory,
+                                              String algorithmName, String shortAlgorithmName,
+                                              int blockSize) {
+        if (keyFactory == null) {
             throw new IllegalArgumentException("You must provide non-null key factory!");
         }
-        this.customKeyFactory = customKeyFactory;
+        this.keyPassword = null;
+        this.keySize = -1;
+        this.keyFactory = keyFactory;
+
+        this.algorithmName = algorithmName;
+        this.shortAlgorithmName = shortAlgorithmName;
+        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize);
     }
 
     /**
@@ -83,7 +69,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * @return this instance
      * @throws IllegalArgumentException exception if passed key salt is null
      */
-    public SymmetricAlgorithmBuilder keySalt(byte[] keySalt) {
+    public SymmetricCryptoAlgorithmBuilder keySalt(byte[] keySalt) throws IllegalArgumentException {
         if (keySalt == null) {
             throw new IllegalArgumentException("You must provide non-null key salt!");
         }
@@ -99,7 +85,8 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * @return this instance
      * @throws IllegalArgumentException exception if passed key salt is null
      */
-    public SymmetricAlgorithmBuilder keySalt(String keySalt) {
+    public SymmetricCryptoAlgorithmBuilder keySalt(String keySalt) throws IllegalArgumentException {
+        checkKeyFactory();
         if (keySalt == null) {
             throw new IllegalArgumentException("You must provide non-null key salt!");
         }
@@ -114,7 +101,8 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * @return this instance
      * @throws IllegalArgumentException exception if passed iterations are lower than 1
      */
-    public SymmetricAlgorithmBuilder keyHashIterations(int keyHashIterations) {
+    public SymmetricCryptoAlgorithmBuilder keyHashIterations(int keyHashIterations) throws IllegalArgumentException {
+        checkKeyFactory();
         if (keyHashIterations < 1) {
             throw new IllegalArgumentException("You must provide iterations for key hashing >= 1!");
         }
@@ -130,7 +118,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * @return this instance
      * @throws IllegalArgumentException exception if passed CombineSplitAlgorithm is null
      */
-    public SymmetricAlgorithmBuilder combineSplitAlgorithm(CombineSplitAlgorithm combineSplitAlgorithm) {
+    public SymmetricCryptoAlgorithmBuilder combineSplitAlgorithm(CombineSplitAlgorithm combineSplitAlgorithm) throws IllegalArgumentException {
         if (combineSplitAlgorithm == null) {
             throw new IllegalArgumentException("You must provide non-null CombineSplitAlgorithm!");
         }
@@ -145,7 +133,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * @return this instance
      * @throws IllegalArgumentException exception if passed BytesRepresentation is null
      */
-    public SymmetricAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+    public SymmetricCryptoAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) throws IllegalArgumentException {
         if (bytesRepresentation == null) {
             throw new IllegalArgumentException("You must provide non-null BytesRepresentation!");
         }
@@ -160,7 +148,7 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
      * @return this instance
      * @throws IllegalArgumentException exception if given encoding is null or not supported
      */
-    public SymmetricAlgorithmBuilder encoding(String encoding) {
+    public SymmetricCryptoAlgorithmBuilder encoding(String encoding) throws IllegalArgumentException {
         if (encoding == null) {
             throw new IllegalArgumentException("You must provide non-null encoding!");
         }
@@ -169,14 +157,25 @@ public abstract class SymmetricAlgorithmBuilder implements EncryptionAlgorithmBu
         return this;
     }
 
-    @Override
-    public EncryptionAlgorithm build() throws EncryptionException {
-        CryptoKeyFactory keyFactory;
-        if (customKeyFactory != null) {
-            keyFactory = customKeyFactory;
-        } else {
-            keyFactory = new PBKDF2KeyFactory(getShortAlgorithm(), keyPassword, getKeySize(), keySalt, keyHashIterations);
+    private void checkKeyFactory() throws IllegalArgumentException {
+        if (keyFactory != null) {
+            throw new IllegalArgumentException("You initialized builder with custom key factory. It is not allowed " +
+                    "to use key salt or hash iterations (it wouldn't be used anyway)");
         }
-        return new SymmetricAlgorithm(getAlgorithm(), keyFactory, combineSplitAlgorithm, bytesRepresentation, encoding);
+    }
+
+    /**
+     * Builds a new instance of encryption algorithm.
+     *
+     * @return algorithm instance
+     */
+    public EncryptionAlgorithm build() throws IllegalArgumentException {
+        KeyFactory<Key> kf;
+        if (keyFactory != null) {
+            kf = keyFactory;
+        } else {
+            kf = new PBKDF2KeyFactory(shortAlgorithmName, keyPassword, keySize, keySalt, keyHashIterations);
+        }
+        return new SymmetricCryptoAlgorithm(algorithmName, kf, combineSplitAlgorithm, bytesRepresentation, encoding);
     }
 }

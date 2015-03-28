@@ -8,7 +8,7 @@ import cz.d1x.dxcrypto.common.CombineAlgorithm;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
+public final class RepeatingDecoratorBuilder {
 
     private final HashingAlgorithm hashingAlgorithm;
     private final BytesRepresentation bytesRepresentation;
@@ -69,7 +69,6 @@ public class RepeatingDecoratorBuilder implements HashingAlgorithmBuilder {
                 .combineAlgorithm(combineAlgorithm);
     }
 
-    @Override
     public RepeatingDecorator build() {
         return new RepeatingDecorator(hashingAlgorithm, repeats);
     }

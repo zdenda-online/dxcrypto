@@ -1,7 +1,7 @@
 package cz.d1x.dxcrypto.common;
 
 import cz.d1x.dxcrypto.encryption.EncryptionException;
-import cz.d1x.dxcrypto.encryption.crypto.SymmetricAlgorithm;
+import cz.d1x.dxcrypto.encryption.SymmetricCryptoAlgorithm;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
@@ -19,9 +19,9 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  * Note that this class is immutable so when this first input length is once set, then all first inputs needs to have
  * this length, otherwise {@link IllegalArgumentException} may occur.
  * </p><p>
- * This algorithm is sufficient for most cases. It is not a problem for (input + salt) usage before hashing because only
- * combine operation is used (split is not needed). Also it is not a problem for (IV + cipher text) during CBC because
- * first input (IV) has always fixed length equal to cipher block size.
+ * This algorithm is sufficient for most cases. It has usage for input and salt combination before hashing because only
+ * combine operation is used (split is not needed). It can be also used for IV and cipher text combine/split
+ * during CBC because first input (IV) has always fixed length equal to cipher block size.
  * </p><p>
  * On the other hand, if you need {@link #split(byte[])} and expect dynamic size of both inputs, you must create new instance
  * every time you want to combine and split.
@@ -29,7 +29,7 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see SaltingAdapter
- * @see SymmetricAlgorithm
+ * @see SymmetricCryptoAlgorithm
  */
 public class ConcatAlgorithm implements CombineSplitAlgorithm {
 

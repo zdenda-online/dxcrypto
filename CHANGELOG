@@ -4,6 +4,7 @@ Version 1.5
 * Changed CombineAlgorithm interface, added SplitAlgorithm and CombineSplitAlgorithm interfaces
 * Added input checks in all builders
 * Fixed DigestAlgorithmBuilder.salted(CombineAlgorithm) builder method
+* Changed inner structure of builders and repackaging of inner classes
 * Few javadoc updates (misspelling...etc.)
 
 Version 1.4

@@ -1,6 +1,4 @@
-package cz.d1x.dxcrypto.encryption.crypto;
-
-import cz.d1x.dxcrypto.encryption.EncryptionException;
+package cz.d1x.dxcrypto.encryption;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -15,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
  * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see RSABuilder
  */
 public class RSAKeysGenerator {
 

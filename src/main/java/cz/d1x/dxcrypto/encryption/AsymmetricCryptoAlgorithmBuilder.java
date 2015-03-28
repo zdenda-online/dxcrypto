@@ -1,37 +1,30 @@
-package cz.d1x.dxcrypto.encryption.crypto;
+package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.common.HexRepresentation;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithmBuilder;
-import cz.d1x.dxcrypto.encryption.EncryptionException;
 
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyPair;
 
 /**
- * Base builder for asymmetric key algorithms.
+ * Base builder for asymmetric key algorithms based on {@link AsymmetricCryptoAlgorithm}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see AsymmetricAlgorithm
+ * @see AsymmetricCryptoAlgorithm
  */
-public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmBuilder {
+public final class AsymmetricCryptoAlgorithmBuilder {
 
-    private CryptoKeyFactory publicKeyFactory;
-    private CryptoKeyFactory privateKeyFactory;
+    private final String algorithmName;
+
+    private KeyFactory<Key> publicKeyFactory;
+    private KeyFactory<Key> privateKeyFactory;
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
 
-    /**
-     * Gets a name of algorithm supported by crypto.
-     *
-     * @return algorithm name
-     */
-    protected abstract String getAlgorithm();
-
-    protected AsymmetricAlgorithmBuilder() {
+    protected AsymmetricCryptoAlgorithmBuilder(String algorithmName) {
+        this.algorithmName = algorithmName;
     }
 
     /**
@@ -41,7 +34,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @param exponent exponent of public key
      * @return this instance
      */
-    public AsymmetricAlgorithmBuilder publicKey(BigInteger modulus, BigInteger exponent) {
+    public AsymmetricCryptoAlgorithmBuilder publicKey(BigInteger modulus, BigInteger exponent) {
         if (modulus == null || exponent == null) {
             throw new EncryptionException("You must provide non-null both modulus and exponent for public key!");
         }
@@ -55,7 +48,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @param publicKeyFactory factory of public key
      * @return this instance
      */
-    public AsymmetricAlgorithmBuilder publicKey(CryptoKeyFactory publicKeyFactory) {
+    public AsymmetricCryptoAlgorithmBuilder publicKey(KeyFactory<Key> publicKeyFactory) {
         if (publicKeyFactory == null) {
             throw new EncryptionException("You must provide non-null key factory!");
         }
@@ -71,7 +64,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @return this instance
      * @throws IllegalArgumentException exception if passed modulus or exponent is null
      */
-    public AsymmetricAlgorithmBuilder privateKey(BigInteger modulus, BigInteger exponent) {
+    public AsymmetricCryptoAlgorithmBuilder privateKey(BigInteger modulus, BigInteger exponent) {
         if (modulus == null || exponent == null) {
             throw new IllegalArgumentException("You must provide non-null both modulus and exponent for private key");
         }
@@ -86,7 +79,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @return this instance
      * @throws IllegalArgumentException exception if passed factory is null
      */
-    public AsymmetricAlgorithmBuilder privateKey(CryptoKeyFactory privateKeyFactory) {
+    public AsymmetricCryptoAlgorithmBuilder privateKey(KeyFactory<Key> privateKeyFactory) {
         if (privateKeyFactory == null) {
             throw new IllegalArgumentException("You must provide non-null private key factory!");
         }
@@ -101,18 +94,18 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @return this instance
      * @throws IllegalArgumentException exception if passed key pair is null
      */
-    public AsymmetricAlgorithmBuilder keyPair(final KeyPair keyPair) {
+    public AsymmetricCryptoAlgorithmBuilder keyPair(final KeyPair keyPair) {
         if (keyPair == null) {
             throw new IllegalArgumentException("You must provide non-null key pair");
         }
-        this.publicKeyFactory = new CryptoKeyFactory() {
+        this.publicKeyFactory = new KeyFactory<Key>() {
             @Override
             public Key getKey() throws EncryptionException {
                 return keyPair.getPublic();
             }
         };
 
-        this.privateKeyFactory = new CryptoKeyFactory() {
+        this.privateKeyFactory = new KeyFactory<Key>() {
             @Override
             public Key getKey() throws EncryptionException {
                 return keyPair.getPrivate();
@@ -128,7 +121,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @return this instance
      * @throws IllegalArgumentException exception if passed BytesRepresentation is null
      */
-    public AsymmetricAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
+    public AsymmetricCryptoAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) {
         if (bytesRepresentation == null) {
             throw new IllegalArgumentException("You must provide non-null BytesRepresentation!");
         }
@@ -143,7 +136,7 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
      * @return this instance
      * @throws IllegalArgumentException exception if given encoding is null or not supported
      */
-    public AsymmetricAlgorithmBuilder encoding(String encoding) {
+    public AsymmetricCryptoAlgorithmBuilder encoding(String encoding) {
         if (encoding == null) {
             throw new IllegalArgumentException("You must provide non-null encoding!");
         }
@@ -152,8 +145,16 @@ public abstract class AsymmetricAlgorithmBuilder implements EncryptionAlgorithmB
         return this;
     }
 
-    @Override
-    public EncryptionAlgorithm build() throws EncryptionException {
-        return new AsymmetricAlgorithm(getAlgorithm(), publicKeyFactory, privateKeyFactory, bytesRepresentation, encoding);
+    /**
+     * Builds a new instance of encryption algorithm.
+     *
+     * @return algorithm instance
+     * @throws EncryptionException possible exception when encryption algorithm cannot be built
+     */
+    public EncryptionAlgorithm build() throws IllegalArgumentException {
+        if (publicKeyFactory == null && privateKeyFactory == null) {
+            throw new IllegalArgumentException("At least one (public or private) key must be set");
+        }
+        return new AsymmetricCryptoAlgorithm(algorithmName, publicKeyFactory, privateKeyFactory, bytesRepresentation, encoding);
     }
 }

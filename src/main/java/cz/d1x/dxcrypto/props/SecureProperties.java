@@ -79,6 +79,9 @@ public class SecureProperties extends Properties {
      * @return previous value of property if was set
      */
     public synchronized Object setEncryptedProperty(String key, String value) {
+        if (value == null) {
+            return super.setProperty(key, null);
+        }
         String encryptedValue = encryptionAlgorithm.encrypt(value) + encryptedPropertySuffix;
         return super.setProperty(key, encryptedValue);
     }

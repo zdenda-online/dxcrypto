@@ -14,7 +14,7 @@ package cz.d1x.dxcrypto.hash;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class RepeatingDecorator implements HashingAlgorithm {
+public final class RepeatingDecorator implements HashingAlgorithm {
 
     private final HashingAlgorithm hashingAlgorithm;
     private final int repeatsCount;

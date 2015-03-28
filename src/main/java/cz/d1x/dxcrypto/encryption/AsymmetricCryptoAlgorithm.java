@@ -1,9 +1,7 @@
-package cz.d1x.dxcrypto.encryption.crypto;
+package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.Encoding;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
-import cz.d1x.dxcrypto.encryption.EncryptionException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -27,9 +25,8 @@ import java.security.NoSuchAlgorithmException;
  * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see RSABuilder
  */
-public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
+public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
     private final Cipher cipher;
     private final Key publicKey;
@@ -47,11 +44,9 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
      * @param encoding            encoding used for strings
      * @throws EncryptionException possible exception when algorithm cannot be created
      */
-    protected AsymmetricAlgorithm(String cipherName, CryptoKeyFactory publicKeyFactory, CryptoKeyFactory privateKeyFactory,
-                                  BytesRepresentation bytesRepresentation, String encoding) {
-        if (publicKeyFactory == null && privateKeyFactory == null) {
-            throw new EncryptionException("At least one (public/private) key factory must be set");
-        }
+    protected AsymmetricCryptoAlgorithm(String cipherName,
+                                        KeyFactory<Key> publicKeyFactory, KeyFactory<Key> privateKeyFactory,
+                                        BytesRepresentation bytesRepresentation, String encoding) {
         this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
         try {
@@ -106,7 +101,6 @@ public final class AsymmetricAlgorithm implements EncryptionAlgorithm {
             throw new EncryptionException("Unable to initialize cipher", e);
         }
     }
-
 
     private void checkKey(boolean isPublic) throws EncryptionException {
         if (isPublic && this.publicKey == null) {

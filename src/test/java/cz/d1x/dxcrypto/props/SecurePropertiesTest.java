@@ -53,8 +53,33 @@ public class SecurePropertiesTest {
     }
 
     @Test
+    public void nullValuesToBeEncrypted() {
+        SecureProperties props = new SecureProperties(algorithm);
+        try {
+            props.setEncryptedProperty("foo", null);
+        } catch (NullPointerException ex) {
+            // this is OK, thrown from default Properties implementation
+        }
+        String actual = props.getProperty("foo");
+        Assert.assertNull(actual);
+    }
+
+    @Test
+    public void originalPropertyOfNonSetProperty() {
+        SecureProperties props = new SecureProperties(algorithm);
+        String actual = props.getOriginalProperty("foo");
+        Assert.assertNull(actual);
+    }
+
+    @Test
+    public void getPropertyOfNonSetProperty() {
+        SecureProperties props = new SecureProperties(algorithm);
+        String actual = props.getProperty("foo");
+        Assert.assertNull(actual);
+    }
+
+    @Test
     public void encryptedValuesWithDefaultSuffix() {
-        EncryptionAlgorithm algorithm = this.algorithm;
         SecureProperties props = new SecureProperties(algorithm);
         props.setEncryptedProperty("foo", "bar"); // bar value is stored encrypted
         String actual = props.getProperty("foo"); // if property is encrypted, it gets automatically decrypted

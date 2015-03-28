@@ -1,13 +1,14 @@
 package cz.d1x.dxcrypto.encryption;
 
-import cz.d1x.dxcrypto.encryption.crypto.RSAKeysGenerator;
-import cz.d1x.dxcrypto.encryption.crypto.SymmetricAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,55 @@ public class EncryptionAlgorithmsTest {
             add(EncryptionAlgorithms.aes(AES_KEY).build());
             add(EncryptionAlgorithms.tripleDes(TRIPLE_DES_KEY).build());
             add(EncryptionAlgorithms.rsa().keyPair(RSA_KEYS).build());
+
+            BigInteger modulus = ((RSAPublicKey) RSA_KEYS.getPublic()).getModulus();
+            BigInteger publicExponent = ((RSAPublicKey) RSA_KEYS.getPublic()).getPublicExponent();
+            BigInteger privateExponent = ((RSAPrivateKey) RSA_KEYS.getPrivate()).getPrivateExponent();
+            add(EncryptionAlgorithms.rsa()
+                    .publicKey(modulus, publicExponent)
+                    .privateKey(modulus, privateExponent)
+                    .build());
         }};
+    }
+
+    /**
+     * Tests encryption of string null.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void nullStringEncryption() throws UnsupportedEncodingException {
+        for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
+            encryptionAlgorithm.encrypt((String) null);
+        }
+    }
+
+    /**
+     * Tests decryption of string null.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void nullStringDecryption() throws UnsupportedEncodingException {
+        for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
+            encryptionAlgorithm.decrypt((String) null);
+        }
+    }
+
+    /**
+     * Tests encryption of string null.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void nullByteEncryption() throws UnsupportedEncodingException {
+        for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
+            encryptionAlgorithm.encrypt((byte[]) null);
+        }
+    }
+
+    /**
+     * Tests decryption of string null.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void nullByteDecryption() throws UnsupportedEncodingException {
+        for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
+            encryptionAlgorithm.decrypt((byte[]) null);
+        }
     }
 
     /**
@@ -91,7 +140,7 @@ public class EncryptionAlgorithmsTest {
     public void sameInputsGiveDifferentResultsForSymmetricAlgorithms() throws UnsupportedEncodingException {
         String plain = "th1s_is_something inter3sting -*";
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
-            if (!(encryptionAlgorithm instanceof SymmetricAlgorithm)) {
+            if (!(encryptionAlgorithm instanceof SymmetricCryptoAlgorithm)) {
                 continue; // test only symmetric algorithms
             }
             String encrypted1 = encryptionAlgorithm.encrypt(plain);

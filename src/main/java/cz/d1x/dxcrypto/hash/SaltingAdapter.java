@@ -26,7 +26,7 @@ import cz.d1x.dxcrypto.common.Encoding;
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see cz.d1x.dxcrypto.common.ConcatAlgorithm
  */
-public class SaltingAdapter implements SaltedHashingAlgorithm {
+public final class SaltingAdapter implements SaltedHashingAlgorithm {
 
     private final HashingAlgorithm hashingAlgorithm;
     private final CombineAlgorithm combineAlgorithm;

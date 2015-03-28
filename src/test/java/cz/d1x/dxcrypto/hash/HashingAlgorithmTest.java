@@ -56,7 +56,7 @@ public abstract class HashingAlgorithmTest {
     /**
      * Tests that null for hashing throws exception.
      */
-    @Test(expected = HashingException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void nullHashing() {
         algorithm.hash((String) null);
     }

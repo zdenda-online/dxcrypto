@@ -5,11 +5,11 @@ import cz.d1x.dxcrypto.common.CombineAlgorithm;
 import cz.d1x.dxcrypto.common.ConcatAlgorithm;
 
 /**
- * Builder for salting adapter over existing hashing algorithms.
+ * Builder for salted hashing algorithm that is based on existing hashing algorithms.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class SaltingAdapterBuilder {
+public final class SaltingAdapterBuilder {
 
     private final HashingAlgorithm hashingAlgorithm;
     private final BytesRepresentation bytesRepresentation;
@@ -50,7 +50,7 @@ public class SaltingAdapterBuilder {
      *
      * @return salting adapter
      */
-    public SaltingAdapter build() {
+    public SaltedHashingAlgorithm build() {
         return new SaltingAdapter(hashingAlgorithm, bytesRepresentation, combineAlgorithm, encoding);
     }
 }

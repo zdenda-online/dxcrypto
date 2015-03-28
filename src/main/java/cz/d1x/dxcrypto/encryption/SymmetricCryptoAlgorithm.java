@@ -1,10 +1,8 @@
-package cz.d1x.dxcrypto.encryption.crypto;
+package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombineSplitAlgorithm;
 import cz.d1x.dxcrypto.common.Encoding;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
-import cz.d1x.dxcrypto.encryption.EncryptionException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -34,10 +32,8 @@ import java.security.*;
  * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see AESBuilder
- * @see TripleDESBuilder
  */
-public final class SymmetricAlgorithm implements EncryptionAlgorithm {
+public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
     private final SecureRandom random = new SecureRandom();
     private final Cipher cipher;
@@ -57,8 +53,8 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
      * @param encoding              encoding used for strings
      * @throws EncryptionException possible exception when algorithm cannot be created
      */
-    protected SymmetricAlgorithm(String cipherName, CryptoKeyFactory keyFactory, CombineSplitAlgorithm combineSplitAlgorithm,
-                                 BytesRepresentation bytesRepresentation, String encoding) throws EncryptionException {
+    protected SymmetricCryptoAlgorithm(String cipherName, KeyFactory<Key> keyFactory, CombineSplitAlgorithm combineSplitAlgorithm,
+                                       BytesRepresentation bytesRepresentation, String encoding) throws EncryptionException {
         this.combineSplitAlgorithm = combineSplitAlgorithm;
         this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
@@ -75,7 +71,7 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
     @Override
     public byte[] encrypt(byte[] input) throws EncryptionException {
         if (input == null) {
-            throw new EncryptionException("Given input for encryption cannot be null!");
+            throw new IllegalArgumentException("Input data for encryption cannot be null!");
         }
         try {
             IvParameterSpec iv = generateIV();
@@ -89,6 +85,9 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public String encrypt(String input) throws EncryptionException {
+        if (input == null) {
+            throw new IllegalArgumentException("Input data for encryption cannot be null!");
+        }
         byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] encryptedBytes = encrypt(textBytes);
         return bytesRepresentation.toString(encryptedBytes);
@@ -96,6 +95,9 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public byte[] decrypt(byte[] input) throws EncryptionException {
+        if (input == null) {
+            throw new IllegalArgumentException("Input data for decryption cannot be null!");
+        }
         try {
             byte[][] ivAndCipherText = combineSplitAlgorithm.split(input);
             if (ivAndCipherText == null || ivAndCipherText.length != 2) {
@@ -112,6 +114,9 @@ public final class SymmetricAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public String decrypt(String input) throws EncryptionException {
+        if (input == null) {
+            throw new IllegalArgumentException("Input data for decryption cannot be null!");
+        }
         byte[] textBytes = bytesRepresentation.toBytes(input);
         byte[] decryptedBytes = decrypt(textBytes);
         return Encoding.getString(decryptedBytes, encoding);
