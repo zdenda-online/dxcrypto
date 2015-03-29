@@ -60,6 +60,9 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public byte[] encrypt(byte[] input) throws EncryptionException {
+        if (input == null) {
+            throw new IllegalArgumentException("Input data for encryption cannot be null!");
+        }
         checkKey(true);
         try {
             initCipher(true);
@@ -71,6 +74,10 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public String encrypt(String input) throws EncryptionException {
+        if (input == null) {
+            throw new IllegalArgumentException("Input data for encryption cannot be null!");
+        }
+        checkKey(true);
         byte[] textBytes = Encoding.getBytes(input, encoding);
         byte[] encryptedBytes = encrypt(textBytes);
         return bytesRepresentation.toString(encryptedBytes);
@@ -78,6 +85,9 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public byte[] decrypt(byte[] input) throws EncryptionException {
+        if (input == null) {
+            throw new IllegalArgumentException("Input data for decryption cannot be null!");
+        }
         checkKey(false);
         try {
             initCipher(false);
@@ -89,6 +99,10 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
     @Override
     public String decrypt(String input) throws EncryptionException {
+        if (input == null) {
+            throw new IllegalArgumentException("Input data for decryption cannot be null!");
+        }
+        checkKey(false);
         byte[] textBytes = bytesRepresentation.toBytes(input);
         byte[] decryptedBytes = decrypt(textBytes);
         return Encoding.getString(decryptedBytes, encoding);
