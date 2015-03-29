@@ -65,6 +65,14 @@ public class SecurePropertiesTest {
     }
 
     @Test
+    public void emptyValueToBeEncrypted() {
+        SecureProperties props = new SecureProperties(algorithm);
+        props.setEncryptedProperty("foo", "");
+        String actual = props.getProperty("foo");
+        Assert.assertTrue(actual.isEmpty());
+    }
+
+    @Test
     public void originalPropertyOfNonSetProperty() {
         SecureProperties props = new SecureProperties(algorithm);
         String actual = props.getOriginalProperty("foo");
