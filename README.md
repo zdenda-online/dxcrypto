@@ -1,6 +1,6 @@
 DXCrypto: Easy Java Cryptography
 ================================
-Simple Java library for cryptography (hashing and encryption) built purely on Java SE without transitive dependencies.
+Simple Java library for cryptography (hashing and encryption) built purely on Java SE without any dependencies.
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
 exceptions it uses. In many cases, programmer needs simpler API, so this library provides higher
