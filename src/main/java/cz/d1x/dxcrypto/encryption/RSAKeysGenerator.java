@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * <p>
- * Generator that can provide key pair for RSA encryption with 1024 key size.
+ * Generator that can provide key pair for RSA encryption.
  * This generator can be re-used for multiple key pair generations.
  * </p><p>
  * This class is immutable and can be considered thread safe.
@@ -14,21 +14,31 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class RSAKeysGenerator {
+public final class RSAKeysGenerator {
+
+    private static final int DEFAULT_KEY_SIZE = 1024;
 
     private final KeyPairGenerator generator;
 
     /**
-     * Creates a new generator of RSA keys.
-     *
-     * @throws EncryptionException possible exception when generation fail
+     * Creates a new generator of RSA keys with default 1024 size of the key.
      */
-    public RSAKeysGenerator() throws EncryptionException {
+    public RSAKeysGenerator() {
+        this(DEFAULT_KEY_SIZE);
+    }
+
+    /**
+     * Creates a new generator of RSA keys with given key size.
+     *
+     * @param keySize size of the key
+     */
+    public RSAKeysGenerator(int keySize) throws EncryptionException {
         try {
             this.generator = KeyPairGenerator.getInstance("RSA");
-            this.generator.initialize(1024);
+            this.generator.initialize(keySize);
         } catch (NoSuchAlgorithmException e) {
-            throw new EncryptionException("Unable to generate RSA keys", e);
+            // this should not happen, it wou
+            throw new EncryptionException("Unable to initialize RSA keys generator, is it supported by your JRE?", e);
         }
     }
 

@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class Encoding {
+public final class Encoding {
 
     public static final String DEFAULT = "UTF-8";
 

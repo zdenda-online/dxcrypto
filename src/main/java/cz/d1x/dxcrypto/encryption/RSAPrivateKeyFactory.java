@@ -12,7 +12,7 @@ import java.security.spec.RSAPrivateKeySpec;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class RSAPrivateKeyFactory implements cz.d1x.dxcrypto.encryption.KeyFactory<Key> {
+public final class RSAPrivateKeyFactory implements cz.d1x.dxcrypto.encryption.KeyFactory<Key> {
 
     private final BigInteger modulus;
     private final BigInteger exponent;
@@ -23,7 +23,7 @@ public class RSAPrivateKeyFactory implements cz.d1x.dxcrypto.encryption.KeyFacto
      * @param modulus  modulus of key
      * @param exponent exponent of private key
      */
-    public RSAPrivateKeyFactory(BigInteger modulus, BigInteger exponent) {
+    protected RSAPrivateKeyFactory(BigInteger modulus, BigInteger exponent) {
         this.modulus = modulus;
         this.exponent = exponent;
     }

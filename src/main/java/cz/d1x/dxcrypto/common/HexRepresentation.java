@@ -8,7 +8,7 @@ import javax.xml.bind.DatatypeConverter;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class HexRepresentation implements BytesRepresentation {
+public final class HexRepresentation implements BytesRepresentation {
 
     private static final boolean DEFAULT_USE_LOWER_CASE = true;
 

@@ -7,7 +7,7 @@ import javax.xml.bind.DatatypeConverter;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class Base64Representation implements BytesRepresentation {
+public final class Base64Representation implements BytesRepresentation {
 
     /**
      * Creates a new instance of Base64 representation.

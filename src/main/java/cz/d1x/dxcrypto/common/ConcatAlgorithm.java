@@ -31,7 +31,7 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  * @see SaltingAdapter
  * @see SymmetricCryptoAlgorithm
  */
-public class ConcatAlgorithm implements CombineSplitAlgorithm {
+public final class ConcatAlgorithm implements CombineSplitAlgorithm {
 
     private static final int INPUT_LENGTH_NOT_SET = -1;
     private final int input1Length;
