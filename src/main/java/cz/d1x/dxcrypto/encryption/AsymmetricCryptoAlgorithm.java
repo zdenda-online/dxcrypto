@@ -28,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
-    private final Cipher cipher;
+    private final String cipherName;
     private final Key publicKey;
     private final Key privateKey;
     private final BytesRepresentation bytesRepresentation;
@@ -50,7 +50,8 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
         try {
-            this.cipher = Cipher.getInstance(cipherName);
+            Cipher.getInstance(cipherName); // find out if i can create instances
+            this.cipherName = cipherName;
             this.publicKey = publicKeyFactory != null ? publicKeyFactory.getKey() : null;
             this.privateKey = privateKeyFactory != null ? privateKeyFactory.getKey() : null;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -65,7 +66,7 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         }
         checkKey(true);
         try {
-            initCipher(true);
+            Cipher cipher = createCipher(true);
             return cipher.doFinal(input);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to encrypt message", e);
@@ -90,7 +91,7 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         }
         checkKey(false);
         try {
-            initCipher(false);
+            Cipher cipher = createCipher(false);
             return cipher.doFinal(input);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to decrypt message", e);
@@ -108,10 +109,16 @@ public final class AsymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         return Encoding.getString(decryptedBytes, encoding);
     }
 
-    private void initCipher(boolean isEncrypt) throws EncryptionException {
+    /**
+     * Creates and initializes cipher with public/private key.
+     * It creates a new {@link Cipher} instance for every operation to ensure immutability (thread safety) of algorithm.
+     */
+    private Cipher createCipher(boolean isEncrypt) throws EncryptionException {
         try {
+            Cipher cipher = Cipher.getInstance(cipherName);
             cipher.init(isEncrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, isEncrypt ? publicKey : privateKey);
-        } catch (InvalidKeyException e) {
+            return cipher;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             throw new EncryptionException("Unable to initialize cipher", e);
         }
     }

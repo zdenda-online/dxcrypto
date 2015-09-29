@@ -1,5 +1,8 @@
 Whats new in latest versions
 
+Version 1.6
+* Fixed immutability of encryption/hashing algorithms (sharing of same Cipher/Digest instance)
+
 Version 1.5
 * Changed CombineAlgorithm interface, added SplitAlgorithm and CombineSplitAlgorithm interfaces
 * Added input checks in all builders

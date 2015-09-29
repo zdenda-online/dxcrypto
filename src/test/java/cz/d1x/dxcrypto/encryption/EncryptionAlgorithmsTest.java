@@ -11,6 +11,8 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Tests {@link EncryptionAlgorithm} implementations.
@@ -165,6 +167,45 @@ public class EncryptionAlgorithmsTest {
             byte[] encrypted = encryptionAlgorithm.encrypt(plainBytes);
             String decrypted = encryptionAlgorithm.decrypt(DatatypeConverter.printHexBinary(encrypted).toLowerCase());
             Assert.assertEquals("Original and decrypted strings are not equal", plainString, decrypted);
+        }
+    }
+
+    /**
+     * Tests concurrent encryption from multiple threads (immutability of algorithm instance).
+     */
+    @Test
+    public void testConcurrentEncryption() {
+        int threads = 1000;
+        final AtomicBoolean everythingOk = new AtomicBoolean(true);
+        final AtomicInteger finishedThreads = new AtomicInteger(0);
+
+        for (final EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
+            for (int i = 0; i < threads; i++) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            encryptionAlgorithm.encrypt("Testing concurrency");
+                        } catch (Exception ex) {
+                            System.out.println("Concurrent encryption fails!");
+                            everythingOk.set(false);
+                        }
+                        finishedThreads.incrementAndGet();
+                    }
+                });
+                thread.start();
+            }
+        }
+
+        while (finishedThreads.get() < threads) {
+            try {
+                Thread.sleep(100);
+                if (!everythingOk.get()) {
+                    Assert.fail("Any of hashing failed");
+                }
+            } catch (InterruptedException e) {
+                Assert.fail("Interrupted thread in test");
+            }
         }
     }
 }

@@ -35,8 +35,8 @@ import java.security.*;
  */
 public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
 
-    private final SecureRandom random = new SecureRandom();
-    private final Cipher cipher;
+    private final SecureRandom random = new SecureRandom(); // is thread-safe
+    private final String cipherName;
     private final int blockSize; // CBC
     private final Key key;
     private final CombineSplitAlgorithm combineSplitAlgorithm;
@@ -59,8 +59,9 @@ public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
         try {
-            cipher = Cipher.getInstance(cipherName); // find out if i can create instances and retrieve block size
+            Cipher cipher = Cipher.getInstance(cipherName); // find out if i can create instances and retrieve block size
             this.blockSize = cipher.getBlockSize();
+            this.cipherName = cipherName;
             this.key = keyFactory.getKey();
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new EncryptionException("Invalid encryption algorithm", e);
@@ -75,7 +76,7 @@ public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         }
         try {
             IvParameterSpec iv = generateIV();
-            initCipher(iv, true);
+            Cipher cipher = createCipher(iv, true);
             byte[] encryptedBytes = cipher.doFinal(input);
             return combineSplitAlgorithm.combine(iv.getIV(), encryptedBytes);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
@@ -105,7 +106,7 @@ public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
                         "number of parts. Is the input or used implementation of CombineSplitAlgorithm correct?");
             }
             IvParameterSpec iv = new IvParameterSpec(ivAndCipherText[0]);
-            initCipher(iv, false);
+            Cipher cipher = createCipher(iv, false);
             return cipher.doFinal(ivAndCipherText[1]);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EncryptionException("Unable to decrypt input", e);
@@ -134,16 +135,15 @@ public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
     }
 
     /**
-     * Initializes cipher with given initialization vector.
-     *
-     * @param iv        initialization vector
-     * @param isEncrypt flag whether cipher will be used for encryption (true) or decryption (false)
-     * @throws EncryptionException possible exception if cipher cannot be initialized
+     * Creates and initializes cipher with given initialization vector.
+     * It creates a new {@link Cipher} instance for every operation to ensure immutability (thread safety) of algorithm.
      */
-    private void initCipher(IvParameterSpec iv, boolean isEncrypt) throws EncryptionException {
+    private Cipher createCipher(IvParameterSpec iv, boolean isEncrypt) throws EncryptionException {
         try {
+            Cipher cipher = Cipher.getInstance(cipherName);
             cipher.init(isEncrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, key, iv);
-        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
+            return cipher;
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
             throw new EncryptionException("Unable to initialize cipher", e);
         }
     }

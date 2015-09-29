@@ -6,6 +6,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.Assert.*;
 
 /**
@@ -105,6 +108,44 @@ public abstract class HashingAlgorithmTest {
         String hash1 = adapter.hash(input, "s@Lt1");
         String hash2 = adapter.hash(input, "s@Lt2");
         assertNotEquals("Same inputs with different salt must have different hash", hash1, hash2);
+    }
+
+    /**
+     * Tests concurrent hashing from multiple threads (immutability of algorithm instance).
+     */
+    @Test
+    public void testConcurrentHashing() {
+        int threads = 1000;
+        final AtomicBoolean everythingOk = new AtomicBoolean(true);
+        final AtomicInteger finishedThreads = new AtomicInteger(0);
+
+        final HashingAlgorithm algorithm = getAlgorithm();
+        for (int i = 0; i < threads; i++) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        algorithm.hash("Test concurrency");
+                    } catch (Exception ex) {
+                        System.out.println("Concurrent hashing fails!");
+                        everythingOk.set(false);
+                    }
+                    finishedThreads.incrementAndGet();
+                }
+            });
+            thread.start();
+        }
+
+        while (finishedThreads.get() < threads) {
+            try {
+                Thread.sleep(100);
+                if (!everythingOk.get()) {
+                    Assert.fail("Any of hashing failed");
+                }
+            } catch (InterruptedException e) {
+                Assert.fail("Interrupted thread in test");
+            }
+        }
     }
 
     protected void testHash(String expectedHash, String actualHash, int idx) {
