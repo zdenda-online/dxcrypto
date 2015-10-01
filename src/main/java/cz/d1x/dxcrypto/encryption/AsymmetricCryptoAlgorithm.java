@@ -18,8 +18,6 @@ import java.security.NoSuchAlgorithmException;
  * This implementation can provide both encoding and decoding or only one of these functions depending on what key
  * was provided during instantiation. Public key is needed for encryption, private key for decryption.
  * </p><p>
- * Inputs and outputs from this encryption are bytes represented in HEX string.
- * </p><p>
  * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
  * that way.
  * </p>

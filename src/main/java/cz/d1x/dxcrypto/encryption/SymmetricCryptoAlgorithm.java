@@ -25,8 +25,6 @@ import java.security.*;
  * This base class also expects input to padded to the correct length, so it is <strong>not</strong> recommended to use
  * NoPadding variants of algorithm.
  * </p><p>
- * Inputs and outputs from this encryption are bytes represented in HEX string.
- * </p><p>
  * This class is immutable and can be considered thread safe. It is not allowed to extend this class to ensure it stays
  * that way.
  * </p>
