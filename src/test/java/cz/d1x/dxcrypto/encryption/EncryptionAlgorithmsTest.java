@@ -11,6 +11,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -185,7 +186,13 @@ public class EncryptionAlgorithmsTest {
                     @Override
                     public void run() {
                         try {
-                            encryptionAlgorithm.encrypt("Testing concurrency");
+                            final byte[] origInput = new byte[30];
+                            new Random().nextBytes(origInput);
+                            byte[] output = encryptionAlgorithm.encrypt(origInput);
+                            byte[] input = encryptionAlgorithm.decrypt(output);
+                            if (input != origInput) {
+                                everythingOk.set(false);
+                            }
                         } catch (Exception ex) {
                             System.out.println("Concurrent encryption fails!");
                             everythingOk.set(false);
