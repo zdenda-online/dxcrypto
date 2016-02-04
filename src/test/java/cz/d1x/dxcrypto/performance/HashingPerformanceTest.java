@@ -34,7 +34,7 @@ public class HashingPerformanceTest {
         SaltedHashingAlgorithm alg = HashingAlgorithms.sha512()
                 .salted()
                 .build();
-        long avg = doTest(alg, "SHA-256");
+        long avg = doTest(alg, "SHA-512");
         // Depends on the machine but I hope I won't get over 50ms on "average" machines where I test
         Assert.assertTrue("Expecting average hashing time lower than 50ms", avg < 50);
     }
