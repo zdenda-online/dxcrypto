@@ -23,7 +23,12 @@ public final class AsymmetricCryptoAlgorithmBuilder {
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
 
-    protected AsymmetricCryptoAlgorithmBuilder(String algorithmName) {
+    /**
+     * Creates a new builder.
+     *
+     * @param algorithmName full algorithm name (used for Cipher initialization)
+     */
+    public AsymmetricCryptoAlgorithmBuilder(String algorithmName) {
         this.algorithmName = algorithmName;
     }
 

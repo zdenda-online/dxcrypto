@@ -18,6 +18,8 @@ public class EncryptionAlgorithms {
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Key size: 128 bits</li>
+     * <li>Block size: 128 bits</li>
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
@@ -31,7 +33,7 @@ public class EncryptionAlgorithms {
      * @throws IllegalArgumentException exception if passed key password is null
      */
     public static SymmetricCryptoAlgorithmBuilder aes(byte[] keyPassword) throws IllegalArgumentException {
-        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "AES/CBC/PKCS5Padding", "AES", 128, 16);
+        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "AES/CBC/PKCS5Padding", "AES", 128, 128);
     }
 
     /**
@@ -39,6 +41,8 @@ public class EncryptionAlgorithms {
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Key size: 128 bits</li>
+     * <li>Block size: 128 bits</li>
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
@@ -60,6 +64,7 @@ public class EncryptionAlgorithms {
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Block size: 128 bits</li>
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: based on given key factory</li>
      * </ul>
@@ -69,7 +74,7 @@ public class EncryptionAlgorithms {
      * @throws IllegalArgumentException exception if passed key factory is null
      */
     public static SymmetricCryptoAlgorithmBuilder aes(KeyFactory<Key> keyFactory) throws IllegalArgumentException {
-        return new SymmetricCryptoAlgorithmBuilder(keyFactory, "AES/CBC/PKCS5Padding", "AES", 16);
+        return new SymmetricCryptoAlgorithmBuilder(keyFactory, "AES/CBC/PKCS5Padding", "AES", 128);
     }
 
     /**
@@ -77,6 +82,8 @@ public class EncryptionAlgorithms {
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Key size: 192 bits</li>
+     * <li>Block size: 64 bits</li>
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation (can be overridden)</li>
      * </ul>
@@ -91,7 +98,7 @@ public class EncryptionAlgorithms {
      */
     public static SymmetricCryptoAlgorithmBuilder tripleDes(byte[] keyPassword) throws IllegalArgumentException {
         int keySize = (3 * 8) * 8; // crypto uses multiples of 24 (even 3DES uses 56 bytes keys)
-        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "DESede/CBC/PKCS5Padding", "DESede", keySize, 8);
+        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "DESede/CBC/PKCS5Padding", "DESede", keySize, 64);
     }
 
     /**
@@ -99,6 +106,8 @@ public class EncryptionAlgorithms {
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Key size: 192 bits</li>
+     * <li>Block size: 64 bits</li>
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation (can be overridden)</li>
      * </ul>
@@ -120,6 +129,7 @@ public class EncryptionAlgorithms {
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Block size: 64 bits</li>
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: based on given key factory</li>
      * </ul>
@@ -129,7 +139,7 @@ public class EncryptionAlgorithms {
      * @throws IllegalArgumentException exception if passed key factory is null
      */
     public static SymmetricCryptoAlgorithmBuilder tripleDes(KeyFactory<Key> keyFactory) throws IllegalArgumentException {
-        return new SymmetricCryptoAlgorithmBuilder(keyFactory, "DESede/CBC/PKCS5Padding", "DESede", 8);
+        return new SymmetricCryptoAlgorithmBuilder(keyFactory, "DESede/CBC/PKCS5Padding", "DESede", 64);
     }
 
     /**

@@ -10,7 +10,12 @@ public final class DigestAlgorithmBuilder extends HashingAlgorithmBuilder {
 
     private final String algorithmName;
 
-    protected DigestAlgorithmBuilder(String algorithmName) {
+    /**
+     * Creates a new builder.
+     *
+     * @param algorithmName full algorithm name (used for Digest initialization)
+     */
+    public DigestAlgorithmBuilder(String algorithmName) {
         super();
         this.algorithmName = algorithmName;
     }

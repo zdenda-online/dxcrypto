@@ -31,9 +31,18 @@ public final class SymmetricCryptoAlgorithmBuilder {
     private String encoding = Encoding.DEFAULT;
     private CombineSplitAlgorithm combineSplitAlgorithm; // initialize default in constructor!
 
-    protected SymmetricCryptoAlgorithmBuilder(byte[] keyPassword,
-                                              String algorithmName, String shortAlgorithmName,
-                                              int keySize, int blockSize) {
+    /**
+     * Creates a new builder.
+     *
+     * @param keyPassword        key password
+     * @param algorithmName      full algorithm name (used for Cipher initialization)
+     * @param shortAlgorithmName short algorithm name (typically only first part of full name)
+     * @param keySize            size of the key (in bits)
+     * @param blockSize          size of the block (in bits)
+     */
+    public SymmetricCryptoAlgorithmBuilder(byte[] keyPassword,
+                                           String algorithmName, String shortAlgorithmName,
+                                           int keySize, int blockSize) {
         if (keyPassword == null) {
             throw new IllegalArgumentException("You must provide non-null key password!");
         }
@@ -43,12 +52,20 @@ public final class SymmetricCryptoAlgorithmBuilder {
 
         this.algorithmName = algorithmName;
         this.shortAlgorithmName = shortAlgorithmName;
-        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize);
+        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize / 8);
     }
 
-    protected SymmetricCryptoAlgorithmBuilder(KeyFactory<Key> keyFactory,
-                                              String algorithmName, String shortAlgorithmName,
-                                              int blockSize) {
+    /**
+     * Creates a new builder.
+     *
+     * @param keyFactory         factory for the keys
+     * @param algorithmName      full algorithm name (used for Cipher initialization)
+     * @param shortAlgorithmName short algorithm name (typically only first part of full name)
+     * @param blockSize          size of the block (in bits)
+     */
+    public SymmetricCryptoAlgorithmBuilder(KeyFactory<Key> keyFactory,
+                                           String algorithmName, String shortAlgorithmName,
+                                           int blockSize) {
         if (keyFactory == null) {
             throw new IllegalArgumentException("You must provide non-null key factory!");
         }
