@@ -75,7 +75,7 @@ public final class SymmetricCryptoAlgorithmBuilder {
 
         this.algorithmName = algorithmName;
         this.shortAlgorithmName = shortAlgorithmName;
-        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize);
+        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize / 8);
     }
 
     /**
