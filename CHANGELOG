@@ -1,5 +1,8 @@
 Whats new in latest versions
 
+Version 1.8
+* Fixed SymmetricCryptoAlgorithmBuilder block size
+
 Version 1.7
 * Removed final markers of crypto builders to allow extensions (e.g. more complex algorithms with JCE)
 

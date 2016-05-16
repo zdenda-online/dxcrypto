@@ -20,7 +20,7 @@ Maven dependency
 <dependency>
    <groupId>cz.d1x</groupId>
    <artifactId>dxcrypto</artifactId>
-   <version>1.6</version>
+   <version>1.8</version>
 </dependency>
 ```
 
