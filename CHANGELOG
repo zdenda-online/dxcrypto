@@ -1,5 +1,8 @@
 Whats new in latest versions
 
+Version 1.9
+* Added AES-256 and JCE checks to EncryptionAlgorithms factory
+
 Version 1.8
 * Fixed SymmetricCryptoAlgorithmBuilder block size
 
