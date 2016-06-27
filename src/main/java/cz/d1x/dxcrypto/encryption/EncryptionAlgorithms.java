@@ -2,7 +2,9 @@ package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.Encoding;
 
+import javax.crypto.Cipher;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Factory that provides builders for available encryption algorithms.
@@ -75,6 +77,54 @@ public class EncryptionAlgorithms {
      */
     public static SymmetricCryptoAlgorithmBuilder aes(KeyFactory<Key> keyFactory) throws IllegalArgumentException {
         return new SymmetricCryptoAlgorithmBuilder(keyFactory, "AES/CBC/PKCS5Padding", "AES", 128);
+    }
+
+    /**
+     * Creates a new builder for AES encryption algorithm with these properties:
+     * <ul>
+     * <li>Type of cipher: Symmetric</li>
+     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Key size: 256 bits</li>
+     * <li>Block size: 128 bits</li>
+     * <li>Input padding: PKCS#5</li>
+     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
+     * </ul>
+     * <p>
+     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
+     * use {@link #aes(KeyFactory)} method to specify custom factory for the key.
+     * </p>
+     *
+     * @param keyPassword password for key derivation
+     * @return builder for AES encryption
+     * @throws IllegalArgumentException exception if passed key password is null or AES-256 is not supported (JCE)
+     */
+    public static SymmetricCryptoAlgorithmBuilder aes256(byte[] keyPassword) throws IllegalArgumentException {
+        checkCipherSupported("AES", 256);
+        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "AES/CBC/PKCS5Padding", "AES", 256, 128);
+    }
+
+    /**
+     * Creates a new builder for AES encryption algorithm with these properties:
+     * <ul>
+     * <li>Type of cipher: Symmetric</li>
+     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
+     * <li>Key size: 256 bits</li>
+     * <li>Block size: 128 bits</li>
+     * <li>Input padding: PKCS#5</li>
+     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
+     * </ul>
+     * <p>
+     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
+     * use {@link #aes(KeyFactory)} method to specify custom factory for the key.
+     * </p>
+     *
+     * @param keyPassword password for key derivation
+     * @return builder for AES encryption algorithm
+     * @throws IllegalArgumentException exception if passed key password is null or AES-256 is not supported (JCE)
+     */
+    public static SymmetricCryptoAlgorithmBuilder aes256(String keyPassword) throws IllegalArgumentException {
+        checkCipherSupported("AES", 256);
+        return aes256(Encoding.getBytes(keyPassword));
     }
 
     /**
@@ -155,5 +205,25 @@ public class EncryptionAlgorithms {
      */
     public static AsymmetricCryptoAlgorithmBuilder rsa() {
         return new AsymmetricCryptoAlgorithmBuilder("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+    }
+
+    /**
+     * Checks whether Java Cryptography Extension (JCE) is installed. Thus stronger ciphers (e.g. AES-256 can be used).
+     *
+     * @return true if JCE is installed, otherwise false
+     */
+    public static boolean isJceInstalled() {
+        try {
+            return Cipher.getMaxAllowedKeyLength("AES") == Integer.MAX_VALUE;
+        } catch (NoSuchAlgorithmException e) {
+            return false;
+        }
+    }
+
+    private static void checkCipherSupported(String name, int keySize) {
+        if (!isJceInstalled()) {
+            throw new IllegalArgumentException("Cipher " + name + " is not supported with key size of " + keySize + "b, " +
+                    " probably Java Cryptography Extension (JCE) is not installed in your Java.");
+        }
     }
 }
