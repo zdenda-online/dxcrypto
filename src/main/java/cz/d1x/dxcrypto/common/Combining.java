@@ -11,7 +11,7 @@ package cz.d1x.dxcrypto.common;
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see ConcatAlgorithm
  */
-public interface CombineAlgorithm {
+public interface Combining {
 
     /**
      * Combines together two byte arrays.

@@ -1,5 +1,6 @@
 package cz.d1x.dxcrypto.encryption;
 
+import cz.d1x.dxcrypto.common.ByteArrayFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -46,6 +47,17 @@ public class EncryptionAlgorithmsTest {
                     .privateKey(modulus, privateExponent)
                     .build());
         }};
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ivFactoryGeneratingInvalidSizeCausesIllegalArgumentException() {
+        EncryptionAlgorithm alg = EncryptionAlgorithms.aes(AES_KEY).ivFactory(new ByteArrayFactory() {
+            @Override
+            public byte[] getBytes(int size) {
+                return new byte[10]; // this is different size of block size (128b for AES)
+            }
+        }).build();
+        alg.encrypt("whatever");
     }
 
     /**

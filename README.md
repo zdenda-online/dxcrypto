@@ -71,9 +71,9 @@ SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
 String salted = saltedSha256.hash("your input text", "your salt");
 
 // salting with custom combining of input text and salt
-CombineAlgorithm combineAlg = ...; // your implementation
+Combining combining = ...; // your implementation
 SaltedHashingAlgorithm customSaltedSha256 = HashingAlgorithms.sha256()
-    .salted(combineAlg)
+    .salted(combining)
     .build();
 ```
 
@@ -83,7 +83,8 @@ SaltedHashingAlgorithm customSaltedSha256 = HashingAlgorithms.sha256()
 EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
     .keySalt("saltForKeyDerivation") // optional
     .keyHashIterations(4096) // optional
-    .combineSplitAlgorithm(...) // optional, how to combine/split IV and input
+    .ivFactory(...) // optional, how IV is generated, defaults to random bytes
+    .ivOutputCombining(...) // optional, how to combine/split IV and input
     .bytesRepresentation(...) // optional, defaults to lower-cased HEX
     .build();
 

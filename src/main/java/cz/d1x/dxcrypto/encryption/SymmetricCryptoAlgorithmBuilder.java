@@ -29,7 +29,8 @@ public final class SymmetricCryptoAlgorithmBuilder {
     private int keyHashIterations = DEFAULT_KEY_HASH_ITERATIONS;
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
-    private CombineSplitAlgorithm combineSplitAlgorithm; // initialize default in constructor!
+    private ByteArrayFactory ivFactory = new RandomByteArrayFactory();
+    private CombiningSplitting ivOutputCombining; // initialize default in constructor!
 
     /**
      * Creates a new builder.
@@ -52,7 +53,7 @@ public final class SymmetricCryptoAlgorithmBuilder {
 
         this.algorithmName = algorithmName;
         this.shortAlgorithmName = shortAlgorithmName;
-        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize / 8);
+        this.ivOutputCombining = new ConcatAlgorithm(blockSize / 8);
     }
 
     /**
@@ -75,7 +76,7 @@ public final class SymmetricCryptoAlgorithmBuilder {
 
         this.algorithmName = algorithmName;
         this.shortAlgorithmName = shortAlgorithmName;
-        this.combineSplitAlgorithm = new ConcatAlgorithm(blockSize / 8);
+        this.ivOutputCombining = new ConcatAlgorithm(blockSize / 8);
     }
 
     /**
@@ -111,7 +112,7 @@ public final class SymmetricCryptoAlgorithmBuilder {
     }
 
     /**
-     * Sets number of keyHashIterations of hashing for key derivation.
+     * Sets number of iterations of hashing for key derivation.
      * Recommended count is at least 1000.
      *
      * @param keyHashIterations number of keyHashIterations
@@ -128,18 +129,36 @@ public final class SymmetricCryptoAlgorithmBuilder {
     }
 
     /**
-     * Sets algorithm combining IV and cipher text in output during encryption
+     * Sets algorithm for generation of initialization vector for every message.
+     * This is used only for algorithms that use it (typically CBC-based algorithms like AES, 3DES...).
+     * Note that it is recommended to have unique initialization vector for every message that is later combined with
+     * encrypted output via {@link #ivAndOutputCombining(CombiningSplitting)} into the final output.
+     *
+     * @param ivFactory factory for initialization vector
+     * @return this instance
+     * @throws IllegalArgumentException exception if passed ByteArrayFactory is null
+     */
+    public SymmetricCryptoAlgorithmBuilder ivFactory(ByteArrayFactory ivFactory) throws IllegalArgumentException {
+        if (ivFactory == null) {
+            throw new IllegalArgumentException("You must provide non-null ByteArrayFactory!");
+        }
+        this.ivFactory = ivFactory;
+        return this;
+    }
+
+    /**
+     * Sets algorithm combining initialization vector and cipher text in output during encryption
      * and splitting from input during decryption.
      *
-     * @param combineSplitAlgorithm combine/split algorithm for IV and cipher text
+     * @param ivOutputCombining combine/split algorithm for IV and cipher text
      * @return this instance
-     * @throws IllegalArgumentException exception if passed CombineSplitAlgorithm is null
+     * @throws IllegalArgumentException exception if passed CombiningSplitting is null
      */
-    public SymmetricCryptoAlgorithmBuilder combineSplitAlgorithm(CombineSplitAlgorithm combineSplitAlgorithm) throws IllegalArgumentException {
-        if (combineSplitAlgorithm == null) {
-            throw new IllegalArgumentException("You must provide non-null CombineSplitAlgorithm!");
+    public SymmetricCryptoAlgorithmBuilder ivAndOutputCombining(CombiningSplitting ivOutputCombining) throws IllegalArgumentException {
+        if (ivOutputCombining == null) {
+            throw new IllegalArgumentException("You must provide non-null CombiningSplitting!");
         }
-        this.combineSplitAlgorithm = combineSplitAlgorithm;
+        this.ivOutputCombining = ivOutputCombining;
         return this;
     }
 
@@ -193,6 +212,6 @@ public final class SymmetricCryptoAlgorithmBuilder {
         } else {
             kf = new PBKDF2KeyFactory(shortAlgorithmName, keyPassword, keySize, keySalt, keyHashIterations);
         }
-        return new SymmetricCryptoAlgorithm(algorithmName, kf, combineSplitAlgorithm, bytesRepresentation, encoding);
+        return new SymmetricCryptoAlgorithm(algorithmName, kf, ivFactory, ivOutputCombining, bytesRepresentation, encoding);
     }
 }

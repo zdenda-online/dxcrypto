@@ -13,9 +13,9 @@ package cz.d1x.dxcrypto.common;
  * </p>
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see CombineAlgorithm
- * @see SplitAlgorithm
+ * @see Combining
+ * @see Splitting
  * @see ConcatAlgorithm
  */
-public interface CombineSplitAlgorithm extends CombineAlgorithm, SplitAlgorithm {
+public interface CombiningSplitting extends Combining, Splitting {
 }

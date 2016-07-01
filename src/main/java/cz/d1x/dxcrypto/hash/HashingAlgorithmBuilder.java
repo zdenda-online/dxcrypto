@@ -1,7 +1,7 @@
 package cz.d1x.dxcrypto.hash;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
-import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.common.HexRepresentation;
 
@@ -72,17 +72,17 @@ public abstract class HashingAlgorithmBuilder {
      * Note that you should call this method when you are finished with properties of hashing algorithm.
      * </p>
      *
-     * @param combineAlgorithm combine algorithm for input text and salt
+     * @param combining combine algorithm for input text and salt
      * @return salting adapter builder
-     * @throws IllegalArgumentException exception if passed key CombineAlgorithm is null
+     * @throws IllegalArgumentException exception if passed key Combining is null
      */
-    public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) throws IllegalArgumentException {
-        if (combineAlgorithm == null) {
-            throw new IllegalArgumentException("You must provide non-null CombineAlgorithm!");
+    public SaltingAdapterBuilder salted(Combining combining) throws IllegalArgumentException {
+        if (combining == null) {
+            throw new IllegalArgumentException("You must provide non-null Combining!");
         }
         HashingAlgorithm alg = build();
         return new SaltingAdapterBuilder(alg, bytesRepresentation, encoding)
-                .combineAlgorithm(combineAlgorithm);
+                .inputAndSaltCombining(combining);
     }
 
     /**

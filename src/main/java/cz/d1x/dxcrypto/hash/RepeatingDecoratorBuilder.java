@@ -1,7 +1,7 @@
 package cz.d1x.dxcrypto.hash;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
-import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.Combining;
 
 /**
  * Builder for repeating decorator over existing hashing algorithms.
@@ -56,17 +56,17 @@ public final class RepeatingDecoratorBuilder {
     /**
      * Builds a repeating decorator and wraps it by salting adapter builder with custom combine algorithm.
      *
-     * @param combineAlgorithm combine algorithm for input text and salt
+     * @param combining combine algorithm for input text and salt
      * @return salting adapter builder
-     * @throws IllegalArgumentException exception if passed CombineAlgorithm is null
+     * @throws IllegalArgumentException exception if passed Combining is null
      */
-    public SaltingAdapterBuilder salted(CombineAlgorithm combineAlgorithm) {
-        if (combineAlgorithm == null) {
-            throw new IllegalArgumentException("You must provide non-null CombineAlgorithm!");
+    public SaltingAdapterBuilder salted(Combining combining) {
+        if (combining == null) {
+            throw new IllegalArgumentException("You must provide non-null Combining!");
         }
         HashingAlgorithm repeatingDecorator = build();
         return new SaltingAdapterBuilder(repeatingDecorator, bytesRepresentation, encoding)
-                .combineAlgorithm(combineAlgorithm);
+                .inputAndSaltCombining(combining);
     }
 
     public RepeatingDecorator build() {

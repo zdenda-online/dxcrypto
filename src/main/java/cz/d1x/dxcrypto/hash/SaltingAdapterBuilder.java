@@ -1,7 +1,7 @@
 package cz.d1x.dxcrypto.hash;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
-import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.ConcatAlgorithm;
 
 /**
@@ -15,7 +15,7 @@ public final class SaltingAdapterBuilder {
     private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
-    private CombineAlgorithm combineAlgorithm = new ConcatAlgorithm();
+    private Combining inputSaltCombining = new ConcatAlgorithm();
 
     /**
      * Creates a new builder for salting adapter with given hashing algorithm.
@@ -33,15 +33,15 @@ public final class SaltingAdapterBuilder {
     /**
      * Sets a custom algorithm for combining input text and salt.
      *
-     * @param combineAlgorithm combine algorithm
+     * @param combining combine algorithm
      * @return this instance
-     * @throws IllegalArgumentException exception if passed CombineAlgorithm is null
+     * @throws IllegalArgumentException exception if passed Combining is null
      */
-    public SaltingAdapterBuilder combineAlgorithm(CombineAlgorithm combineAlgorithm) {
-        if (combineAlgorithm == null) {
-            throw new IllegalArgumentException("You must provide non-null CombineAlgorithm!");
+    public SaltingAdapterBuilder inputAndSaltCombining(Combining combining) {
+        if (combining == null) {
+            throw new IllegalArgumentException("You must provide non-null Combining!");
         }
-        this.combineAlgorithm = combineAlgorithm;
+        this.inputSaltCombining = combining;
         return this;
     }
 
@@ -51,6 +51,6 @@ public final class SaltingAdapterBuilder {
      * @return salting adapter
      */
     public SaltedHashingAlgorithm build() {
-        return new SaltingAdapter(hashingAlgorithm, bytesRepresentation, combineAlgorithm, encoding);
+        return new SaltingAdapter(hashingAlgorithm, bytesRepresentation, inputSaltCombining, encoding);
     }
 }

@@ -1,6 +1,6 @@
 package cz.d1x.dxcrypto;
 
-import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.ConcatAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
 import cz.d1x.dxcrypto.encryption.EncryptionAlgorithms;
@@ -45,16 +45,16 @@ public class ReadMeExamples {
                 .build();
         String salted = saltedSha256.hash("your input text", "your salt");
 
-        CombineAlgorithm combineAlg = new ConcatAlgorithm(); // your implementation
+        Combining combining = new ConcatAlgorithm(); // your implementation
         SaltedHashingAlgorithm customSaltedSha256 = HashingAlgorithms.sha256()
-                .salted(combineAlg)
+                .salted(combining)
                 .build();
 
         // AES
         EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
                 .keySalt("saltForKeyDerivation") // optional
                 .keyHashIterations(4096) // optional
-                        // .combineSplitAlgorithm(...) // optional, how to combine/split IV and cipherText
+                        // .ivAndOutputCombining(...) // optional, how to combine/split IV and cipherText
                         // .bytesRepresentation(...) // optional, defaults to lower-cased HEX
                 .build();
 

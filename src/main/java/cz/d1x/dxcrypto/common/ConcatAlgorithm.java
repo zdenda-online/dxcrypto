@@ -6,7 +6,7 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
  * <p>
- * Simplest implementation of combine/split algorithm. It combines inputs consecutively (simple concatenation).
+ * Simple implementation of combine/split algorithm. It combines inputs consecutively (simple concatenation).
  * It implies that this algorithm needs to know length of first input if {@link #split(byte[])} will be used.
  * </p>
  * <ul>
@@ -31,7 +31,7 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  * @see SaltingAdapter
  * @see SymmetricCryptoAlgorithm
  */
-public final class ConcatAlgorithm implements CombineSplitAlgorithm {
+public final class ConcatAlgorithm implements CombiningSplitting {
 
     private static final int INPUT_LENGTH_NOT_SET = -1;
     private final int input1Length;

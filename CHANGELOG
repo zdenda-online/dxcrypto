@@ -1,5 +1,9 @@
 Whats new in latest versions
 
+Version 1.10
+* Added ByteArrayFactory for initialization vector of CBC-based encryption algorithms
+* Refactoring of Combining and Splitting
+
 Version 1.9
 * Added AES-256 and JCE checks to EncryptionAlgorithms factory
 

@@ -1,13 +1,13 @@
 package cz.d1x.dxcrypto.hash;
 
 import cz.d1x.dxcrypto.common.BytesRepresentation;
-import cz.d1x.dxcrypto.common.CombineAlgorithm;
+import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.Encoding;
 
 /**
  * <p>
  * Adapter for hashing algorithms that combines input text and salt before it is processed by adapted algorithm.
- * For combination, you can implement your own {@link CombineAlgorithm} or you can use default one.
+ * For combination, you can implement your own {@link Combining} or you can use default one.
  * </p>
  * Example:
  * <pre>
@@ -16,7 +16,7 @@ import cz.d1x.dxcrypto.common.Encoding;
  *     adapter.hash("your input text", "your salt");
  *
  *     // or with custom combine algorithm
- *     CombineAlgorithm combineAlg = ...; // your implementation
+ *     Combining combineAlg = ...; // your implementation
  *     SaltingAdapter adapter = new SaltingAdapter(alg, combineAlg); // ConcatCombineAlgorithm
  * </pre>
  * <p>
@@ -29,7 +29,7 @@ import cz.d1x.dxcrypto.common.Encoding;
 public final class SaltingAdapter implements SaltedHashingAlgorithm {
 
     private final HashingAlgorithm hashingAlgorithm;
-    private final CombineAlgorithm combineAlgorithm;
+    private final Combining inputSaltCombining;
     private final BytesRepresentation bytesRepresentation;
     private final String encoding;
 
@@ -38,20 +38,20 @@ public final class SaltingAdapter implements SaltedHashingAlgorithm {
      *
      * @param hashingAlgorithm    algorithm for hashing
      * @param bytesRepresentation representation of bytes
-     * @param combineAlgorithm    strategy how to combine input text and salt
+     * @param inputSaltCombining  strategy how to combine input text and salt
      * @param encoding            encoding for used strings
      */
     protected SaltingAdapter(HashingAlgorithm hashingAlgorithm, BytesRepresentation bytesRepresentation,
-                             CombineAlgorithm combineAlgorithm, String encoding) {
+                             Combining inputSaltCombining, String encoding) {
         if (hashingAlgorithm == null) {
             throw new IllegalArgumentException("Expecting non-null adapted algorithm");
         }
         this.hashingAlgorithm = hashingAlgorithm;
 
-        if (combineAlgorithm == null) {
+        if (inputSaltCombining == null) {
             throw new IllegalArgumentException("Expecting non-null combine strategy");
         }
-        this.combineAlgorithm = combineAlgorithm;
+        this.inputSaltCombining = inputSaltCombining;
         this.bytesRepresentation = bytesRepresentation;
 
         Encoding.checkEncoding(encoding);
@@ -68,7 +68,7 @@ public final class SaltingAdapter implements SaltedHashingAlgorithm {
 
     @Override
     public byte[] hash(byte[] input, byte[] salt) throws HashingException {
-        byte[] toHash = combineAlgorithm.combine(input, salt);
+        byte[] toHash = inputSaltCombining.combine(input, salt);
         return hashingAlgorithm.hash(toHash);
     }
 }
