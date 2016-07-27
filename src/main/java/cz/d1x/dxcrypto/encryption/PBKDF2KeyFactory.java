@@ -14,14 +14,14 @@ public final class PBKDF2KeyFactory implements KeyFactory<Key> {
     /**
      * Creates a new PBKDF2 key factory.
      *
-     * @param encryptionAlgorithmName       name of encryption algorithm for which key will be generated
-     * @param keyPassword     password for key derivation
-     * @param keySalt         salt for key derivation
-     * @param iterationsCount count of iterations for key derivation
-     * @param keyLength       length of desired key
+     * @param encryptionAlgorithmName name of encryption algorithm for which key will be generated
+     * @param keyPassword             password for key derivation
+     * @param keySalt                 salt for key derivation
+     * @param iterationsCount         count of iterations for key derivation
+     * @param keyLength               length of desired key
      */
     protected PBKDF2KeyFactory(String encryptionAlgorithmName, byte[] keyPassword, int keyLength, byte[] keySalt, int iterationsCount) {
-        this.keyFactory = new PBEKeyFactory(encryptionAlgorithmName, "PBKDF2WithHmacSHA1",
+        this.keyFactory = new PBEKeyFactory(encryptionAlgorithmName, "PBKDF2WithHmacSHA256",
                 keyPassword, keyLength, keySalt, iterationsCount);
     }
 

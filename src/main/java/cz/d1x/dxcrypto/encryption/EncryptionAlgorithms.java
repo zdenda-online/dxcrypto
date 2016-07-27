@@ -3,7 +3,6 @@ package cz.d1x.dxcrypto.encryption;
 import cz.d1x.dxcrypto.common.Encoding;
 
 import javax.crypto.Cipher;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -25,17 +24,13 @@ public class EncryptionAlgorithms {
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
-     * <p>
-     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
-     * use {@link #aes(KeyFactory)} method to specify custom factory for the key.
-     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption
      * @throws IllegalArgumentException exception if passed key password is null
      */
-    public static SymmetricCryptoAlgorithmBuilder aes(byte[] keyPassword) throws IllegalArgumentException {
-        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "AES/CBC/PKCS5Padding", "AES", 128, 128);
+    public static SymmetricAlgorithmBuilder aes(byte[] keyPassword) throws IllegalArgumentException {
+        return new SymmetricAlgorithmBuilder(keyPassword, "AES/CBC/PKCS5Padding", "AES", 128, 128);
     }
 
     /**
@@ -48,16 +43,12 @@ public class EncryptionAlgorithms {
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
-     * <p>
-     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
-     * use {@link #aes(KeyFactory)} method to specify custom factory for the key.
-     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption algorithm
      * @throws IllegalArgumentException exception if passed key password is null
      */
-    public static SymmetricCryptoAlgorithmBuilder aes(String keyPassword) throws IllegalArgumentException {
+    public static SymmetricAlgorithmBuilder aes(String keyPassword) throws IllegalArgumentException {
         return aes(Encoding.getBytes(keyPassword));
     }
 
@@ -66,41 +57,19 @@ public class EncryptionAlgorithms {
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Block size: 128 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: based on given key factory</li>
-     * </ul>
-     *
-     * @param keyFactory custom factory for encryption key
-     * @return builder for AES encryption algorithm
-     * @throws IllegalArgumentException exception if passed key factory is null
-     */
-    public static SymmetricCryptoAlgorithmBuilder aes(KeyFactory<Key> keyFactory) throws IllegalArgumentException {
-        return new SymmetricCryptoAlgorithmBuilder(keyFactory, "AES/CBC/PKCS5Padding", "AES", 128);
-    }
-
-    /**
-     * Creates a new builder for AES encryption algorithm with these properties:
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
      * <li>Key size: 256 bits</li>
      * <li>Block size: 128 bits</li>
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
-     * <p>
-     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
-     * use {@link #aes(KeyFactory)} method to specify custom factory for the key.
-     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption
      * @throws IllegalArgumentException exception if passed key password is null or AES-256 is not supported (JCE)
      */
-    public static SymmetricCryptoAlgorithmBuilder aes256(byte[] keyPassword) throws IllegalArgumentException {
+    public static SymmetricAlgorithmBuilder aes256(byte[] keyPassword) throws IllegalArgumentException {
         checkCipherSupported("AES", 256);
-        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "AES/CBC/PKCS5Padding", "AES", 256, 128);
+        return new SymmetricAlgorithmBuilder(keyPassword, "AES/CBC/PKCS7Padding", "AES", 256, 128);
     }
 
     /**
@@ -113,16 +82,12 @@ public class EncryptionAlgorithms {
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
-     * <p>
-     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
-     * use {@link #aes(KeyFactory)} method to specify custom factory for the key.
-     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption algorithm
      * @throws IllegalArgumentException exception if passed key password is null or AES-256 is not supported (JCE)
      */
-    public static SymmetricCryptoAlgorithmBuilder aes256(String keyPassword) throws IllegalArgumentException {
+    public static SymmetricAlgorithmBuilder aes256(String keyPassword) throws IllegalArgumentException {
         checkCipherSupported("AES", 256);
         return aes256(Encoding.getBytes(keyPassword));
     }
@@ -137,18 +102,14 @@ public class EncryptionAlgorithms {
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation (can be overridden)</li>
      * </ul>
-     * <p>
-     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
-     * use {@link #tripleDes(KeyFactory)} method to specify custom factory for the key.
-     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for 3DES encryption algorithm
      * @throws IllegalArgumentException exception if passed key password is null
      */
-    public static SymmetricCryptoAlgorithmBuilder tripleDes(byte[] keyPassword) throws IllegalArgumentException {
+    public static SymmetricAlgorithmBuilder tripleDes(byte[] keyPassword) throws IllegalArgumentException {
         int keySize = (3 * 8) * 8; // crypto uses multiples of 24 (even 3DES uses 56 bytes keys)
-        return new SymmetricCryptoAlgorithmBuilder(keyPassword, "DESede/CBC/PKCS5Padding", "DESede", keySize, 64);
+        return new SymmetricAlgorithmBuilder(keyPassword, "DESede/CBC/PKCS5Padding", "DESede", keySize, 64);
     }
 
     /**
@@ -161,35 +122,13 @@ public class EncryptionAlgorithms {
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation (can be overridden)</li>
      * </ul>
-     * <p>
-     * You can provide salt and iterations count for PBKDF2. If you want custom encryption key derivation, you can
-     * use {@link #tripleDes(KeyFactory)} method to specify custom factory for the key.
-     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for 3DES encryption algorithm
      * @throws IllegalArgumentException exception if passed key password is null
      */
-    public static SymmetricCryptoAlgorithmBuilder tripleDes(String keyPassword) throws IllegalArgumentException {
+    public static SymmetricAlgorithmBuilder tripleDes(String keyPassword) throws IllegalArgumentException {
         return tripleDes(Encoding.getBytes(keyPassword));
-    }
-
-    /**
-     * Crates a new builder for 3DES encryption algorithm with these properties:
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Block size: 64 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: based on given key factory</li>
-     * </ul>
-     *
-     * @param keyFactory custom factory for encryption key
-     * @return builder for 3DES encryption algorithm
-     * @throws IllegalArgumentException exception if passed key factory is null
-     */
-    public static SymmetricCryptoAlgorithmBuilder tripleDes(KeyFactory<Key> keyFactory) throws IllegalArgumentException {
-        return new SymmetricCryptoAlgorithmBuilder(keyFactory, "DESede/CBC/PKCS5Padding", "DESede", 64);
     }
 
     /**

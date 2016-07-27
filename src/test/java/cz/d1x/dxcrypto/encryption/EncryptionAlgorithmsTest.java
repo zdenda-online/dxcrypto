@@ -155,7 +155,7 @@ public class EncryptionAlgorithmsTest {
     public void sameInputsGiveDifferentResultsForSymmetricAlgorithms() throws UnsupportedEncodingException {
         String plain = "th1s_is_something inter3sting -*";
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
-            if (!(encryptionAlgorithm instanceof SymmetricCryptoAlgorithm)) {
+            if (!(encryptionAlgorithm instanceof SymmetricBlockAlgorithm)) {
                 continue; // test only symmetric algorithms
             }
             String encrypted1 = encryptionAlgorithm.encrypt(plain);

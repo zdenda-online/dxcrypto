@@ -1,7 +1,7 @@
 package cz.d1x.dxcrypto.common;
 
 import cz.d1x.dxcrypto.encryption.EncryptionException;
-import cz.d1x.dxcrypto.encryption.SymmetricCryptoAlgorithm;
+import cz.d1x.dxcrypto.encryption.SymmetricBlockAlgorithm;
 import cz.d1x.dxcrypto.hash.SaltingAdapter;
 
 /**
@@ -29,7 +29,7 @@ import cz.d1x.dxcrypto.hash.SaltingAdapter;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see SaltingAdapter
- * @see SymmetricCryptoAlgorithm
+ * @see SymmetricBlockAlgorithm
  */
 public final class ConcatAlgorithm implements CombiningSplitting {
 

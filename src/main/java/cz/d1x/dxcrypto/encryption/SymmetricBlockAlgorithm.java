@@ -5,13 +5,6 @@ import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.CombiningSplitting;
 import cz.d1x.dxcrypto.common.Encoding;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import java.security.*;
-
 /**
  * <p>
  * Main implementation of encryption algorithms that use symmetric key based on existing javax.crypto package.
@@ -32,11 +25,10 @@ import java.security.*;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
+public final class SymmetricBlockAlgorithm implements EncryptionAlgorithm {
 
-    private final String cipherName;
+    private final EncryptionEngine engine;
     private final int blockSize; // CBC
-    private final Key key;
     private final ByteArrayFactory ivFactory;
     private final CombiningSplitting ivOutputCombining;
     private final BytesRepresentation bytesRepresentation;
@@ -45,48 +37,36 @@ public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
     /**
      * Creates a new instance of base symmetric algorithm.
      *
-     * @param cipherName          name of crypto algorithm
-     * @param keyFactory          factory used for creation of encryption key
+     * @param engine              engine for encryption
+     * @param blockSize           size of block
      * @param ivFactory           factory used for creation of initialization vector
      * @param ivOutputCombining   algorithm for combining/splitting IV and cipher text
      * @param bytesRepresentation representation of byte arrays in String
      * @param encoding            encoding used for strings
      * @throws EncryptionException possible exception when algorithm cannot be created
      */
-    protected SymmetricCryptoAlgorithm(String cipherName,
-                                       KeyFactory<Key> keyFactory,
-                                       ByteArrayFactory ivFactory,
-                                       CombiningSplitting ivOutputCombining,
-                                       BytesRepresentation bytesRepresentation,
-                                       String encoding) throws EncryptionException {
+    protected SymmetricBlockAlgorithm(EncryptionEngine engine,
+                                      int blockSize,
+                                      ByteArrayFactory ivFactory,
+                                      CombiningSplitting ivOutputCombining,
+                                      BytesRepresentation bytesRepresentation,
+                                      String encoding) throws EncryptionException {
+        this.engine = engine;
+        this.blockSize = blockSize;
         this.ivFactory = ivFactory;
         this.ivOutputCombining = ivOutputCombining;
         this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;
-        try {
-            Cipher cipher = Cipher.getInstance(cipherName); // find out if i can create instances and retrieve block size
-            this.blockSize = cipher.getBlockSize();
-            this.cipherName = cipherName;
-            this.key = keyFactory.getKey();
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new EncryptionException("Invalid encryption algorithm", e);
-        }
     }
-
 
     @Override
     public byte[] encrypt(byte[] input) throws EncryptionException {
         if (input == null) {
             throw new IllegalArgumentException("Input data for encryption cannot be null!");
         }
-        try {
-            IvParameterSpec iv = getIv();
-            Cipher cipher = createCipher(iv, true);
-            byte[] encryptedBytes = cipher.doFinal(input);
-            return ivOutputCombining.combine(iv.getIV(), encryptedBytes);
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
-            throw new EncryptionException("Unable to encrypt input", e);
-        }
+        byte[] iv = getIv();
+        byte[] encryptedBytes = engine.encrypt(input, iv);
+        return ivOutputCombining.combine(iv, encryptedBytes);
     }
 
     @Override
@@ -104,18 +84,12 @@ public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         if (input == null) {
             throw new IllegalArgumentException("Input data for decryption cannot be null!");
         }
-        try {
-            byte[][] ivAndCipherText = ivOutputCombining.split(input);
-            if (ivAndCipherText == null || ivAndCipherText.length != 2) {
-                throw new EncryptionException("Splitting of input into two parts during decryption produced wrong " +
-                        "number of parts. Is the input or used implementation of CombiningSplitting correct?");
-            }
-            IvParameterSpec iv = new IvParameterSpec(ivAndCipherText[0]);
-            Cipher cipher = createCipher(iv, false);
-            return cipher.doFinal(ivAndCipherText[1]);
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
-            throw new EncryptionException("Unable to decrypt input", e);
+        byte[][] ivAndCipherText = ivOutputCombining.split(input);
+        if (ivAndCipherText == null || ivAndCipherText.length != 2) {
+            throw new EncryptionException("Splitting of input into two parts during decryption produced wrong " +
+                    "number of parts. Is the input or used implementation of CombiningSplitting correct?");
         }
+        return engine.decrypt(ivAndCipherText[1], ivAndCipherText[0]);
     }
 
     @Override
@@ -128,26 +102,12 @@ public final class SymmetricCryptoAlgorithm implements EncryptionAlgorithm {
         return Encoding.getString(decryptedBytes, encoding);
     }
 
-    private IvParameterSpec getIv() {
+    private byte[] getIv() {
         byte[] ivBytes = ivFactory.getBytes(blockSize);
         if (ivBytes.length != blockSize) {
             throw new IllegalArgumentException("Generated initialization vector has size " + ivBytes.length +
                     " bytes but must be size equal to block size " + blockSize + " bytes");
         }
-        return new IvParameterSpec(ivBytes);
-    }
-
-    /**
-     * Creates and initializes cipher with given initialization vector.
-     * It creates a new {@link Cipher} instance for every operation to ensure immutability (thread safety) of algorithm.
-     */
-    private Cipher createCipher(IvParameterSpec iv, boolean isEncrypt) throws EncryptionException {
-        try {
-            Cipher cipher = Cipher.getInstance(cipherName);
-            cipher.init(isEncrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, key, iv);
-            return cipher;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new EncryptionException("Unable to initialize cipher", e);
-        }
+        return ivBytes;
     }
 }
