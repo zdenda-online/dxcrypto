@@ -23,7 +23,7 @@ public class SymmetricCryptoEngine implements EncryptionEngine {
     private final String cipherName;
     private final Key key;
 
-    public SymmetricCryptoEngine(String cipherName, Key key) {
+    public SymmetricCryptoEngine(String cipherName, Key key) throws EncryptionException {
         this.cipherName = cipherName;
         this.key = key;
         try {
@@ -34,7 +34,7 @@ public class SymmetricCryptoEngine implements EncryptionEngine {
     }
 
     @Override
-    public byte[] encrypt(byte[] input, byte[] initVector) {
+    public byte[] encrypt(byte[] input, byte[] initVector) throws EncryptionException {
         return doOperation(input, initVector, true);
     }
 

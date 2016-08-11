@@ -35,7 +35,7 @@ public class AsymmetricCryptoEngine implements EncryptionEngine {
     }
 
     @Override
-    public byte[] encrypt(byte[] input, byte[] initVector) {
+    public byte[] encrypt(byte[] input, byte[] initVector) throws EncryptionException {
         if (encryptionKey == null) {
             throw new EncryptionException("You didn't set public key during initialization, unable to encrypt messages");
         }
@@ -43,7 +43,7 @@ public class AsymmetricCryptoEngine implements EncryptionEngine {
     }
 
     @Override
-    public byte[] decrypt(byte[] input, byte[] initVector) {
+    public byte[] decrypt(byte[] input, byte[] initVector) throws EncryptionException {
         if (decryptionKey == null) {
             throw new EncryptionException("You didn't set private key during initialization, unable to decrypt messages");
         }

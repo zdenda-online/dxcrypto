@@ -15,8 +15,9 @@ public interface EncryptionEngine {
      * @param input      input to be encrypted
      * @param initVector initialization vector for encryption if needed (can be null)
      * @return encrypted input
+     * @throws EncryptionException exception if encryption fails
      */
-    byte[] encrypt(byte[] input, byte[] initVector);
+    byte[] encrypt(byte[] input, byte[] initVector) throws EncryptionException;
 
     /**
      * Decrypts given input using given initialization vector (if needed)
@@ -24,7 +25,8 @@ public interface EncryptionEngine {
      * @param input      input to be decrypted
      * @param initVector initialization vector for decryption if needed (can be null)
      * @return decrypted input
+     * @throws EncryptionException exception if decryption fails
      */
-    byte[] decrypt(byte[] input, byte[] initVector);
+    byte[] decrypt(byte[] input, byte[] initVector) throws EncryptionException;
 
 }
