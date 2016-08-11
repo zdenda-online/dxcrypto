@@ -119,6 +119,22 @@ EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
     .build();
 ```
 
+**Custom Encryption Engines**
+```java
+/ Custom engine for one specific algorithm
+SymmetricEncryptionEngineFactory customFactory = null; // your implementation
+EncryptionAlgorithm customAes = EncryptionAlgorithms.aes("secretPassphrase")
+    .engineFactory(customFactory)
+    .build();
+
+// Custom set of factories (for all supported algorithms of EncryptionAlgorithms)
+EncryptionEnginesFactories factories = null; // your implementation
+EncryptionAlgorithms.defaultFactories(factories);
+EncryptionAlgorithm customAes256 = EncryptionAlgorithms.aes256("secretPassphrase")
+    // no need to set engineFactory as in previous example
+    .build();
+```
+
 **Secure Properties**
 ```java
 EncryptionAlgorithm algorithm = ...; // your algorithm

@@ -2,9 +2,7 @@ package cz.d1x.dxcrypto;
 
 import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.ConcatAlgorithm;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithms;
-import cz.d1x.dxcrypto.encryption.RSAKeysGenerator;
+import cz.d1x.dxcrypto.encryption.*;
 import cz.d1x.dxcrypto.hash.HashingAlgorithm;
 import cz.d1x.dxcrypto.hash.HashingAlgorithms;
 import cz.d1x.dxcrypto.hash.SaltedHashingAlgorithm;
@@ -22,7 +20,7 @@ public class ReadMeExamples {
      * Copy paste README examples in here and verify
      */
     @Test
-    public void test() {
+    public void hasing() {
         HashingAlgorithm sha256 = HashingAlgorithms.sha256()
                 .encoding("UTF-8") // optional, defaults to UTF-8
                 // .bytesRepresentation(...) // optional, defaults to lower-cased HEX
@@ -46,7 +44,10 @@ public class ReadMeExamples {
         SaltedHashingAlgorithm customSaltedSha256 = HashingAlgorithms.sha256()
                 .salted(combining)
                 .build();
+    }
 
+    @Test
+    public void symmetricEncryption() {
         // AES
         EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
                 .keySalt("saltForKeyDerivation") // optional
@@ -64,7 +65,10 @@ public class ReadMeExamples {
 
         String asString3 = des.encrypt("hello");
         String andBack3 = des.decrypt(asString3);
+    }
 
+    @Test
+    public void asymmetricEncryption() {
         // Commented because test would fail with these big integer values.
         // custom key
 //        BigInteger modulus = BigInteger.ONE; // your modulus (n)
@@ -82,7 +86,26 @@ public class ReadMeExamples {
                 .publicKey(keys.getModulus(), keys.getPublicExponent())
                 .privateKey(keys.getModulus(), keys.getPrivateExponent())
                 .build();
+    }
 
+    @Test
+    public void customEngines() {
+        // Custom factory for one specific algorithm
+        SymmetricEncryptionEngineFactory customFactory = null; // your implementation
+        EncryptionAlgorithm customAes = EncryptionAlgorithms.aes("secretPassphrase")
+                .engineFactory(customFactory)
+                .build();
+
+        // Custom set of factories (for all supported algorithms of EncryptionAlgorithms)
+        EncryptionEnginesFactories factories = null; // your implementation
+        EncryptionAlgorithms.defaultFactories(factories);
+        EncryptionAlgorithm customAes256 = EncryptionAlgorithms.aes256("secretPassphrase")
+                // no need to set engineFactory as in previous example
+                .build();
+    }
+
+    @Test
+    public void secureProperties() {
         EncryptionAlgorithm algorithm = EncryptionAlgorithms.aes("whatever").build(); // your algorithm
         SecureProperties props = new SecureProperties(algorithm);
         props.setProperty("plainProperty", "imGoodBoy");
@@ -95,6 +118,5 @@ public class ReadMeExamples {
         // automatic decryption of values
         String decrypted = props.getProperty("encryptedProperty"); // "myDirtySecret"
         String original = props.getOriginalProperty("encryptedProperty"); // bf165...
-
     }
 }

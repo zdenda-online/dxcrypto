@@ -1,11 +1,8 @@
 package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.Encoding;
+import cz.d1x.dxcrypto.encryption.crypto.CryptoEnginesFactories;
 import cz.d1x.dxcrypto.encryption.crypto.RSACryptoEngineFactory;
-import cz.d1x.dxcrypto.encryption.crypto.SymmetricCryptoEngineFactory;
-
-import javax.crypto.Cipher;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Factory that provides builders for available encryption algorithms.
@@ -16,48 +13,38 @@ import java.security.NoSuchAlgorithmException;
  */
 public class EncryptionAlgorithms {
 
+    private static EncryptionEnginesFactories defaultFactories = new CryptoEnginesFactories();
+
     /**
-     * <p>
-     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
-     * default encryption engine.
-     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
-     * </p><p>
-     * Properties of default engine from Java API implementation:
-     * </p>
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Key size: 128 bits</li>
-     * <li>Block size: 128 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
-     * </ul>
+     * Sets a new global factories for encryption engines.
+     * It defaults to {@link CryptoEnginesFactories}.
+     *
+     * @param factories factories to be set
+     */
+    public static void defaultFactories(EncryptionEnginesFactories factories) {
+        EncryptionAlgorithms.defaultFactories = factories;
+    }
+
+    /**
+     * Creates a new builder for AES (128b) encryption. Engine for encryption is dependent on
+     * {@link #defaultFactories(EncryptionEnginesFactories)} which defaults to {@link CryptoEnginesFactories}
+     * that uses standard Java API implementations (you can read {@link CryptoEnginesFactories} javadoc that
+     * describes what parameters it uses for encryption algorithms).
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption
      * @throws IllegalArgumentException exception if passed key password is null
      */
     public static SymmetricAlgorithmBuilder aes(byte[] keyPassword) throws IllegalArgumentException {
-        SymmetricEncryptionEngineFactory engineFactory = new SymmetricCryptoEngineFactory("AES/CBC/PKCS5Padding", "PBKDF2WithHmacSHA1");
+        SymmetricEncryptionEngineFactory engineFactory = defaultFactories.aes();
         return new SymmetricAlgorithmBuilder(engineFactory, keyPassword, 128, 128);
     }
 
     /**
-     * <p>
-     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
-     * default encryption engine.
-     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
-     * </p><p>
-     * Properties of default engine from Java API implementation:
-     * </p>
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Key size: 128 bits</li>
-     * <li>Block size: 128 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
-     * </ul>
+     * Creates a new builder for AES (128b) encryption. Engine for encryption is dependent on
+     * {@link #defaultFactories(EncryptionEnginesFactories)} which defaults to {@link CryptoEnginesFactories}
+     * that uses standard Java API implementations (you can read {@link CryptoEnginesFactories} javadoc that
+     * describes what parameters it uses for encryption algorithms).
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption algorithm
@@ -68,24 +55,12 @@ public class EncryptionAlgorithms {
     }
 
     /**
+     * Creates a new builder for AES (256b) encryption. Engine for encryption is dependent on
+     * {@link #defaultFactories(EncryptionEnginesFactories)} which defaults to {@link CryptoEnginesFactories}
+     * that uses standard Java API implementations (you can read {@link CryptoEnginesFactories} javadoc that
+     * describes what parameters it uses for encryption algorithms).
      * <p>
-     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
-     * default encryption engine.
-     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
-     * </p><p>
-     * Properties of default engine from Java API implementation:
-     * </p>
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Key size: 256 bits</li>
-     * <li>Block size: 128 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
-     * </ul>
-     * <p>
-     * Note that if you use default javax.crypto implementation, you may need JCE installed for AES-256.
-     * On the other hand, you can use custom {@link EncryptionEngine}, e.g. Bouncy Castle that does need JCE.
+     * Note that if you use default {@link CryptoEnginesFactories}, you may need JCE installed for AES-256.
      * </p>
      *
      * @param keyPassword password for key derivation
@@ -93,29 +68,17 @@ public class EncryptionAlgorithms {
      * @throws IllegalArgumentException exception if passed key password is null
      */
     public static SymmetricAlgorithmBuilder aes256(byte[] keyPassword) throws IllegalArgumentException {
-        SymmetricEncryptionEngineFactory engineFactory = new SymmetricCryptoEngineFactory("AES/CBC/PKCS7Padding", "PBKDF2WithHmacSHA1");
+        SymmetricEncryptionEngineFactory engineFactory = defaultFactories.aes256();
         return new SymmetricAlgorithmBuilder(engineFactory, keyPassword, 256, 128);
     }
 
     /**
+     * Creates a new builder for AES (256b) encryption. Engine for encryption is dependent on
+     * {@link #defaultFactories(EncryptionEnginesFactories)} which defaults to {@link CryptoEnginesFactories}
+     * that uses standard Java API implementations (you can read {@link CryptoEnginesFactories} javadoc that
+     * describes what parameters it uses for encryption algorithms) .
      * <p>
-     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
-     * default encryption engine.
-     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
-     * </p><p>
-     * Properties of default engine from Java API implementation:
-     * </p>
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Key size: 256 bits</li>
-     * <li>Block size: 128 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
-     * </ul>
-     * <p>
-     * Note that if you use default javax.crypto implementation, you may need JCE installed for AES-256.
-     * On the other hand, you can use custom {@link EncryptionEngine}, e.g. Bouncy Castle that does need JCE.
+     * Note that if you use default {@link CryptoEnginesFactories}, you may need JCE installed for AES-256.
      * </p>
      *
      * @param keyPassword password for key derivation
@@ -127,21 +90,10 @@ public class EncryptionAlgorithms {
     }
 
     /**
-     * <p>
-     * Creates a new builder for 3DES encryption algorithm that uses standard Java API implementation (javax.crypto) as
-     * default encryption engine.
-     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
-     * </p><p>
-     * Properties of default engine from Java API implementation:
-     * </p>
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Key size: 192 bits</li>
-     * <li>Block size: 64 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation (can be overridden)</li>
-     * </ul>
+     * Creates a new builder for 3DES encryption. Engine for encryption is dependent on
+     * {@link #defaultFactories(EncryptionEnginesFactories)} which defaults to {@link CryptoEnginesFactories}
+     * that uses standard Java API implementations (you can read {@link CryptoEnginesFactories} javadoc that
+     * describes what parameters it uses for encryption algorithms).
      *
      * @param keyPassword password for key derivation
      * @return builder for 3DES encryption algorithm
@@ -149,26 +101,15 @@ public class EncryptionAlgorithms {
      */
     public static SymmetricAlgorithmBuilder tripleDes(byte[] keyPassword) throws IllegalArgumentException {
         int keySize = (3 * 8) * 8; // crypto uses multiples of 24 (even 3DES uses 56 bytes keys)
-        SymmetricEncryptionEngineFactory engineFactory = new SymmetricCryptoEngineFactory("DESede/CBC/PKCS5Padding", "PBKDF2WithHmacSHA1");
+        SymmetricEncryptionEngineFactory engineFactory = defaultFactories.tripleDes();
         return new SymmetricAlgorithmBuilder(engineFactory, keyPassword, keySize, 64);
     }
 
     /**
-     * <p>
-     * Creates a new builder for 3DES encryption algorithm that uses standard Java API implementation (javax.crypto) as
-     * default encryption engine.
-     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
-     * </p><p>
-     * Properties of default engine from Java API implementation:
-     * </p>
-     * <ul>
-     * <li>Type of cipher: Symmetric</li>
-     * <li>Operation mode: Cipher Block Chaining (CBC)</li>
-     * <li>Key size: 192 bits</li>
-     * <li>Block size: 64 bits</li>
-     * <li>Input padding: PKCS#5</li>
-     * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation (can be overridden)</li>
-     * </ul>
+     * Creates a new builder for 3DES encryption. Engine for encryption is dependent on
+     * {@link #defaultFactories(EncryptionEnginesFactories)} which defaults to {@link CryptoEnginesFactories}
+     * that uses standard Java API implementations (you can read {@link CryptoEnginesFactories} javadoc that
+     * describes what parameters it uses for encryption algorithms).
      *
      * @param keyPassword password for key derivation
      * @return builder for 3DES encryption algorithm
@@ -179,37 +120,16 @@ public class EncryptionAlgorithms {
     }
 
     /**
-     * <p>
-     * Creates a new builder for RSA encryption algorithm that uses standard Java API implementation (javax.crypto) as
-     * default encryption engine.
-     * Note that you may use custom {@link RSAEngineFactory} to bypass your custom engine.
-     * </p><p>
-     * Properties of default engine from Java API implementation:
-     * </p>
-     * <ul>
-     * <li>Type of cipher: Asymmetric</li>
-     * <li>Operation mode: Electronic Codebook (ECB)</li>
-     * <li>Input padding: OAEP with SHA-256 (MGF1 for masks)</li>
-     * </ul>
-     * If you don't have key pair, you can generate some via {@link RSAKeysGenerator}.
+     * Creates a new builder for RSA encryption. Engine for encryption is dependent on
+     * {@link #defaultFactories(EncryptionEnginesFactories)} which defaults to {@link CryptoEnginesFactories}
+     * that uses standard Java API implementations (you can read {@link CryptoEnginesFactories} javadoc that
+     * describes what parameters it uses for encryption algorithms).
      *
      * @return builder for RSA encryption algorithm
      */
     public static RSAAlgorithmBuilder rsa() {
-        RSACryptoEngineFactory factory = new RSACryptoEngineFactory("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+        RSACryptoEngineFactory factory = defaultFactories.rsa();
         return new RSAAlgorithmBuilder(factory);
     }
 
-    /**
-     * Checks whether Java Cryptography Extension (JCE) is installed. Thus stronger ciphers (e.g. AES-256 can be used).
-     *
-     * @return true if JCE is installed, otherwise false
-     */
-    public static boolean isJceInstalled() {
-        try {
-            return Cipher.getMaxAllowedKeyLength("AES") == Integer.MAX_VALUE;
-        } catch (NoSuchAlgorithmException e) {
-            return false;
-        }
-    }
 }

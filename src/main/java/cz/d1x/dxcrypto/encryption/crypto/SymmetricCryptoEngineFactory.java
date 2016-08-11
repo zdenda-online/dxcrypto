@@ -1,7 +1,6 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
 import cz.d1x.dxcrypto.common.Encoding;
-import cz.d1x.dxcrypto.encryption.EncryptionAlgorithms;
 import cz.d1x.dxcrypto.encryption.EncryptionEngine;
 import cz.d1x.dxcrypto.encryption.EncryptionException;
 import cz.d1x.dxcrypto.encryption.SymmetricEncryptionEngineFactory;
@@ -57,7 +56,7 @@ public class SymmetricCryptoEngineFactory implements SymmetricEncryptionEngineFa
     }
 
     private void checkJCE(String name, int keySize) {
-        if (!EncryptionAlgorithms.isJceInstalled()) {
+        if (!CryptoEnginesFactories.isJceInstalled()) {
             throw new IllegalArgumentException("Cipher " + name + " is not supported with key size of " + keySize + "b, " +
                     " probably Java Cryptography Extension (JCE) is not installed in your Java.");
         }
