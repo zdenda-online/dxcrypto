@@ -22,6 +22,7 @@ public class EncryptionAlgorithms {
      * @param factories factories to be set
      */
     public static void defaultFactories(EncryptionEnginesFactories factories) {
+        if (factories == null) throw new IllegalArgumentException("You must provide non-null engine factories!");
         EncryptionAlgorithms.defaultFactories = factories;
     }
 

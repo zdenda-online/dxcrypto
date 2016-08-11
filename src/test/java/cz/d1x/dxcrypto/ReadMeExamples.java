@@ -2,7 +2,9 @@ package cz.d1x.dxcrypto;
 
 import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.ConcatAlgorithm;
-import cz.d1x.dxcrypto.encryption.*;
+import cz.d1x.dxcrypto.encryption.EncryptionAlgorithm;
+import cz.d1x.dxcrypto.encryption.EncryptionAlgorithms;
+import cz.d1x.dxcrypto.encryption.RSAKeysGenerator;
 import cz.d1x.dxcrypto.hash.HashingAlgorithm;
 import cz.d1x.dxcrypto.hash.HashingAlgorithms;
 import cz.d1x.dxcrypto.hash.SaltedHashingAlgorithm;
@@ -90,18 +92,19 @@ public class ReadMeExamples {
 
     @Test
     public void customEngines() {
+        // Commented because test would fail with nulls.
         // Custom factory for one specific algorithm
-        SymmetricEncryptionEngineFactory customFactory = null; // your implementation
-        EncryptionAlgorithm customAes = EncryptionAlgorithms.aes("secretPassphrase")
-                .engineFactory(customFactory)
-                .build();
+//        SymmetricEncryptionEngineFactory customFactory = null; // your implementation
+//        EncryptionAlgorithm customAes = EncryptionAlgorithms.aes("secretPassphrase")
+//                .engineFactory(customFactory)
+//                .build();
 
         // Custom set of factories (for all supported algorithms of EncryptionAlgorithms)
-        EncryptionEnginesFactories factories = null; // your implementation
-        EncryptionAlgorithms.defaultFactories(factories);
-        EncryptionAlgorithm customAes256 = EncryptionAlgorithms.aes256("secretPassphrase")
-                // no need to set engineFactory as in previous example
-                .build();
+//        EncryptionEnginesFactories factories = null; // your implementation
+//        EncryptionAlgorithms.defaultFactories(factories);
+//        EncryptionAlgorithm customAes256 = EncryptionAlgorithms.aes256("secretPassphrase")
+//                // no need to set engineFactory as in previous example
+//                .build();
     }
 
     @Test

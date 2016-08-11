@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
  * </p>
  * <ul>
  * <li>AES-128: CBC mode with PKCS#5 padding and PBKDF2 with HMAC-SHA1 for key derivation</li>
- * <li>AES-256: CBC mode with PKCS#7 padding and PBKDF2 with HMAC-SHA1 for key derivation</li>
+ * <li>AES-256: CBC mode with PKCS#5 padding and PBKDF2 with HMAC-SHA1 for key derivation</li>
  * <li>3DES: CBC mode with PKCS#5 padding and PBKDF2 with HMAC-SHA1 for key derivation</li>
  * <li>RSA: ECB mode with OAEP SHA-256 and MGF1 padding</li>
  * </ul>
@@ -31,7 +31,7 @@ public class CryptoEnginesFactories implements EncryptionEnginesFactories {
 
     @Override
     public SymmetricEncryptionEngineFactory aes256() {
-        return new SymmetricCryptoEngineFactory("AES/CBC/PKCS7Padding", "PBKDF2WithHmacSHA1");
+        return new SymmetricCryptoEngineFactory("AES/CBC/PKCS5Padding", "PBKDF2WithHmacSHA1");
     }
 
     @Override

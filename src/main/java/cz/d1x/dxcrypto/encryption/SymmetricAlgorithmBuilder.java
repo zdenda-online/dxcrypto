@@ -56,9 +56,7 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if passed factory is null
      */
     public SymmetricAlgorithmBuilder engineFactory(SymmetricEncryptionEngineFactory engineFactory) throws IllegalArgumentException {
-        if (engineFactory == null) {
-            throw new IllegalArgumentException("You must provide non-null engine factory!");
-        }
+        if (engineFactory == null) throw new IllegalArgumentException("You must provide non-null engine factory!");
         this.engineFactory = engineFactory;
         return this;
     }
@@ -72,9 +70,7 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if passed key salt is null
      */
     public SymmetricAlgorithmBuilder keySalt(byte[] keySalt) throws IllegalArgumentException {
-        if (keySalt == null) {
-            throw new IllegalArgumentException("You must provide non-null key salt!");
-        }
+        if (keySalt == null) throw new IllegalArgumentException("You must provide non-null key salt!");
         this.keySalt = keySalt;
         return this;
     }
@@ -88,9 +84,7 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if passed key salt is null
      */
     public SymmetricAlgorithmBuilder keySalt(String keySalt) throws IllegalArgumentException {
-        if (keySalt == null) {
-            throw new IllegalArgumentException("You must provide non-null key salt!");
-        }
+        if (keySalt == null) throw new IllegalArgumentException("You must provide non-null key salt!");
         return keySalt(Encoding.getBytes(keySalt));
     }
 
@@ -103,9 +97,7 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if passed iterations are lower than 1
      */
     public SymmetricAlgorithmBuilder keyHashIterations(int keyHashIterations) throws IllegalArgumentException {
-        if (keyHashIterations < 1) {
-            throw new IllegalArgumentException("You must provide iterations for key hashing >= 1!");
-        }
+        if (keyHashIterations < 1) throw new IllegalArgumentException("You must provide iterations >= 1!");
         this.keyHashIterations = keyHashIterations;
         return this;
     }
@@ -121,9 +113,7 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if passed ByteArrayFactory is null
      */
     public SymmetricAlgorithmBuilder ivFactory(ByteArrayFactory ivFactory) throws IllegalArgumentException {
-        if (ivFactory == null) {
-            throw new IllegalArgumentException("You must provide non-null ByteArrayFactory!");
-        }
+        if (ivFactory == null) throw new IllegalArgumentException("You must provide non-null ByteArrayFactory!");
         this.ivFactory = ivFactory;
         return this;
     }
@@ -137,9 +127,8 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if passed CombiningSplitting is null
      */
     public SymmetricAlgorithmBuilder ivAndOutputCombining(CombiningSplitting ivOutputCombining) throws IllegalArgumentException {
-        if (ivOutputCombining == null) {
+        if (ivOutputCombining == null)
             throw new IllegalArgumentException("You must provide non-null CombiningSplitting!");
-        }
         this.ivOutputCombining = ivOutputCombining;
         return this;
     }
@@ -152,9 +141,8 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if passed BytesRepresentation is null
      */
     public SymmetricAlgorithmBuilder bytesRepresentation(BytesRepresentation bytesRepresentation) throws IllegalArgumentException {
-        if (bytesRepresentation == null) {
+        if (bytesRepresentation == null)
             throw new IllegalArgumentException("You must provide non-null BytesRepresentation!");
-        }
         this.bytesRepresentation = bytesRepresentation;
         return this;
     }
@@ -167,9 +155,7 @@ public final class SymmetricAlgorithmBuilder {
      * @throws IllegalArgumentException exception if given encoding is null or not supported
      */
     public SymmetricAlgorithmBuilder encoding(String encoding) throws IllegalArgumentException {
-        if (encoding == null) {
-            throw new IllegalArgumentException("You must provide non-null encoding!");
-        }
+        if (encoding == null) throw new IllegalArgumentException("You must provide non-null encoding!");
         Encoding.checkEncoding(encoding);
         this.encoding = encoding;
         return this;
