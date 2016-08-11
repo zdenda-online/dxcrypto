@@ -20,7 +20,7 @@ Maven dependency
 <dependency>
    <groupId>cz.d1x</groupId>
    <artifactId>dxcrypto</artifactId>
-   <version>1.10</version>
+   <version>1.11</version>
 </dependency>
 ```
 
@@ -121,14 +121,14 @@ EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
 
 **Custom Encryption Engines**
 ```java
-/ Custom engine for one specific algorithm
-SymmetricEncryptionEngineFactory customFactory = null; // your implementation
+// Custom engine for one specific algorithm
+SymmetricEncryptionEngineFactory customFactory = ...; // your factory (for 1 engine)
 EncryptionAlgorithm customAes = EncryptionAlgorithms.aes("secretPassphrase")
     .engineFactory(customFactory)
     .build();
 
 // Custom set of factories (for all supported algorithms of EncryptionAlgorithms)
-EncryptionEnginesFactories factories = null; // your implementation
+EncryptionEnginesFactories factories = ...; // your factories
 EncryptionAlgorithms.defaultFactories(factories);
 EncryptionAlgorithm customAes256 = EncryptionAlgorithms.aes256("secretPassphrase")
     // no need to set engineFactory as in previous example
