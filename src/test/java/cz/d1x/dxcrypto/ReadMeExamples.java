@@ -22,7 +22,7 @@ public class ReadMeExamples {
      * Copy paste README examples in here and verify
      */
     @Test
-    public void hasing() {
+    public void hashing() {
         HashingAlgorithm sha256 = HashingAlgorithms.sha256()
                 .encoding("UTF-8") // optional, defaults to UTF-8
                 // .bytesRepresentation(...) // optional, defaults to lower-cased HEX
