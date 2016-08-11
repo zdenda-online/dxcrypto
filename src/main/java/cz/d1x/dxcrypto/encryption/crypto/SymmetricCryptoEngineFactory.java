@@ -44,7 +44,11 @@ public class SymmetricCryptoEngineFactory implements SymmetricEncryptionEngineFa
         // if we support more algorithms that require JCE, we should check it the same way
 
         try {
-            char[] keyEncoded = Encoding.getString(keyPassword).toCharArray();
+            // A bug in PBEKeySpec as it accepts first parameter only char[] and does not allow custom byte[]
+            // This can cause incompatibility with other engines when used different than String-based key password
+            // https://bugs.openjdk.java.net/browse/JDK-4703384
+            char[] keyEncoded = Encoding.getString(keyPassword).toCharArray(); // likely we cannot do any better
+
             PBEKeySpec keySpec = new PBEKeySpec(keyEncoded, keySalt, keyHashIterations, keySize);
             SecretKey tmp = SecretKeyFactory.getInstance(keyAlgorithmName).generateSecret(keySpec);
 
