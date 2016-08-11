@@ -6,10 +6,6 @@ import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,20 +27,16 @@ public class EncryptionAlgorithmsTest {
             0x27, 0x18, 0x27, 0x09, 0x7C, 0x44, 0x17, 0x1E,
             0x43, 0x03, 0x11, 0x27, 0x1F, 0x0D, 0x6D, 0x64,
             0x44, 0x18, 0x27, 0x09, 0x7A, 0x44, 0x17, 0x3E};
-    private static final KeyPair RSA_KEYS = new RSAKeysGenerator().generateKeys();
+    private static final RSAKeysGenerator.RSAKeys RSA_KEYS = new RSAKeysGenerator().generateKeys();
 
     protected List<EncryptionAlgorithm> getImplementationsToTest() {
         return new ArrayList<EncryptionAlgorithm>() {{
             add(EncryptionAlgorithms.aes(AES_KEY).build());
             add(EncryptionAlgorithms.tripleDes(TRIPLE_DES_KEY).build());
-            add(EncryptionAlgorithms.rsa().keyPair(RSA_KEYS).build());
 
-            BigInteger modulus = ((RSAPublicKey) RSA_KEYS.getPublic()).getModulus();
-            BigInteger publicExponent = ((RSAPublicKey) RSA_KEYS.getPublic()).getPublicExponent();
-            BigInteger privateExponent = ((RSAPrivateKey) RSA_KEYS.getPrivate()).getPrivateExponent();
             add(EncryptionAlgorithms.rsa()
-                    .publicKey(modulus, publicExponent)
-                    .privateKey(modulus, privateExponent)
+                    .publicKey(RSA_KEYS.getModulus(), RSA_KEYS.getPublicExponent())
+                    .privateKey(RSA_KEYS.getModulus(), RSA_KEYS.getPrivateExponent())
                     .build());
         }};
     }
@@ -155,7 +147,7 @@ public class EncryptionAlgorithmsTest {
     public void sameInputsGiveDifferentResultsForSymmetricAlgorithms() throws UnsupportedEncodingException {
         String plain = "th1s_is_something inter3sting -*";
         for (EncryptionAlgorithm encryptionAlgorithm : getImplementationsToTest()) {
-            if (!(encryptionAlgorithm instanceof SymmetricBlockAlgorithm)) {
+            if (!(encryptionAlgorithm instanceof GenericEncryptionAlgorithm)) {
                 continue; // test only symmetric algorithms
             }
             String encrypted1 = encryptionAlgorithm.encrypt(plain);

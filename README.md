@@ -102,20 +102,21 @@ String andBack = des.decrypt(asString);
 **Asymmetric Encryption**
 ```java
 // custom keys
-BigInteger modulus = ...; // your modulus (n)
-BigInteger publicExponent = ...; // your public exponent (e)
-BigInteger privateExponent = ...; // your private exponent (d)
+BigInteger modulus = BigInteger.ZERO; // your modulus (n)
+BigInteger publicExponent = BigInteger.ZERO; // your public exponent (e)
+BigInteger privateExponent = BigInteger.ZERO; // your private exponent (d)
 EncryptionAlgorithm customRsa = EncryptionAlgorithms.rsa()
-        .publicKey(modulus, publicExponent)
-        .privateKey(modulus, privateExponent)
-        .build();
-        
+    .publicKey(modulus, publicExponent)
+    .privateKey(modulus, privateExponent)
+    .build();
+
 // generated keys
 RSAKeysGenerator keysGen = new RSAKeysGenerator();
-KeyPair keys = keysGen.generateKeys();
+RSAKeysGenerator.RSAKeys keys = keysGen.generateKeys();
 EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
-        .keyPair(keys)
-        .build();
+    .publicKey(keys.getModulus(), keys.getPublicExponent())
+    .privateKey(keys.getModulus(), keys.getPrivateExponent())
+    .build();
 ```
 
 **Secure Properties**

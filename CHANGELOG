@@ -1,5 +1,8 @@
 Whats new in latest versions
 
+Version 1.11
+* Added EncryptionEngine concept for symmetric encryption to allow usage of different implementations (e.g. BouncyCastle)
+
 Version 1.10
 * Added ByteArrayFactory for initialization vector of CBC-based encryption algorithms
 * Refactoring of Combining and Splitting

@@ -11,9 +11,6 @@ import cz.d1x.dxcrypto.hash.SaltedHashingAlgorithm;
 import cz.d1x.dxcrypto.props.SecureProperties;
 import org.junit.Test;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
-
 /**
  * Tests README examples.
  *
@@ -28,7 +25,7 @@ public class ReadMeExamples {
     public void test() {
         HashingAlgorithm sha256 = HashingAlgorithms.sha256()
                 .encoding("UTF-8") // optional, defaults to UTF-8
-                        // .bytesRepresentation(...) // optional, defaults to lower-cased HEX
+                // .bytesRepresentation(...) // optional, defaults to lower-cased HEX
                 .build();
 
         byte[] asBytes = sha256.hash(new byte[]{'h', 'e', 'l', 'l', 'o'});
@@ -54,8 +51,8 @@ public class ReadMeExamples {
         EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
                 .keySalt("saltForKeyDerivation") // optional
                 .keyHashIterations(4096) // optional
-                        // .ivAndOutputCombining(...) // optional, how to combine/split IV and cipherText
-                        // .bytesRepresentation(...) // optional, defaults to lower-cased HEX
+                // .ivAndOutputCombining(...) // optional, how to combine/split IV and cipherText
+                // .bytesRepresentation(...) // optional, defaults to lower-cased HEX
                 .build();
 
         byte[] asBytes2 = aes.encrypt(new byte[]{'h', 'e', 'l', 'l', 'o'});
@@ -68,10 +65,11 @@ public class ReadMeExamples {
         String asString3 = des.encrypt("hello");
         String andBack3 = des.decrypt(asString3);
 
+        // Commented because test would fail with these big integer values.
         // custom key
-        BigInteger modulus = BigInteger.ZERO; // your modulus (n)
-        BigInteger publicExponent = BigInteger.ZERO; // your public exponent (e)
-        BigInteger privateExponent = BigInteger.ZERO; // your private exponent (d)
+//        BigInteger modulus = BigInteger.ONE; // your modulus (n)
+//        BigInteger publicExponent = BigInteger.ONE; // your public exponent (e)
+//        BigInteger privateExponent = BigInteger.ONE; // your private exponent (d)
 //        EncryptionAlgorithm customRsa = EncryptionAlgorithms.rsa()
 //                .publicKey(modulus, publicExponent)
 //                .privateKey(modulus, privateExponent)
@@ -79,9 +77,10 @@ public class ReadMeExamples {
 
         // generated keys
         RSAKeysGenerator keysGen = new RSAKeysGenerator();
-        KeyPair keys = keysGen.generateKeys();
+        RSAKeysGenerator.RSAKeys keys = keysGen.generateKeys();
         EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
-                .keyPair(keys)
+                .publicKey(keys.getModulus(), keys.getPublicExponent())
+                .privateKey(keys.getModulus(), keys.getPrivateExponent())
                 .build();
 
         EncryptionAlgorithm algorithm = EncryptionAlgorithms.aes("whatever").build(); // your algorithm

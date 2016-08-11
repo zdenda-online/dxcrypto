@@ -1,13 +1,12 @@
 package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.*;
-import cz.d1x.dxcrypto.encryption.crypto.CryptoEngineFactory;
 
 /**
- * Base builder for symmetric key algorithms based on {@link SymmetricBlockAlgorithm}.
+ * Base builder for symmetric key algorithms based on {@link GenericEncryptionAlgorithm}.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
- * @see SymmetricBlockAlgorithm
+ * @see GenericEncryptionAlgorithm
  */
 public final class SymmetricAlgorithmBuilder {
 
@@ -16,16 +15,14 @@ public final class SymmetricAlgorithmBuilder {
             0x40, 0x43, 0x18, 0x65};
     private static final int DEFAULT_KEY_HASH_ITERATIONS = 4096;
 
-    private final String algorithmName;
-    private final String shortAlgorithmName;
-    private final int keySize;
-
-    private final byte[] keyPassword;
-
-    private EngineFactory engineFactory;
+    private SymmetricEncryptionEngineFactory engineFactory;
     private int blockSize;
+
+    private final int keySize;
+    private final byte[] keyPassword;
     private byte[] keySalt = DEFAULT_KEY_SALT;
     private int keyHashIterations = DEFAULT_KEY_HASH_ITERATIONS;
+
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
     private ByteArrayFactory ivFactory = new RandomByteArrayFactory();
@@ -34,40 +31,31 @@ public final class SymmetricAlgorithmBuilder {
     /**
      * Creates a new builder.
      *
-     * @param keyPassword        key password
-     * @param algorithmName      full algorithm name (used for Cipher initialization)
-     * @param shortAlgorithmName short algorithm name (typically only first part of full name)
-     * @param keySize            size of the key (in bits)
-     * @param blockSize          size of the block (in bits)
+     * @param engineFactory factory for encryption engine
+     * @param keyPassword   key password
+     * @param keySize       size of the key (in bits)
+     * @param blockSize     size of the block (in bits)
      */
-    public SymmetricAlgorithmBuilder(byte[] keyPassword,
-                                     String algorithmName, String shortAlgorithmName,
-                                     int keySize, int blockSize) {
+    public SymmetricAlgorithmBuilder(SymmetricEncryptionEngineFactory engineFactory, byte[] keyPassword, int keySize, int blockSize) {
         if (keyPassword == null) {
             throw new IllegalArgumentException("You must provide non-null key password!");
         }
         this.blockSize = blockSize / 8;
-        this.keyPassword = keyPassword;
         this.keySize = keySize;
+        this.keyPassword = keyPassword;
 
-        this.algorithmName = algorithmName;
-        this.shortAlgorithmName = shortAlgorithmName;
+        this.engineFactory = engineFactory;
         this.ivOutputCombining = new ConcatAlgorithm(this.blockSize);
-        this.engineFactory = new CryptoEngineFactory(algorithmName, shortAlgorithmName);
     }
 
-    public SymmetricAlgorithmBuilder cryptoEngine() {
-        this.engineFactory = new CryptoEngineFactory(algorithmName, shortAlgorithmName);
-        return this;
-    }
-
-    public SymmetricAlgorithmBuilder bouncyCastleEngine() {
-        // TODO
-        this.engineFactory = new CryptoEngineFactory(algorithmName, shortAlgorithmName);
-        return this;
-    }
-
-    public SymmetricAlgorithmBuilder customEngine(EngineFactory engineFactory) throws IllegalArgumentException {
+    /**
+     * Sets factory for encryption engine.
+     *
+     * @param engineFactory factory for encryption engine
+     * @return this instance
+     * @throws IllegalArgumentException exception if passed factory is null
+     */
+    public SymmetricAlgorithmBuilder engineFactory(SymmetricEncryptionEngineFactory engineFactory) throws IllegalArgumentException {
         if (engineFactory == null) {
             throw new IllegalArgumentException("You must provide non-null engine factory!");
         }
@@ -194,6 +182,6 @@ public final class SymmetricAlgorithmBuilder {
      */
     public EncryptionAlgorithm build() throws IllegalArgumentException {
         EncryptionEngine engine = engineFactory.newEngine(keyPassword, keySalt, keyHashIterations, keySize);
-        return new SymmetricBlockAlgorithm(engine, blockSize, ivFactory, ivOutputCombining, bytesRepresentation, encoding);
+        return new GenericEncryptionAlgorithm(engine, bytesRepresentation, encoding, blockSize, ivFactory, ivOutputCombining);
     }
 }

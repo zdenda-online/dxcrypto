@@ -1,6 +1,8 @@
 package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.Encoding;
+import cz.d1x.dxcrypto.encryption.crypto.RSACryptoEngineFactory;
+import cz.d1x.dxcrypto.encryption.crypto.SymmetricCryptoEngineFactory;
 
 import javax.crypto.Cipher;
 import java.security.NoSuchAlgorithmException;
@@ -15,7 +17,13 @@ import java.security.NoSuchAlgorithmException;
 public class EncryptionAlgorithms {
 
     /**
-     * Creates a new builder for AES encryption algorithm with these properties:
+     * <p>
+     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
+     * default encryption engine.
+     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
+     * </p><p>
+     * Properties of default engine from Java API implementation:
+     * </p>
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
@@ -30,11 +38,18 @@ public class EncryptionAlgorithms {
      * @throws IllegalArgumentException exception if passed key password is null
      */
     public static SymmetricAlgorithmBuilder aes(byte[] keyPassword) throws IllegalArgumentException {
-        return new SymmetricAlgorithmBuilder(keyPassword, "AES/CBC/PKCS5Padding", "AES", 128, 128);
+        SymmetricEncryptionEngineFactory engineFactory = new SymmetricCryptoEngineFactory("AES/CBC/PKCS5Padding", "PBKDF2WithHmacSHA1");
+        return new SymmetricAlgorithmBuilder(engineFactory, keyPassword, 128, 128);
     }
 
     /**
-     * Creates a new builder for AES encryption algorithm with these properties:
+     * <p>
+     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
+     * default encryption engine.
+     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
+     * </p><p>
+     * Properties of default engine from Java API implementation:
+     * </p>
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
@@ -53,7 +68,13 @@ public class EncryptionAlgorithms {
     }
 
     /**
-     * Creates a new builder for AES encryption algorithm with these properties:
+     * <p>
+     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
+     * default encryption engine.
+     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
+     * </p><p>
+     * Properties of default engine from Java API implementation:
+     * </p>
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
@@ -62,18 +83,28 @@ public class EncryptionAlgorithms {
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
+     * <p>
+     * Note that if you use default javax.crypto implementation, you may need JCE installed for AES-256.
+     * On the other hand, you can use custom {@link EncryptionEngine}, e.g. Bouncy Castle that does need JCE.
+     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption
-     * @throws IllegalArgumentException exception if passed key password is null or AES-256 is not supported (JCE)
+     * @throws IllegalArgumentException exception if passed key password is null
      */
     public static SymmetricAlgorithmBuilder aes256(byte[] keyPassword) throws IllegalArgumentException {
-        checkCipherSupported("AES", 256);
-        return new SymmetricAlgorithmBuilder(keyPassword, "AES/CBC/PKCS7Padding", "AES", 256, 128);
+        SymmetricEncryptionEngineFactory engineFactory = new SymmetricCryptoEngineFactory("AES/CBC/PKCS7Padding", "PBKDF2WithHmacSHA1");
+        return new SymmetricAlgorithmBuilder(engineFactory, keyPassword, 256, 128);
     }
 
     /**
-     * Creates a new builder for AES encryption algorithm with these properties:
+     * <p>
+     * Creates a new builder for AES encryption algorithm that uses standard Java API implementation (javax.crypto) as
+     * default encryption engine.
+     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
+     * </p><p>
+     * Properties of default engine from Java API implementation:
+     * </p>
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
@@ -82,18 +113,27 @@ public class EncryptionAlgorithms {
      * <li>Input padding: PKCS#5</li>
      * <li>Encryption key: PBKDF2 with HMAC-SHA1 for key derivation</li>
      * </ul>
+     * <p>
+     * Note that if you use default javax.crypto implementation, you may need JCE installed for AES-256.
+     * On the other hand, you can use custom {@link EncryptionEngine}, e.g. Bouncy Castle that does need JCE.
+     * </p>
      *
      * @param keyPassword password for key derivation
      * @return builder for AES encryption algorithm
-     * @throws IllegalArgumentException exception if passed key password is null or AES-256 is not supported (JCE)
+     * @throws IllegalArgumentException exception if passed key password is null
      */
     public static SymmetricAlgorithmBuilder aes256(String keyPassword) throws IllegalArgumentException {
-        checkCipherSupported("AES", 256);
         return aes256(Encoding.getBytes(keyPassword));
     }
 
     /**
-     * Creates a new builder for 3DES encryption algorithm with these properties:
+     * <p>
+     * Creates a new builder for 3DES encryption algorithm that uses standard Java API implementation (javax.crypto) as
+     * default encryption engine.
+     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
+     * </p><p>
+     * Properties of default engine from Java API implementation:
+     * </p>
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
@@ -109,11 +149,18 @@ public class EncryptionAlgorithms {
      */
     public static SymmetricAlgorithmBuilder tripleDes(byte[] keyPassword) throws IllegalArgumentException {
         int keySize = (3 * 8) * 8; // crypto uses multiples of 24 (even 3DES uses 56 bytes keys)
-        return new SymmetricAlgorithmBuilder(keyPassword, "DESede/CBC/PKCS5Padding", "DESede", keySize, 64);
+        SymmetricEncryptionEngineFactory engineFactory = new SymmetricCryptoEngineFactory("DESede/CBC/PKCS5Padding", "PBKDF2WithHmacSHA1");
+        return new SymmetricAlgorithmBuilder(engineFactory, keyPassword, keySize, 64);
     }
 
     /**
-     * Creates a new builder for 3DES encryption algorithm with these properties:
+     * <p>
+     * Creates a new builder for 3DES encryption algorithm that uses standard Java API implementation (javax.crypto) as
+     * default encryption engine.
+     * Note that you may use custom {@link SymmetricEncryptionEngineFactory} to bypass your custom engine.
+     * </p><p>
+     * Properties of default engine from Java API implementation:
+     * </p>
      * <ul>
      * <li>Type of cipher: Symmetric</li>
      * <li>Operation mode: Cipher Block Chaining (CBC)</li>
@@ -132,7 +179,13 @@ public class EncryptionAlgorithms {
     }
 
     /**
-     * Creates a new builder for RSA encryption algorithm with these properties:
+     * <p>
+     * Creates a new builder for RSA encryption algorithm that uses standard Java API implementation (javax.crypto) as
+     * default encryption engine.
+     * Note that you may use custom {@link RSAEngineFactory} to bypass your custom engine.
+     * </p><p>
+     * Properties of default engine from Java API implementation:
+     * </p>
      * <ul>
      * <li>Type of cipher: Asymmetric</li>
      * <li>Operation mode: Electronic Codebook (ECB)</li>
@@ -142,8 +195,9 @@ public class EncryptionAlgorithms {
      *
      * @return builder for RSA encryption algorithm
      */
-    public static AsymmetricCryptoAlgorithmBuilder rsa() {
-        return new AsymmetricCryptoAlgorithmBuilder("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+    public static RSAAlgorithmBuilder rsa() {
+        RSACryptoEngineFactory factory = new RSACryptoEngineFactory("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+        return new RSAAlgorithmBuilder(factory);
     }
 
     /**
@@ -156,13 +210,6 @@ public class EncryptionAlgorithms {
             return Cipher.getMaxAllowedKeyLength("AES") == Integer.MAX_VALUE;
         } catch (NoSuchAlgorithmException e) {
             return false;
-        }
-    }
-
-    private static void checkCipherSupported(String name, int keySize) {
-        if (!isJceInstalled()) {
-            throw new IllegalArgumentException("Cipher " + name + " is not supported with key size of " + keySize + "b, " +
-                    " probably Java Cryptography Extension (JCE) is not installed in your Java.");
         }
     }
 }

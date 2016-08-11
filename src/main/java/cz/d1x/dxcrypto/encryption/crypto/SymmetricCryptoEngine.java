@@ -1,7 +1,7 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
-import cz.d1x.dxcrypto.encryption.EncryptionException;
 import cz.d1x.dxcrypto.encryption.EncryptionEngine;
+import cz.d1x.dxcrypto.encryption.EncryptionException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -13,12 +13,17 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
-public class CryptoEngine implements EncryptionEngine {
+/**
+ * Implementation of encryption engine that uses javax.crypto implementations for symmetric encryption.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ */
+public class SymmetricCryptoEngine implements EncryptionEngine {
 
     private final String cipherName;
     private final Key key;
 
-    public CryptoEngine(String cipherName, Key key) {
+    public SymmetricCryptoEngine(String cipherName, Key key) {
         this.cipherName = cipherName;
         this.key = key;
         try {
