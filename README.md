@@ -209,17 +209,17 @@ class BouncyCastleAESEngine implements EncryptionEngine {
         BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(engine, padding);
         cipher.init(isEncrypt, params);
 
-        byte[] output = new byte[cipher.getOutputSize(input.length)];
-        int length = cipher.processBytes(input, 0, input.length, output, 0);
+        byte[] encrypted = new byte[cipher.getOutputSize(input.length)];
+        int length = cipher.processBytes(input, 0, input.length, encrypted, 0);
         try {
-            length += cipher.doFinal(output, 0);
+            length += cipher.doFinal(encrypted, 0);
         } catch (InvalidCipherTextException e) {
             throw new EncryptionException("Encryption fails", e);
         }
 
         // Remove output padding
         byte[] out = new byte[length];
-        System.arraycopy(output, 0, out, 0, length);
+        System.arraycopy(encrypted, 0, out, 0, length);
         return out;
     }
 }
