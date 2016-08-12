@@ -3,12 +3,14 @@ DXCrypto: Easy Java Cryptography
 Simple Java library for cryptography (hashing and encryption) built purely on Java SE without any dependencies.
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
-exceptions it uses. In many cases, programmer needs simpler API. As default implementations of algorithms, this
-library uses standard JRE implementations from existing existing *java.security* and *javax.crypto* packages.
+exceptions it uses. It often happens that programmers using Java encryption APIs (from *java.security* and
+*javax.crypto* packages) consume a lot of time trying to initialize their algorithms properly. The aim of this library
+is to ease this pain as well as providing best practices in their usage (see features list below).
 
-The library is extensible so you can implement your custom parts of algorithms. E.g. if you want to use different
+This library does **not** contain any custom implementation of encryption algorithm. It uses existing Java APIs
+implementations. On the other hand, it is also extensible in many ways. E.g. if you want to use different
 engine for encryption (e.g. Bouncy Castle API for AES-256 which does not require JCE installed), you can easily
-do it - see examples.
+do it (see examples below).
 
 It also provides few utility classes like SecureProperties that extend existing *java.util.Properties* with
 encrypted properties.
@@ -42,7 +44,7 @@ and **salting**
 
 - Symmetric encryption algorithms **AES** and **Triple DES** with CBC, PKCS#5 padding and PBKDF2 for key derivation.
 Both algorithms generate a new random initialization vector for every message and combine it with cipher text
-into the output.
+into the output (so two same inputs always have different output which strengthens security).
 
 - Asymmetric encryption algorithm **RSA** with ECB and OAEP padding
 
