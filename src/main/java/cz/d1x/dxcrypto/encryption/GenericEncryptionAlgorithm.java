@@ -45,12 +45,12 @@ public final class GenericEncryptionAlgorithm implements EncryptionAlgorithm {
      * @param ivOutputCombining   algorithm for combining/splitting IV and cipher text
      * @throws EncryptionException exception when algorithm cannot be created
      */
-    protected GenericEncryptionAlgorithm(EncryptionEngine engine,
-                                         BytesRepresentation bytesRepresentation,
-                                         String encoding,
-                                         int blockSize,
-                                         ByteArrayFactory ivFactory,
-                                         CombiningSplitting ivOutputCombining) throws EncryptionException {
+    GenericEncryptionAlgorithm(EncryptionEngine engine,
+                               BytesRepresentation bytesRepresentation,
+                               String encoding,
+                               int blockSize,
+                               ByteArrayFactory ivFactory,
+                               CombiningSplitting ivOutputCombining) throws EncryptionException {
         this.engine = engine;
         this.bytesRepresentation = bytesRepresentation;
         this.encoding = encoding;

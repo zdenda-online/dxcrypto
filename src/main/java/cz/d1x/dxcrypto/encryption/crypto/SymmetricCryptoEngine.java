@@ -8,6 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -23,9 +24,10 @@ public class SymmetricCryptoEngine implements EncryptionEngine {
     private final String cipherName;
     private final Key key;
 
-    public SymmetricCryptoEngine(String cipherName, Key key) throws EncryptionException {
+    public SymmetricCryptoEngine(String cipherName, byte[] key) throws EncryptionException {
         this.cipherName = cipherName;
-        this.key = key;
+        String shortCipherName = cipherName.contains("/") ? cipherName.substring(0, cipherName.indexOf("/")) : cipherName;
+        this.key = new SecretKeySpec(key, shortCipherName);
         try {
             Cipher.getInstance(cipherName); // find out if i can create instances and retrieve block size
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {

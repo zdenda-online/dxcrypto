@@ -5,16 +5,13 @@ package cz.d1x.dxcrypto.encryption;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public interface SymmetricEncryptionEngineFactory {
+public interface SymmetricEncryptionEngineFactory<K> {
 
     /**
      * Creates a new encryption engine.
      *
-     * @param keyPassword       password for generation of encryption key
-     * @param keySalt           salt for generation of encryption key
-     * @param keyHashIterations count of hash function iterations for generation of encryption key
-     * @param keySize           size of the key
+     * @param keyFactory factory for encryption key
      * @return encryption engine
      */
-    EncryptionEngine newEngine(byte[] keyPassword, byte[] keySalt, int keyHashIterations, int keySize);
+    EncryptionEngine newEngine(EncryptionKeyFactory<K> keyFactory);
 }

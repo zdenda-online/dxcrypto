@@ -4,6 +4,9 @@ import cz.d1x.dxcrypto.common.*;
 
 /**
  * Base builder for symmetric key algorithms based on {@link GenericEncryptionAlgorithm}.
+ * For all supported symmetric ciphers we use initialization vector so we have it also in this builder even if
+ * symmetric ciphers can be without IV by definition. If we would support other ciphers that does not have IV, this
+ * builder should be refactored into two different classes.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  * @see GenericEncryptionAlgorithm
@@ -15,37 +18,44 @@ public final class SymmetricAlgorithmBuilder {
             0x40, 0x43, 0x18, 0x65};
     private static final int DEFAULT_KEY_HASH_ITERATIONS = 4096;
 
-    private SymmetricEncryptionEngineFactory engineFactory;
-    private int blockSize;
-
+    private final EncryptionFactories factories;
     private final int keySize;
-    private final byte[] keyPassword;
+    private final int blockSize;
+
+    // the key will be used from one of these, depending on what user uses as last call in this builder
+    private EncryptionKeyFactory<ByteArray> keyFactory = null;
+    private byte[] key;
+    private byte[] keyPassword;
+
+    private SymmetricEncryptionEngineFactory<ByteArray> engineFactory;
     private byte[] keySalt = DEFAULT_KEY_SALT;
     private int keyHashIterations = DEFAULT_KEY_HASH_ITERATIONS;
-
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
-    private ByteArrayFactory ivFactory = new RandomByteArrayFactory();
-    private CombiningSplitting ivOutputCombining; // initialize default in constructor!
+
+    // initialize defaults in constructor!
+    private ByteArrayFactory ivFactory;
+    private CombiningSplitting ivOutputCombining;
 
     /**
      * Creates a new builder.
      *
+     * @param factories     factories for engines
      * @param engineFactory factory for encryption engine
-     * @param keyPassword   key password
      * @param keySize       size of the key (in bits)
      * @param blockSize     size of the block (in bits)
      */
-    public SymmetricAlgorithmBuilder(SymmetricEncryptionEngineFactory engineFactory, byte[] keyPassword, int keySize, int blockSize) {
-        if (keyPassword == null) {
-            throw new IllegalArgumentException("You must provide non-null key password!");
-        }
-        this.blockSize = blockSize / 8;
-        this.keySize = keySize;
-        this.keyPassword = keyPassword;
-
+    public SymmetricAlgorithmBuilder(EncryptionFactories factories,
+                                     SymmetricEncryptionEngineFactory<ByteArray> engineFactory,
+                                     int keySize,
+                                     int blockSize) {
+        this.factories = factories;
         this.engineFactory = engineFactory;
+        this.keySize = keySize;
+        this.blockSize = blockSize / 8;
+
         this.ivOutputCombining = new ConcatAlgorithm(this.blockSize);
+        this.ivFactory = new RandomByteArrayFactory();
     }
 
     /**
@@ -55,10 +65,69 @@ public final class SymmetricAlgorithmBuilder {
      * @return this instance
      * @throws IllegalArgumentException exception if passed factory is null
      */
-    public SymmetricAlgorithmBuilder engineFactory(SymmetricEncryptionEngineFactory engineFactory) throws IllegalArgumentException {
+    public SymmetricAlgorithmBuilder engineFactory(SymmetricEncryptionEngineFactory<ByteArray> engineFactory)
+            throws IllegalArgumentException {
         if (engineFactory == null) throw new IllegalArgumentException("You must provide non-null engine factory!");
         this.engineFactory = engineFactory;
         return this;
+    }
+
+    /**
+     * <p>
+     * Set custom key. Note that client is responsible for correct key size.
+     * If passed key size is invalid, {@link IllegalArgumentException} is thrown.
+     * </p><p>
+     * Note that if you use this method, it overrides previous setting of
+     * {@link #keyFactory(EncryptionKeyFactory)} and {@link #keyPassword(byte[])}.
+     * </p>
+     *
+     * @param key key to be set
+     * @return this instance
+     * @throws IllegalArgumentException exception if passed key is null or key size is invalid
+     */
+    public SymmetricAlgorithmBuilder key(byte[] key) throws IllegalArgumentException {
+        if (key == null) throw new IllegalArgumentException("You must provide non-null key salt!");
+        if (key.length != (keySize / 8))
+            throw new IllegalArgumentException("Invalid key size, is " + key.length + " bytes but must be " + (keySize / 8) + "bytes");
+        resetKeyFields(null, key, null);
+        return this;
+    }
+
+    /**
+     * <p>
+     * Sets a key password for key derivation.
+     * </p>
+     * <p>
+     * Note that if you use this method, it overrides previous setting of
+     * {@link #keyFactory(EncryptionKeyFactory)} and {@link #key(byte[])}.
+     * </p>
+     *
+     * @param keyPassword key password for key derivation
+     * @return this instance
+     * @throws IllegalArgumentException exception if passed key password is null
+     */
+    public SymmetricAlgorithmBuilder keyPassword(byte[] keyPassword) throws IllegalArgumentException {
+        if (keyPassword == null) throw new IllegalArgumentException("You must provide non-null key password!");
+        resetKeyFields(null, null, keyPassword);
+        return this;
+    }
+
+    /**
+     * <p>
+     * Sets a key password for key derivation.
+     * </p>
+     * <p>
+     * Note that if you use this method, it overrides previous setting of
+     * {@link #keyFactory(EncryptionKeyFactory)} and {@link #key(byte[])}.
+     * </p>
+     *
+     * @param keyPassword key password for key derivation
+     * @return this instance
+     * @throws IllegalArgumentException exception if passed key password is null
+     */
+    public SymmetricAlgorithmBuilder keyPassword(String keyPassword) throws IllegalArgumentException {
+        if (keyPassword == null) throw new IllegalArgumentException("You must provide non-null key password!");
+        return keyPassword(Encoding.getBytes(keyPassword));
     }
 
     /**
@@ -99,6 +168,45 @@ public final class SymmetricAlgorithmBuilder {
     public SymmetricAlgorithmBuilder keyHashIterations(int keyHashIterations) throws IllegalArgumentException {
         if (keyHashIterations < 1) throw new IllegalArgumentException("You must provide iterations >= 1!");
         this.keyHashIterations = keyHashIterations;
+        return this;
+    }
+
+    /**
+     * <p>
+     * Sets all parameters for key derivation function.
+     * </p>
+     * <p>
+     * Note that if you use this method, it overrides previous setting of
+     * {@link #keyFactory(EncryptionKeyFactory)} and {@link #key(byte[])}.
+     * </p>
+     *
+     * @param keyPassword key password for key derivation
+     * @return this instance
+     * @throws IllegalArgumentException exception if passed key password is null
+     */
+    public SymmetricAlgorithmBuilder keyDerivation(byte[] keyPassword, byte[] keySalt,
+                                                   int keyHashIterations) throws IllegalArgumentException {
+        keyPassword(keyPassword);
+        keySalt(keySalt);
+        keyHashIterations(keyHashIterations);
+        return this;
+    }
+
+    /**
+     * <p>
+     * Sets a custom key factory.
+     * </p><p>
+     * Note that if you use this method, it overrides previous setting of
+     * {@link #key(byte[])} and {@link #keyPassword(byte[])}.
+     * </p>
+     *
+     * @param keyFactory factory to be set
+     * @return this instance
+     * @throws IllegalArgumentException exception if passed factory is null
+     */
+    public SymmetricAlgorithmBuilder keyFactory(EncryptionKeyFactory<ByteArray> keyFactory) throws IllegalArgumentException {
+        if (keyFactory == null) throw new IllegalArgumentException("You must provide non-null key factory!");
+        resetKeyFields(keyFactory, null, null);
         return this;
     }
 
@@ -167,7 +275,34 @@ public final class SymmetricAlgorithmBuilder {
      * @return algorithm instance
      */
     public EncryptionAlgorithm build() throws IllegalArgumentException {
-        EncryptionEngine engine = engineFactory.newEngine(keyPassword, keySalt, keyHashIterations, keySize);
+        EncryptionEngine engine = engineFactory.newEngine(resolveKeyFactory());
         return new GenericEncryptionAlgorithm(engine, bytesRepresentation, encoding, blockSize, ivFactory, ivOutputCombining);
+    }
+
+    private void resetKeyFields(EncryptionKeyFactory<ByteArray> keyFactory, byte[] key, byte[] keyPassword) {
+        this.keyFactory = keyFactory;
+        this.key = key;
+        this.keyPassword = keyPassword;
+    }
+
+    private EncryptionKeyFactory<ByteArray> resolveKeyFactory() {
+        // variant with custom key factory
+        if (keyFactory != null) return keyFactory;
+
+        // variant with custom key password, salt, hash iterations
+        if (keyPassword != null && keyPassword.length != 0)
+            return factories.derivedKeyFactory(keyPassword, keySalt, keyHashIterations, keySize);
+
+        // variant with custom key
+        if (key != null && key.length != 0) {
+            return new EncryptionKeyFactory<ByteArray>() {
+                @Override
+                public ByteArray newKey() throws EncryptionException {
+                    return new ByteArray(key);
+                }
+            };
+        }
+
+        throw new IllegalArgumentException("Missing data for encryption key (at least one of these must be set: keyFactory, keyPassword, key)");
     }
 }

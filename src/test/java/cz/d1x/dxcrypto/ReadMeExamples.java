@@ -100,7 +100,7 @@ public class ReadMeExamples {
 //                .build();
 
         // Custom set of factories (for all supported algorithms of EncryptionAlgorithms)
-//        EncryptionEnginesFactories factories = null; // your implementation
+//        EncryptionFactories factories = null; // your implementation
 //        EncryptionAlgorithms.defaultFactories(factories);
 //        EncryptionAlgorithm customAes256 = EncryptionAlgorithms.aes256("secretPassphrase")
 //                // no need to set engineFactory as in previous example
