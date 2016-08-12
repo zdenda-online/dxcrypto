@@ -5,10 +5,23 @@ import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.ConcatAlgorithm;
 import cz.d1x.dxcrypto.common.HexRepresentation;
 import cz.d1x.dxcrypto.encryption.*;
+import cz.d1x.dxcrypto.encryption.key.DerivedKeyParameters;
+import cz.d1x.dxcrypto.encryption.key.EncryptionKeyFactory;
 import cz.d1x.dxcrypto.hash.HashingAlgorithm;
 import cz.d1x.dxcrypto.hash.HashingAlgorithms;
 import cz.d1x.dxcrypto.hash.SaltedHashingAlgorithm;
 import cz.d1x.dxcrypto.props.SecureProperties;
+import org.bouncycastle.crypto.*;
+import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.BlockCipherPadding;
+import org.bouncycastle.crypto.paddings.PKCS7Padding;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.junit.Test;
 
 import java.math.BigInteger;
 
@@ -122,5 +135,77 @@ public class ReadMeExamples {
         // automatic decryption of values
         String decrypted = props.getProperty("encryptedProperty"); // "myDirtySecret"
         String original = props.getOriginalProperty("encryptedProperty"); // bf165...
+    }
+
+    @Test
+    public void bouncyCastle() {
+        EncryptionAlgorithm bcAes = EncryptionAlgorithms.aes256("secretPassphrase")
+                .keyFactory(new BouncyCastlePBKDF2KeyFactory())
+                .engineFactory(new BouncyCastleAESEngineFactory())
+                .build();
+
+        String encrypted = bcAes.encrypt("ahoj");
+        String decrypted = bcAes.decrypt(encrypted);
+        System.out.println(decrypted);
+    }
+
+    class BouncyCastlePBKDF2KeyFactory implements EncryptionKeyFactory<ByteArray, DerivedKeyParameters> {
+
+        @Override
+        public ByteArray newKey(DerivedKeyParameters keyParams) throws EncryptionException {
+            PBEParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA1Digest());
+            gen.init(keyParams.getPassword(), keyParams.getSalt(), keyParams.getIterations());
+            KeyParameter keyParam = (KeyParameter) gen.generateDerivedParameters(keyParams.getKeySize());
+            return new ByteArray(keyParam.getKey());
+        }
+    }
+
+    class BouncyCastleAESEngineFactory implements SymmetricEncryptionEngineFactory<ByteArray> {
+
+        @Override
+        public EncryptionEngine newEngine(ByteArray key) {
+            KeyParameter keyParam = new KeyParameter(key.getValue());
+            return new BouncyCastleAESEngine(keyParam);
+        }
+    }
+
+    class BouncyCastleAESEngine implements EncryptionEngine {
+
+        private final KeyParameter keyParam;
+
+        public BouncyCastleAESEngine(KeyParameter keyParam) {
+            this.keyParam = keyParam;
+        }
+
+        @Override
+        public byte[] encrypt(byte[] input, byte[] initVector) throws EncryptionException {
+            return doOperation(input, initVector, true);
+        }
+
+        @Override
+        public byte[] decrypt(byte[] input, byte[] initVector) throws EncryptionException {
+            return doOperation(input, initVector, false);
+        }
+
+        private byte[] doOperation(byte[] input, byte[] initVector, boolean isEncrypt) {
+            CipherParameters params = new ParametersWithIV(keyParam, initVector);
+            BlockCipherPadding padding = new PKCS7Padding();
+            BlockCipher engine = new CBCBlockCipher(new AESEngine());
+            BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(engine, padding);
+            cipher.init(isEncrypt, params);
+
+            byte[] output = new byte[cipher.getOutputSize(input.length)];
+            int length = cipher.processBytes(input, 0, input.length, output, 0);
+            try {
+                length += cipher.doFinal(output, 0);
+            } catch (InvalidCipherTextException e) {
+                throw new EncryptionException("Encryption fails", e);
+            }
+
+            // Remove output padding
+            byte[] out = new byte[length];
+            System.arraycopy(output, 0, out, 0, length);
+            return out;
+        }
     }
 }

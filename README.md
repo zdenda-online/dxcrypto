@@ -3,9 +3,12 @@ DXCrypto: Easy Java Cryptography
 Simple Java library for cryptography (hashing and encryption) built purely on Java SE without any dependencies.
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
-exceptions it uses. In many cases, programmer needs simpler API, so this library provides higher
-level of abstraction over existing *java.security* and *javax.crypto* packages. You can be sure it uses implementations
-of cryptographic functions from JDK. In other words if you trust implementations in JDK, you can trust this library.
+exceptions it uses. In many cases, programmer needs simpler API. As default implementations of algorithms, this
+library uses standard JRE implementations from existing existing *java.security* and *javax.crypto* packages.
+
+The library is extensible so you can implement your custom parts of algorithms. E.g. if you want to use different
+engine for encryption (e.g. Bouncy Castle API for AES-256 which does not require JCE installed), you can easily
+do it - see examples.
 
 It also provides few utility classes like SecureProperties that extend existing *java.util.Properties* with
 encrypted properties.
@@ -152,4 +155,72 @@ props.setEncryptedProperty("encryptedProperty", "myDirtySecret");
 // automatic decryption of values
 String decrypted = props.getProperty("encryptedProperty"); // "myDirtySecret"
 String original = props.getOriginalProperty("encryptedProperty"); // bf165...
+```
+
+**Bouncy Castle for AES-256**
+```java
+EncryptionAlgorithm bcAes = EncryptionAlgorithms.aes256("secretPassphrase")
+    .keyFactory(new BouncyCastlePBKDF2KeyFactory())
+    .engineFactory(new BouncyCastleAESEngineFactory())
+    .build();
+
+class BouncyCastlePBKDF2KeyFactory implements EncryptionKeyFactory<ByteArray, DerivedKeyParameters> {
+
+    @Override
+    public ByteArray newKey(DerivedKeyParameters keyParams) throws EncryptionException {
+        PBEParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA1Digest());
+        gen.init(keyParams.getPassword(), keyParams.getSalt(), keyParams.getIterations());
+        KeyParameter keyParam = (KeyParameter) gen.generateDerivedParameters(keyParams.getKeySize());
+        return new ByteArray(keyParam.getKey());
+    }
+}
+
+class BouncyCastleAESEngineFactory implements SymmetricEncryptionEngineFactory<ByteArray> {
+
+    @Override
+    public EncryptionEngine newEngine(ByteArray key) {
+        KeyParameter keyParam = new KeyParameter(key.getValue());
+        return new BouncyCastleAESEngine(keyParam);
+    }
+}
+
+class BouncyCastleAESEngine implements EncryptionEngine {
+
+    private final KeyParameter keyParam;
+
+    public BouncyCastleAESEngine(KeyParameter keyParam) {
+        this.keyParam = keyParam;
+    }
+
+    @Override
+    public byte[] encrypt(byte[] input, byte[] initVector) throws EncryptionException {
+        return doOperation(input, initVector, true);
+    }
+
+    @Override
+    public byte[] decrypt(byte[] input, byte[] initVector) throws EncryptionException {
+        return doOperation(input, initVector, false);
+    }
+
+    private byte[] doOperation(byte[] input, byte[] initVector, boolean isEncrypt) {
+        CipherParameters params = new ParametersWithIV(keyParam, initVector);
+        BlockCipherPadding padding = new PKCS7Padding();
+        BlockCipher engine = new CBCBlockCipher(new AESEngine());
+        BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(engine, padding);
+        cipher.init(isEncrypt, params);
+
+        byte[] output = new byte[cipher.getOutputSize(input.length)];
+        int length = cipher.processBytes(input, 0, input.length, output, 0);
+        try {
+            length += cipher.doFinal(output, 0);
+        } catch (InvalidCipherTextException e) {
+            throw new EncryptionException("Encryption fails", e);
+        }
+
+        // Remove output padding
+        byte[] out = new byte[length];
+        System.arraycopy(output, 0, out, 0, length);
+        return out;
+    }
+}
 ```

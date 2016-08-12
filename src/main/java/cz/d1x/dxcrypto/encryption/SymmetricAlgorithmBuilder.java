@@ -91,7 +91,9 @@ public final class SymmetricAlgorithmBuilder {
         if (key == null) throw new IllegalArgumentException("You must provide non-null key salt!");
         if (key.length != (keySize / 8))
             throw new IllegalArgumentException("Invalid key size, is " + key.length + " bytes but must be " + (keySize / 8) + "bytes");
-        resetKeyFields(null, key, null);
+        this.key = key;
+        this.keyFactory = null;
+        this.keyPassword = null;
         return this;
     }
 
@@ -100,8 +102,7 @@ public final class SymmetricAlgorithmBuilder {
      * Sets a key password for key derivation.
      * </p>
      * <p>
-     * Note that if you use this method, it overrides previous setting of
-     * {@link #keyFactory(EncryptionKeyFactory)} and {@link #key(byte[])}.
+     * Note that if you use this method, it overrides previous setting of {@link #key(byte[])}.
      * </p>
      *
      * @param keyPassword key password for key derivation
@@ -110,7 +111,8 @@ public final class SymmetricAlgorithmBuilder {
      */
     public SymmetricAlgorithmBuilder keyPassword(byte[] keyPassword) throws IllegalArgumentException {
         if (keyPassword == null) throw new IllegalArgumentException("You must provide non-null key password!");
-        resetKeyFields(null, null, keyPassword);
+        this.keyPassword = keyPassword;
+        this.key = null;
         return this;
     }
 
@@ -119,8 +121,7 @@ public final class SymmetricAlgorithmBuilder {
      * Sets a key password for key derivation.
      * </p>
      * <p>
-     * Note that if you use this method, it overrides previous setting of
-     * {@link #keyFactory(EncryptionKeyFactory)} and {@link #key(byte[])}.
+     * Note that if you use this method, it overrides previous setting of {@link #key(byte[])}.
      * </p>
      *
      * @param keyPassword key password for key derivation
@@ -178,8 +179,7 @@ public final class SymmetricAlgorithmBuilder {
      * Sets all parameters for key derivation function.
      * </p>
      * <p>
-     * Note that if you use this method, it overrides previous setting of
-     * {@link #keyFactory(EncryptionKeyFactory)} and {@link #key(byte[])}.
+     * Note that if you use this method, it overrides previous setting of {@link #key(byte[])}.
      * </p>
      *
      * @param keyPassword key password for key derivation
@@ -198,8 +198,7 @@ public final class SymmetricAlgorithmBuilder {
      * <p>
      * Sets a custom key factory.
      * </p><p>
-     * Note that if you use this method, it overrides previous setting of
-     * {@link #key(byte[])} and {@link #keyPassword(byte[])}.
+     * Note that if you use this method, it overrides previous setting of {@link #key(byte[])}.
      * </p>
      *
      * @param keyFactory factory to be set
@@ -209,7 +208,8 @@ public final class SymmetricAlgorithmBuilder {
     public SymmetricAlgorithmBuilder keyFactory(EncryptionKeyFactory<ByteArray, DerivedKeyParameters> keyFactory)
             throws IllegalArgumentException {
         if (keyFactory == null) throw new IllegalArgumentException("You must provide non-null key factory!");
-        resetKeyFields(keyFactory, null, null);
+        this.keyFactory = keyFactory;
+        this.key = null; // reset
         return this;
     }
 
@@ -284,20 +284,7 @@ public final class SymmetricAlgorithmBuilder {
         return new GenericEncryptionAlgorithm(engine, bytesRepresentation, encoding, blockSize, ivFactory, ivOutputCombining);
     }
 
-    private void resetKeyFields(EncryptionKeyFactory<ByteArray, DerivedKeyParameters> keyFactory, byte[] key, byte[] keyPassword) {
-        this.keyFactory = keyFactory;
-        this.key = key;
-        this.keyPassword = keyPassword;
-    }
-
     private EncryptionKeyFactory<ByteArray, DerivedKeyParameters> resolveKeyFactory() {
-        // variant with custom key factory
-        if (keyFactory != null) return keyFactory;
-
-        // variant with custom key password, salt, hash iterations
-        if (keyPassword != null && keyPassword.length != 0)
-            return factories.derivedKeyFactory();
-
         // variant with custom key
         if (key != null && key.length != 0) {
             return new EncryptionKeyFactory<ByteArray, DerivedKeyParameters>() {
@@ -307,6 +294,14 @@ public final class SymmetricAlgorithmBuilder {
                 }
             };
         }
+
+        // variant with custom key factory
+        if (keyFactory != null) return keyFactory;
+
+        // variant with custom key password, salt, hash iterations
+        if (keyPassword != null && keyPassword.length != 0)
+            return factories.derivedKeyFactory();
+
 
         throw new IllegalArgumentException("Missing data for encryption key (at least one of these must be set: keyFactory, keyPassword, key)");
     }
