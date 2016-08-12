@@ -1,6 +1,9 @@
 package cz.d1x.dxcrypto.encryption.crypto;
 
-import cz.d1x.dxcrypto.encryption.*;
+import cz.d1x.dxcrypto.encryption.AsymmetricEncryptionEngineFactory;
+import cz.d1x.dxcrypto.encryption.EncryptionEngine;
+import cz.d1x.dxcrypto.encryption.EncryptionException;
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParameters;
 
 import java.security.Key;
 import java.security.KeyFactory;
@@ -14,7 +17,7 @@ import java.security.spec.RSAPublicKeySpec;
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
-public class RSACryptoEngineFactory implements AsymmetricEncryptionEngineFactory<RSAKey, RSAKey> {
+public class RSACryptoEngineFactory implements AsymmetricEncryptionEngineFactory<RSAKeyParameters, RSAKeyParameters> {
 
     private final String algorithmName;
 
@@ -23,22 +26,20 @@ public class RSACryptoEngineFactory implements AsymmetricEncryptionEngineFactory
     }
 
     @Override
-    public EncryptionEngine newEngine(EncryptionKeyFactory<RSAKey> publicKeyFactory, EncryptionKeyFactory<RSAKey> privateKeyFactory) {
+    public EncryptionEngine newEngine(RSAKeyParameters publicKey, RSAKeyParameters privateKey) {
         try {
             String shortAlgorithmName = algorithmName.contains("/") ? algorithmName.substring(0, algorithmName.indexOf("/")) : algorithmName;
             KeyFactory keyFactory = KeyFactory.getInstance(shortAlgorithmName);
-            Key publicKey = null, privateKey = null;
-            if (publicKeyFactory != null) {
-                RSAKey key = publicKeyFactory.newKey();
-                RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(key.getModulus(), key.getExponent());
-                publicKey = keyFactory.generatePublic(pubKeySpec);
+            Key pubKey = null, privKey = null;
+            if (publicKey != null) {
+                RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(publicKey.getModulus(), publicKey.getExponent());
+                pubKey = keyFactory.generatePublic(pubKeySpec);
             }
-            if (privateKeyFactory != null) {
-                RSAKey key = privateKeyFactory.newKey();
-                RSAPrivateKeySpec privKeySpec = new RSAPrivateKeySpec(key.getModulus(), key.getExponent());
-                privateKey = keyFactory.generatePrivate(privKeySpec);
+            if (privateKey != null) {
+                RSAPrivateKeySpec privKeySpec = new RSAPrivateKeySpec(privateKey.getModulus(), privateKey.getExponent());
+                privKey = keyFactory.generatePrivate(privKeySpec);
             }
-            return new AsymmetricCryptoEngine(algorithmName, publicKey, privateKey);
+            return new AsymmetricCryptoEngine(algorithmName, pubKey, privKey);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new EncryptionException("Unable to retrieve RSA public key", e);
         }

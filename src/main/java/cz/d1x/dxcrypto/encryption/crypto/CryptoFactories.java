@@ -2,6 +2,9 @@ package cz.d1x.dxcrypto.encryption.crypto;
 
 import cz.d1x.dxcrypto.common.ByteArray;
 import cz.d1x.dxcrypto.encryption.*;
+import cz.d1x.dxcrypto.encryption.key.DerivedKeyParameters;
+import cz.d1x.dxcrypto.encryption.key.EncryptionKeyFactory;
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParameters;
 
 import javax.crypto.Cipher;
 import java.security.NoSuchAlgorithmException;
@@ -25,8 +28,8 @@ import java.security.NoSuchAlgorithmException;
 public class CryptoFactories implements EncryptionFactories {
 
     @Override
-    public EncryptionKeyFactory<ByteArray> derivedKeyFactory(byte[] keyPassword, byte[] keySalt, int iterations, int keySize) {
-        return new CryptoPBKDF2KeyFactory(keyPassword, keySalt, iterations, keySize);
+    public EncryptionKeyFactory<ByteArray, DerivedKeyParameters> derivedKeyFactory() {
+        return new CryptoPBKDF2KeyFactory();
     }
 
     @Override
@@ -46,7 +49,7 @@ public class CryptoFactories implements EncryptionFactories {
     }
 
     @Override
-    public AsymmetricEncryptionEngineFactory<RSAKey, RSAKey> rsa() {
+    public AsymmetricEncryptionEngineFactory<RSAKeyParameters, RSAKeyParameters> rsa() {
         return new RSACryptoEngineFactory("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
     }
 

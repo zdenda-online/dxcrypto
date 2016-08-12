@@ -1,17 +1,17 @@
-package cz.d1x.dxcrypto.encryption;
+package cz.d1x.dxcrypto.encryption.key;
 
 import java.math.BigInteger;
 
 /**
  * Specification of RSA key.
  */
-public class RSAKey {
+public class RSAKeyParameters {
 
     private final BigInteger modulus;
     private final BigInteger exponent;
     private final boolean isPublicKey;
 
-    public RSAKey(BigInteger modulus, BigInteger exponent, boolean isPublicKey) {
+    public RSAKeyParameters(BigInteger modulus, BigInteger exponent, boolean isPublicKey) {
         this.modulus = modulus;
         this.exponent = exponent;
         this.isPublicKey = isPublicKey;

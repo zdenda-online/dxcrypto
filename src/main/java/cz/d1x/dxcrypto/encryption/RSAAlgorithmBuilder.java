@@ -3,7 +3,7 @@ package cz.d1x.dxcrypto.encryption;
 import cz.d1x.dxcrypto.common.BytesRepresentation;
 import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.common.HexRepresentation;
-import cz.d1x.dxcrypto.encryption.crypto.GenericRSAKeyFactory;
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParameters;
 
 import java.math.BigInteger;
 
@@ -18,7 +18,7 @@ public final class RSAAlgorithmBuilder {
     private BigInteger modulus;
     private BigInteger publicExponent;
     private BigInteger privateExponent;
-    private AsymmetricEncryptionEngineFactory<RSAKey, RSAKey> engineFactory;
+    private AsymmetricEncryptionEngineFactory<RSAKeyParameters, RSAKeyParameters> engineFactory;
     private BytesRepresentation bytesRepresentation = new HexRepresentation();
     private String encoding = Encoding.DEFAULT;
 
@@ -27,7 +27,7 @@ public final class RSAAlgorithmBuilder {
      *
      * @param engineFactory factory for encryption engine
      */
-    public RSAAlgorithmBuilder(AsymmetricEncryptionEngineFactory<RSAKey, RSAKey> engineFactory) {
+    public RSAAlgorithmBuilder(AsymmetricEncryptionEngineFactory<RSAKeyParameters, RSAKeyParameters> engineFactory) {
         this.engineFactory = engineFactory;
     }
 
@@ -38,7 +38,7 @@ public final class RSAAlgorithmBuilder {
      * @return this instance
      * @throws IllegalArgumentException exception if passed factory is null
      */
-    public RSAAlgorithmBuilder engineFactory(AsymmetricEncryptionEngineFactory<RSAKey, RSAKey> engineFactory)
+    public RSAAlgorithmBuilder engineFactory(AsymmetricEncryptionEngineFactory<RSAKeyParameters, RSAKeyParameters> engineFactory)
             throws IllegalArgumentException {
         if (engineFactory == null) throw new IllegalArgumentException("You must provide non-null engine factory!");
         this.engineFactory = engineFactory;
@@ -111,9 +111,9 @@ public final class RSAAlgorithmBuilder {
      * @throws EncryptionException possible exception when encryption algorithm cannot be built
      */
     public EncryptionAlgorithm build() throws IllegalArgumentException {
-        EncryptionKeyFactory<RSAKey> publicKeyFactory = (publicExponent != null) ? new GenericRSAKeyFactory(modulus, publicExponent, true) : null;
-        EncryptionKeyFactory<RSAKey> privateKeyFactory = (privateExponent != null) ? new GenericRSAKeyFactory(modulus, privateExponent, false) : null;
-        EncryptionEngine engine = engineFactory.newEngine(publicKeyFactory, privateKeyFactory);
+        RSAKeyParameters publicKey = (publicExponent != null) ? new RSAKeyParameters(modulus, publicExponent, true) : null;
+        RSAKeyParameters privateKey = (privateExponent != null) ? new RSAKeyParameters(modulus, privateExponent, false) : null;
+        EncryptionEngine engine = engineFactory.newEngine(publicKey, privateKey);
         return new GenericEncryptionAlgorithm(engine, bytesRepresentation, encoding);
     }
 }

@@ -50,89 +50,92 @@ Examples
 **Hashing**
 ```java
 HashingAlgorithm sha256 = HashingAlgorithms.sha256()
-    .encoding("UTF-8") // optional, defaults to UTF-8
-    .bytesRepresentation(...) // optional, defaults to lower-cased HEX
-    .build();
+                .build();
 
 // byte[] or String based methods
-byte[] asBytes = sha256.hash(new byte[] {'h', 'e', 'l', 'l', 'o'});
-String asString = sha256.hash("hello"); // 2cf24dba5fb0a...
+byte[] hashedBytes = sha256.hash(new byte[]{'h', 'e', 'l', 'l', 'o'});
+String hashedString = sha256.hash("hello"); // 2cf24dba5fb0a...
 
-// repeated hashing
-HashingAlgorithm repeatedSha512 = HashingAlgorithms.sha512()
-    .repeated(27)
-    .build();
-String repeated = repeatedSha512.hash("hello"); // hash(hash("hello")) ~ 27x
+// customization of hashing function
+HashingAlgorithm customizedSha512 = HashingAlgorithms.sha512()
+        .encoding("UTF-8") // optional, defaults to UTF-8
+        .bytesRepresentation(new HexRepresentation(true)) // optional, defaults to lower-cased HEX
+        .repeated(27) // optional, defaults to no repeating
+        .build();
 
 // salting (with default combining of input text and salt)
-SaltedHashingAlgorithm saltedSha256 = HashingAlgorithms.sha256()
-    .salted()
-    .build();
-String salted = saltedSha256.hash("your input text", "your salt");
+SaltedHashingAlgorithm saltedSha1 = HashingAlgorithms.sha1()
+        .salted()
+        .build();
+String salted = saltedSha1.hash("your input text", "your salt");
 
 // salting with custom combining of input text and salt
-Combining combining = ...; // your implementation
+Combining combining = new ConcatAlgorithm(); // you can implement your custom combining
 SaltedHashingAlgorithm customSaltedSha256 = HashingAlgorithms.sha256()
-    .salted(combining)
-    .build();
+        .salted(combining)
+        .build();
 ```
 
 **Symmetric Encryption**
 ```java
-// AES
-EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassphrase")
-    .keySalt("saltForKeyDerivation") // optional
-    .keyHashIterations(4096) // optional
-    .ivFactory(...) // optional, how IV is generated, defaults to random bytes
-    .ivOutputCombining(...) // optional, how to combine/split IV and input
-    .bytesRepresentation(...) // optional, defaults to lower-cased HEX
-    .build();
+// AES with PBKDF2 key derivation from given password
+EncryptionAlgorithm aes = EncryptionAlgorithms.aes("secretPassword")
+        .build();
 
-byte[] asBytes = aes.encrypt(new byte[] {'h', 'e', 'l', 'l', 'o'});
-byte[] andBack = aes.decrypt(asBytes);
+// byte[] or String based methods
+byte[] encryptedBytes = aes.encrypt(new byte[]{'h', 'e', 'l', 'l', 'o'});
+byte[] decryptedBytes = aes.decrypt(encryptedBytes);
+String encryptedString = aes.encrypt("hello");
+String decryptedString = aes.decrypt(encryptedString);
 
-// DES
-EncryptionAlgorithm des = EncryptionAlgorithms.tripleDes("secret")
-    .build(); // default key salt, iterations count and combine/split alg.
+// customization of symmetric encryption algorithm with PBKDF2
+EncryptionAlgorithm customizedAes = EncryptionAlgorithms.aes("secretPassphrase")
+        .keySalt("saltForKeyDerivation") // optional (defaults to fixed byte array)
+        .keyHashIterations(4096) // optional (defaults to 4096)
+        .ivAndOutputCombining(new ConcatAlgorithm()) // optional, how to combine/split IV and cipherText
+        .bytesRepresentation(new HexRepresentation(true)) // optional, defaults to lower-cased HEX
+        .build();
 
-String asString = des.encrypt("hello");
-String andBack = des.decrypt(asString);
+// custom AES key (without key derivation function)
+byte[] key = new byte[16]; // your key (somehow filled), must have correct size for algorithm!
+EncryptionAlgorithm customKeyAes = EncryptionAlgorithms.aes()
+        .key(key)
+        .build();
 ```
 
 **Asymmetric Encryption**
 ```java
-// custom keys
-BigInteger modulus = BigInteger.ZERO; // your modulus (n)
-BigInteger publicExponent = BigInteger.ZERO; // your public exponent (e)
-BigInteger privateExponent = BigInteger.ZERO; // your private exponent (d)
-EncryptionAlgorithm customRsa = EncryptionAlgorithms.rsa()
-    .publicKey(modulus, publicExponent)
-    .privateKey(modulus, privateExponent)
-    .build();
+BigInteger modulus = BigInteger.ONE; // your modulus (n)
+BigInteger publicExponent = BigInteger.ONE; // your public exponent (e)
+BigInteger privateExponent = BigInteger.ONE; // your private exponent (d)
+EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
+        .publicKey(modulus, publicExponent)
+        .privateKey(modulus, privateExponent)
+        .build();
 
 // generated keys
 RSAKeysGenerator keysGen = new RSAKeysGenerator();
 RSAKeysGenerator.RSAKeys keys = keysGen.generateKeys();
 EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
-    .publicKey(keys.getModulus(), keys.getPublicExponent())
-    .privateKey(keys.getModulus(), keys.getPrivateExponent())
-    .build();
+        .publicKey(keys.getModulus(), keys.getPublicExponent())
+        .privateKey(keys.getModulus(), keys.getPrivateExponent())
+         .build();
 ```
 
 **Custom Encryption Engines**
 ```java
-// Custom engine for one specific algorithm
-SymmetricEncryptionEngineFactory customFactory = ...; // your factory (for 1 engine)
+// Custom factory for one specific algorithm
+SymmetricEncryptionEngineFactory<ByteArray> customFactory = null; // your implementation
 EncryptionAlgorithm customAes = EncryptionAlgorithms.aes("secretPassphrase")
-    .engineFactory(customFactory)
-    .build();
+        .engineFactory(customFactory)
+        .build();
 
-// Custom set of factories (for all supported algorithms of EncryptionAlgorithms)
-EncryptionEnginesFactories factories = ...; // your factories
+// Global configuration for all factories
+EncryptionFactories factories = null; // your implementation of all factories
 EncryptionAlgorithms.defaultFactories(factories);
 EncryptionAlgorithm customAes256 = EncryptionAlgorithms.aes256("secretPassphrase")
-    // no need to set engineFactory as in previous example
-    .build();
+         // no need to set engineFactory as they are globally set now
+         .build();
 ```
 
 **Secure Properties**
@@ -142,7 +145,7 @@ SecureProperties props = new SecureProperties(algorithm);
 props.setProperty("plainProperty", "imGoodBoy");
 props.setEncryptedProperty("encryptedProperty", "myDirtySecret");
 
-props.store(...);
+// props.store(...);
 // plainProperty=imGoodBoy
 // encryptedProperty=bf165faf5067...
 

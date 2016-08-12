@@ -1,6 +1,8 @@
 package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.*;
+import cz.d1x.dxcrypto.encryption.key.DerivedKeyParameters;
+import cz.d1x.dxcrypto.encryption.key.EncryptionKeyFactory;
 
 /**
  * Base builder for symmetric key algorithms based on {@link GenericEncryptionAlgorithm}.
@@ -23,7 +25,7 @@ public final class SymmetricAlgorithmBuilder {
     private final int blockSize;
 
     // the key will be used from one of these, depending on what user uses as last call in this builder
-    private EncryptionKeyFactory<ByteArray> keyFactory = null;
+    private EncryptionKeyFactory<ByteArray, DerivedKeyParameters> keyFactory = null;
     private byte[] key;
     private byte[] keyPassword;
 
@@ -204,7 +206,8 @@ public final class SymmetricAlgorithmBuilder {
      * @return this instance
      * @throws IllegalArgumentException exception if passed factory is null
      */
-    public SymmetricAlgorithmBuilder keyFactory(EncryptionKeyFactory<ByteArray> keyFactory) throws IllegalArgumentException {
+    public SymmetricAlgorithmBuilder keyFactory(EncryptionKeyFactory<ByteArray, DerivedKeyParameters> keyFactory)
+            throws IllegalArgumentException {
         if (keyFactory == null) throw new IllegalArgumentException("You must provide non-null key factory!");
         resetKeyFields(keyFactory, null, null);
         return this;
@@ -275,29 +278,31 @@ public final class SymmetricAlgorithmBuilder {
      * @return algorithm instance
      */
     public EncryptionAlgorithm build() throws IllegalArgumentException {
-        EncryptionEngine engine = engineFactory.newEngine(resolveKeyFactory());
+        DerivedKeyParameters keyParams = new DerivedKeyParameters(keyPassword, keySalt, keyHashIterations, keySize);
+        ByteArray key = resolveKeyFactory().newKey(keyParams);
+        EncryptionEngine engine = engineFactory.newEngine(key);
         return new GenericEncryptionAlgorithm(engine, bytesRepresentation, encoding, blockSize, ivFactory, ivOutputCombining);
     }
 
-    private void resetKeyFields(EncryptionKeyFactory<ByteArray> keyFactory, byte[] key, byte[] keyPassword) {
+    private void resetKeyFields(EncryptionKeyFactory<ByteArray, DerivedKeyParameters> keyFactory, byte[] key, byte[] keyPassword) {
         this.keyFactory = keyFactory;
         this.key = key;
         this.keyPassword = keyPassword;
     }
 
-    private EncryptionKeyFactory<ByteArray> resolveKeyFactory() {
+    private EncryptionKeyFactory<ByteArray, DerivedKeyParameters> resolveKeyFactory() {
         // variant with custom key factory
         if (keyFactory != null) return keyFactory;
 
         // variant with custom key password, salt, hash iterations
         if (keyPassword != null && keyPassword.length != 0)
-            return factories.derivedKeyFactory(keyPassword, keySalt, keyHashIterations, keySize);
+            return factories.derivedKeyFactory();
 
         // variant with custom key
         if (key != null && key.length != 0) {
-            return new EncryptionKeyFactory<ByteArray>() {
+            return new EncryptionKeyFactory<ByteArray, DerivedKeyParameters>() {
                 @Override
-                public ByteArray newKey() throws EncryptionException {
+                public ByteArray newKey(DerivedKeyParameters keyParams) throws EncryptionException {
                     return new ByteArray(key);
                 }
             };

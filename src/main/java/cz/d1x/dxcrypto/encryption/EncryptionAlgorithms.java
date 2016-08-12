@@ -2,6 +2,8 @@ package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.Encoding;
 import cz.d1x.dxcrypto.encryption.crypto.CryptoFactories;
+import cz.d1x.dxcrypto.encryption.key.EncryptionKeyFactory;
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParameters;
 
 /**
  * Factory that provides builders for available encryption algorithms.
@@ -218,7 +220,7 @@ public class EncryptionAlgorithms {
      * @return builder for RSA encryption algorithm
      */
     public static RSAAlgorithmBuilder rsa() {
-        AsymmetricEncryptionEngineFactory<RSAKey, RSAKey> factory = defaultFactories.rsa();
+        AsymmetricEncryptionEngineFactory<RSAKeyParameters, RSAKeyParameters> factory = defaultFactories.rsa();
         return new RSAAlgorithmBuilder(factory);
     }
 

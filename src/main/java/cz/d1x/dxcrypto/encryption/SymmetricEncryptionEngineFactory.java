@@ -10,8 +10,8 @@ public interface SymmetricEncryptionEngineFactory<K> {
     /**
      * Creates a new encryption engine.
      *
-     * @param keyFactory factory for encryption key
+     * @param key key for encryption engine
      * @return encryption engine
      */
-    EncryptionEngine newEngine(EncryptionKeyFactory<K> keyFactory);
+    EncryptionEngine newEngine(K key);
 }

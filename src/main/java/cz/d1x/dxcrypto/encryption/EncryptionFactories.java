@@ -1,6 +1,9 @@
 package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.ByteArray;
+import cz.d1x.dxcrypto.encryption.key.DerivedKeyParameters;
+import cz.d1x.dxcrypto.encryption.key.EncryptionKeyFactory;
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParameters;
 
 /**
  * Abstract factory for encryption engines and key factories that uses {@link EncryptionAlgorithms}.
@@ -12,17 +15,13 @@ import cz.d1x.dxcrypto.common.ByteArray;
 public interface EncryptionFactories {
 
     /**
-     * Creates a new key factory for derived keys by hash functions.
-     * Typically used for derivation of key by {@link SymmetricEncryptionEngineFactory} (AES, 3DES).
+     * Creates a new key factory for derived keys (typically by hash function).
+     * Used for derivation of key by {@link SymmetricEncryptionEngineFactory} (AES, 3DES).
      * It is recommended to use PBKDF2 (HMAC with SHA-1) as it is used for default crypto implementation.
      *
-     * @param keyPassword password for key derivation
-     * @param keySalt     salt for key derivation
-     * @param iterations  count of hash iterations for key derivation
-     * @param keySize     expected key size
      * @return key factory for key derivation
      */
-    EncryptionKeyFactory<ByteArray> derivedKeyFactory(byte[] keyPassword, byte[] keySalt, int iterations, int keySize);
+    EncryptionKeyFactory<ByteArray, DerivedKeyParameters> derivedKeyFactory();
 
     /**
      * Creates a new engine factory for AES (128 bits).
@@ -51,5 +50,5 @@ public interface EncryptionFactories {
      *
      * @return factory for RSA
      */
-    AsymmetricEncryptionEngineFactory<RSAKey, RSAKey> rsa();
+    AsymmetricEncryptionEngineFactory<RSAKeyParameters, RSAKeyParameters> rsa();
 }

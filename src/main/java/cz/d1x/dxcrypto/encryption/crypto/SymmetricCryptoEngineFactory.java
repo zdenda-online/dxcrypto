@@ -2,7 +2,6 @@ package cz.d1x.dxcrypto.encryption.crypto;
 
 import cz.d1x.dxcrypto.common.ByteArray;
 import cz.d1x.dxcrypto.encryption.EncryptionEngine;
-import cz.d1x.dxcrypto.encryption.EncryptionKeyFactory;
 import cz.d1x.dxcrypto.encryption.SymmetricEncryptionEngineFactory;
 
 /**
@@ -24,8 +23,7 @@ public class SymmetricCryptoEngineFactory implements SymmetricEncryptionEngineFa
     }
 
     @Override
-    public EncryptionEngine newEngine(EncryptionKeyFactory<ByteArray> keyFactory) {
-        byte[] key = keyFactory.newKey().getValue();
-        return new SymmetricCryptoEngine(algorithmName, key);
+    public EncryptionEngine newEngine(ByteArray key) {
+        return new SymmetricCryptoEngine(algorithmName, key.getValue());
     }
 }

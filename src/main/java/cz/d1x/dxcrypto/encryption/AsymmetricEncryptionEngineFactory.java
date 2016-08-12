@@ -9,12 +9,12 @@ public interface AsymmetricEncryptionEngineFactory<PUBKEY, PRIVKEY> {
 
     /**
      * Creates a new encryption engine.
-     * Note that you can pass only one of exponent, created algorithm then will be only able to encrypt/decrypt
-     * messages depending on what exponent you provided.
+     * Note that you can pass only one of key, created algorithm then will be only able to encrypt/decrypt
+     * messages depending on what key you provided.
      *
-     * @param publicKeyFactory  key factory for public keys
-     * @param privateKeyFactory key factory for private keys
+     * @param publicKey  public key for encryption
+     * @param privateKey private key for decryption
      * @return encryption engine
      */
-    EncryptionEngine newEngine(EncryptionKeyFactory<PUBKEY> publicKeyFactory, EncryptionKeyFactory<PRIVKEY> privateKeyFactory);
+    EncryptionEngine newEngine(PUBKEY publicKey, PRIVKEY privateKey);
 }
