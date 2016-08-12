@@ -90,10 +90,10 @@ String decryptedString = aes.decrypt(encryptedString);
 
 // customization of symmetric encryption algorithm with PBKDF2
 EncryptionAlgorithm customizedAes = EncryptionAlgorithms.aes("secretPassphrase")
-        .keySalt("saltForKeyDerivation") // optional (defaults to fixed byte array)
-        .keyHashIterations(4096) // optional (defaults to 4096)
-        .ivAndOutputCombining(new ConcatAlgorithm()) // optional, how to combine/split IV and cipherText
-        .bytesRepresentation(new HexRepresentation(true)) // optional, defaults to lower-cased HEX
+        .keySalt("saltForKeyDerivation") // optional, salt for key derivation
+        .keyHashIterations(4096) // optional, hash iterations for key derivation
+        .ivAndOutputCombining(new ConcatAlgorithm()) // optional, combining IV and output
+        .bytesRepresentation(new HexRepresentation(true)) // optional, how to represent bytes
         .build();
 
 // custom AES key (without key derivation function)
