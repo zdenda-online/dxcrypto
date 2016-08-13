@@ -87,7 +87,7 @@ public class ReadMeExamples {
                 .build();
 
         // generated keys
-        RSAKeysGenerator keysGen = new RSAKeysGenerator(); // you can specify desired key size (defaults 1024)
+        RSAKeysGenerator keysGen = new RSAKeysGenerator(); // you can specify key size (defaults 1024)
         RSAKeyParams[] keys = keysGen.generateKeys();
         EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
                 .publicKey(keys[0].getModulus(), keys[0].getExponent())

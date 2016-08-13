@@ -1,6 +1,7 @@
 DXCrypto: Easy Java Cryptography
 ================================
 Simple Java library for cryptography (hashing and encryption).
+
 There is one core implementation that is built purely on Java SE without any dependencies.
 Most of times, that one should be sufficient for you. But if you need it, there is also version of this library
 that uses Bouncy Castle. Typically you may need this if you want AES-256 and does not want to require JCE installed.
@@ -131,7 +132,7 @@ EncryptionAlgorithm rsa = EncryptionAlgorithms.rsa()
         .build();
 
 // generated keys
-RSAKeysGenerator keysGen = new RSAKeysGenerator(); // you can specify desired key size (defaults 1024)
+RSAKeysGenerator keysGen = new RSAKeysGenerator(); // you can specify key size (defaults 1024)
 RSAKeyParams[] keys = keysGen.generateKeys();
 EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
         .publicKey(keys[0].getModulus(), keys[0].getExponent())
