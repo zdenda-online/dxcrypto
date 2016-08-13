@@ -43,7 +43,7 @@ public class BouncyCastleSymmetricEngine implements EncryptionEngine {
         byte[] output = new byte[cipher.getOutputSize(input.length)];
         int length = cipher.processBytes(input, 0, input.length, output, 0);
         try {
-            length += cipher.doFinal(output, 0);
+            length += cipher.doFinal(output, length);
         } catch (InvalidCipherTextException e) {
             throw new EncryptionException("Encryption fails", e);
         }
