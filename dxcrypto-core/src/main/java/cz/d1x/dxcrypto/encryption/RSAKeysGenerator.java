@@ -1,5 +1,7 @@
 package cz.d1x.dxcrypto.encryption;
 
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParams;
+
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -46,15 +48,18 @@ public final class RSAKeysGenerator {
     }
 
     /**
-     * Generates a new RSA keys - its modulus, public and private exponents.
+     * Generates a new RSA keys.
      *
-     * @return RSA keys
+     * @return RSA keys array with 2 values, first value is public key, second value is private key
      */
-    public RSAKeys generateKeys() {
+    public RSAKeyParams[] generateKeys() {
         KeyPair keyPair = generateKeyPair();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        return new RSAKeys(publicKey.getModulus(), publicKey.getPublicExponent(), privateKey.getPrivateExponent());
+        RSAKeyParams[] out = new RSAKeyParams[2];
+        out[0] = new RSAKeyParams(publicKey.getModulus(), publicKey.getPublicExponent());
+        out[1] = new RSAKeyParams(privateKey.getModulus(), privateKey.getPrivateExponent());
+        return out;
     }
 
     /**

@@ -5,6 +5,7 @@ import cz.d1x.dxcrypto.common.Combining;
 import cz.d1x.dxcrypto.common.ConcatAlgorithm;
 import cz.d1x.dxcrypto.common.HexRepresentation;
 import cz.d1x.dxcrypto.encryption.*;
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParams;
 import cz.d1x.dxcrypto.hash.HashingAlgorithm;
 import cz.d1x.dxcrypto.hash.HashingAlgorithms;
 import cz.d1x.dxcrypto.hash.SaltedHashingAlgorithm;
@@ -86,11 +87,11 @@ public class ReadMeExamples {
                 .build();
 
         // generated keys
-        RSAKeysGenerator keysGen = new RSAKeysGenerator();
-        RSAKeysGenerator.RSAKeys keys = keysGen.generateKeys();
+        RSAKeysGenerator keysGen = new RSAKeysGenerator(); // you can specify desired key size (defaults 1024)
+        RSAKeyParams[] keys = keysGen.generateKeys();
         EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
-                .publicKey(keys.getModulus(), keys.getPublicExponent())
-                .privateKey(keys.getModulus(), keys.getPrivateExponent())
+                .publicKey(keys[0].getModulus(), keys[0].getExponent())
+                .privateKey(keys[1].getModulus(), keys[1].getExponent())
                 .build();
     }
 

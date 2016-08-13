@@ -1,6 +1,7 @@
 package cz.d1x.dxcrypto.encryption;
 
 import cz.d1x.dxcrypto.common.ByteArrayFactory;
+import cz.d1x.dxcrypto.encryption.key.RSAKeyParams;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class EncryptionAlgorithmsTest {
             0x27, 0x18, 0x27, 0x09, 0x7C, 0x44, 0x17, 0x1E,
             0x43, 0x03, 0x11, 0x27, 0x1F, 0x0D, 0x6D, 0x64,
             0x44, 0x18, 0x27, 0x09, 0x7A, 0x44, 0x17, 0x3E};
-    private static final RSAKeysGenerator.RSAKeys RSA_KEYS = new RSAKeysGenerator().generateKeys();
+    private static final RSAKeyParams[] RSA_KEYS = new RSAKeysGenerator().generateKeys();
 
     protected List<EncryptionAlgorithm> getImplementationsToTest() {
         return new ArrayList<EncryptionAlgorithm>() {{
@@ -35,8 +36,8 @@ public class EncryptionAlgorithmsTest {
             add(EncryptionAlgorithms.tripleDes(TRIPLE_DES_KEY).build());
 
             add(EncryptionAlgorithms.rsa()
-                    .publicKey(RSA_KEYS.getModulus(), RSA_KEYS.getPublicExponent())
-                    .privateKey(RSA_KEYS.getModulus(), RSA_KEYS.getPrivateExponent())
+                    .publicKey(RSA_KEYS[0].getModulus(), RSA_KEYS[0].getExponent())
+                    .privateKey(RSA_KEYS[1].getModulus(), RSA_KEYS[1].getExponent())
                     .build());
         }};
     }

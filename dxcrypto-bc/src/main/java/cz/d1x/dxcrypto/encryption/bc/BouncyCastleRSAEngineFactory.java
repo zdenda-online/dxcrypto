@@ -11,10 +11,10 @@ public class BouncyCastleRSAEngineFactory implements AsymmetricEncryptionEngineF
     public EncryptionEngine newEngine(RSAKeyParams publicKey, RSAKeyParams privateKey) {
         RSAKeyParameters pubKey = null, privKey = null;
         if (publicKey != null) {
-            pubKey = new RSAKeyParameters(true, publicKey.getModulus(), publicKey.getExponent());
+            pubKey = new RSAKeyParameters(false, publicKey.getModulus(), publicKey.getExponent());
         }
         if (privateKey != null) {
-            privKey = new RSAKeyParameters(false, privateKey.getModulus(), privateKey.getExponent());
+            privKey = new RSAKeyParameters(true, privateKey.getModulus(), privateKey.getExponent());
         }
         return new BouncyCastleRSAEngine(pubKey, privKey);
     }
