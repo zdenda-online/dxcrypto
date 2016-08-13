@@ -1,16 +1,17 @@
 DXCrypto: Easy Java Cryptography
 ================================
-Simple Java library for cryptography (hashing and encryption) built purely on Java SE without any dependencies.
+Simple Java library for cryptography (hashing and encryption).
+There is one core implementation that is built purely on Java SE without any dependencies.
+Most of times, that one should be sufficient for you. But if you need it, there is also version of this library
+that uses Bouncy Castle. Typically you may need this if you want AES-256 and does not want to require JCE installed.
 
 I created this library because I was tired of object initializations of existing Java APIs and all those checked
 exceptions it uses. It often happens that programmers using Java encryption APIs (from *java.security* and
 *javax.crypto* packages) consume a lot of time trying to initialize their algorithms properly. The aim of this library
 is to ease this pain as well as providing best practices in their usage (see features list below).
 
-This library does **not** contain any custom implementation of encryption algorithm. It uses existing Java APIs
-implementations. On the other hand, it is also extensible in many ways. E.g. if you want to use different
-engine for encryption (e.g. Bouncy Castle API for AES-256 which does not require JCE installed), you can easily
-do it (see examples below).
+This library does **not** contain any custom implementation of encryption algorithms. In core, it uses existing Java APIs
+implementations, in bc version uses Bouncy Castle. On the other hand, it is also easily extensible in many ways.
 
 It also provides few utility classes like SecureProperties that extend existing *java.util.Properties* with
 encrypted properties.
@@ -18,14 +19,23 @@ encrypted properties.
 This library is distributed under MIT license in the hope that it will be useful, but without any warranty.
 If you find any issue, please contact me on my e-mail.
 
-Maven dependency
-----------------
-
+Maven dependencies
+------------------
+The core implementation (using built-in Java APIs)
 ```xml
 <dependency>
    <groupId>cz.d1x</groupId>
-   <artifactId>dxcrypto</artifactId>
-   <version>1.11</version>
+   <artifactId>dxcrypto-core</artifactId>
+   <version>2.0</version>
+</dependency>
+```
+
+The Bouncy Castle implementation
+```xml
+<dependency>
+   <groupId>cz.d1x</groupId>
+   <artifactId>dxcrypto-bc</artifactId>
+   <version>2.0</version>
 </dependency>
 ```
 
@@ -127,6 +137,24 @@ EncryptionAlgorithm genRsa = EncryptionAlgorithms.rsa()
         .build();
 ```
 
+**Bouncy Castle Encryption**
+```java
+// switching to all encryption algorithms to bouncy castle
+BouncyCastleFactories bcFactories = new BouncyCastleFactories();
+EncryptionAlgorithms.defaultFactories(bcFactories);
+
+// now build algorithms the same way as before
+EncryptionAlgorithm bcAes = EncryptionAlgorithms.aes("secretPassphrase")
+        .build();
+
+// using bouncy castle only for one specific algorithm
+EncryptionAlgorithms.defaultFactories(new CryptoFactories()); // back to default
+EncryptionAlgorithms.aes256("secretPassphrase")
+        .keyFactory(bcFactories.derivedKeyFactory()) // optional, default will work as well
+        .engineFactory(bcFactories.aes256()) // be sure to use correct factory
+        .build();
+```
+
 **Custom Encryption Engines**
 ```java
 // Custom factory for one specific algorithm
@@ -157,72 +185,4 @@ props.setEncryptedProperty("encryptedProperty", "myDirtySecret");
 // automatic decryption of values
 String decrypted = props.getProperty("encryptedProperty"); // "myDirtySecret"
 String original = props.getOriginalProperty("encryptedProperty"); // bf165...
-```
-
-**Bouncy Castle for AES-256**
-```java
-EncryptionAlgorithm bcAes = EncryptionAlgorithms.aes256("secretPassphrase")
-    .keyFactory(new BouncyCastlePBKDF2KeyFactory())
-    .engineFactory(new BouncyCastleAESEngineFactory())
-    .build();
-
-class BouncyCastlePBKDF2KeyFactory implements EncryptionKeyFactory<ByteArray, DerivedKeyParameters> {
-
-    @Override
-    public ByteArray newKey(DerivedKeyParameters keyParams) throws EncryptionException {
-        PBEParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA1Digest());
-        gen.init(keyParams.getPassword(), keyParams.getSalt(), keyParams.getIterations());
-        KeyParameter keyParam = (KeyParameter) gen.generateDerivedParameters(keyParams.getKeySize());
-        return new ByteArray(keyParam.getKey());
-    }
-}
-
-class BouncyCastleAESEngineFactory implements SymmetricEncryptionEngineFactory<ByteArray> {
-
-    @Override
-    public EncryptionEngine newEngine(ByteArray key) {
-        KeyParameter keyParam = new KeyParameter(key.getValue());
-        return new BouncyCastleAESEngine(keyParam);
-    }
-}
-
-class BouncyCastleAESEngine implements EncryptionEngine {
-
-    private final KeyParameter keyParam;
-
-    public BouncyCastleAESEngine(KeyParameter keyParam) {
-        this.keyParam = keyParam;
-    }
-
-    @Override
-    public byte[] encrypt(byte[] input, byte[] initVector) throws EncryptionException {
-        return doOperation(input, initVector, true);
-    }
-
-    @Override
-    public byte[] decrypt(byte[] input, byte[] initVector) throws EncryptionException {
-        return doOperation(input, initVector, false);
-    }
-
-    private byte[] doOperation(byte[] input, byte[] initVector, boolean isEncrypt) {
-        CipherParameters params = new ParametersWithIV(keyParam, initVector);
-        BlockCipherPadding padding = new PKCS7Padding();
-        BlockCipher engine = new CBCBlockCipher(new AESEngine());
-        BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(engine, padding);
-        cipher.init(isEncrypt, params);
-
-        byte[] encrypted = new byte[cipher.getOutputSize(input.length)];
-        int length = cipher.processBytes(input, 0, input.length, encrypted, 0);
-        try {
-            length += cipher.doFinal(encrypted, 0);
-        } catch (InvalidCipherTextException e) {
-            throw new EncryptionException("Encryption fails", e);
-        }
-
-        // Remove output padding
-        byte[] out = new byte[length];
-        System.arraycopy(encrypted, 0, out, 0, length);
-        return out;
-    }
-}
 ```
