@@ -11,6 +11,10 @@
     </parent>
 
     <artifactId>dxcrypto-bc</artifactId>
+    <packaging>jar</packaging>
+
+    <name>DXCrypto Bouncy Castle</name>
+    <description>Additional implementation that provides Bouncy Castle implementation as engine</description>
 
     <dependencies>
         <dependency>

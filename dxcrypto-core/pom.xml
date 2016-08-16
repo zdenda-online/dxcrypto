@@ -11,6 +11,10 @@
     </parent>
 
     <artifactId>dxcrypto-core</artifactId>
+    <packaging>jar</packaging>
+
+    <name>DXCrypto Core</name>
+    <description>Core implementation that provides default javax.crypto implementation as engine</description>
 
     <dependencies>
         <dependency>
