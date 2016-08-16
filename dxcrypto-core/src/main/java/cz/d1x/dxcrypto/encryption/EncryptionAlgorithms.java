@@ -71,13 +71,12 @@ public class EncryptionAlgorithms {
      * describes what parameters it uses for encryption algorithms).
      * </p><p>
      * Note that during build process, you must call one of methods for specifying encryption key.
-     * The methods are
+     * The methods are</p>
      * <ul>
      * <li>{@link SymmetricAlgorithmBuilder#keyPassword(byte[])}</li>
      * <li>{@link SymmetricAlgorithmBuilder#key(byte[])}</li>
      * <li>{@link SymmetricAlgorithmBuilder#keyFactory(EncryptionKeyFactory)}</li>
      * </ul>
-     * </p>
      *
      * @return builder for AES encryption algorithm
      * @throws IllegalArgumentException exception if passed key password is null
@@ -134,13 +133,12 @@ public class EncryptionAlgorithms {
      * describes what parameters it uses for encryption algorithms).
      * </p><p>
      * Note that during build process, you must call one of methods for specifying encryption key.
-     * The methods are
+     * The methods are</p>
      * <ul>
      * <li>{@link SymmetricAlgorithmBuilder#keyPassword(byte[])}</li>
      * <li>{@link SymmetricAlgorithmBuilder#key(byte[])}</li>
      * <li>{@link SymmetricAlgorithmBuilder#keyFactory(EncryptionKeyFactory)}</li>
      * </ul>
-     * </p>
      *
      * @return builder for AES encryption algorithm
      * @throws IllegalArgumentException exception if passed key password is null
@@ -194,13 +192,12 @@ public class EncryptionAlgorithms {
      * describes what parameters it uses for encryption algorithms).
      * </p><p>
      * Note that during build process, you must call one of methods for specifying encryption key.
-     * The methods are
+     * The methods are</p>
      * <ul>
      * <li>{@link SymmetricAlgorithmBuilder#keyPassword(byte[])}</li>
      * <li>{@link SymmetricAlgorithmBuilder#key(byte[])}</li>
      * <li>{@link SymmetricAlgorithmBuilder#keyFactory(EncryptionKeyFactory)}</li>
      * </ul>
-     * </p>
      *
      * @return builder for AES encryption algorithm
      * @throws IllegalArgumentException exception if passed key password is null

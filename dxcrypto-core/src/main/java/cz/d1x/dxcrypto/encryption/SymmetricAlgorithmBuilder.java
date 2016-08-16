@@ -164,7 +164,7 @@ public final class SymmetricAlgorithmBuilder {
      * Sets number of iterations of hashing for key derivation.
      * Recommended count is at least 1000.
      *
-     * @param keyHashIterations number of keyHashIterations
+     * @param keyHashIterations number of hash iterations
      * @return this instance
      * @throws IllegalArgumentException exception if passed iterations are lower than 1
      */
@@ -182,7 +182,9 @@ public final class SymmetricAlgorithmBuilder {
      * Note that if you use this method, it overrides previous setting of {@link #key(byte[])}.
      * </p>
      *
-     * @param keyPassword key password for key derivation
+     * @param keyPassword       key password for key derivation
+     * @param keySalt           salt for key derivation
+     * @param keyHashIterations number of hash iterations
      * @return this instance
      * @throws IllegalArgumentException exception if passed key password is null
      */
