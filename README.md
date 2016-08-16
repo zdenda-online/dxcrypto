@@ -21,8 +21,6 @@ If you find any issue, please contact me on my e-mail.
 
 Maven dependencies
 ------------------
-2.0 version will be released during September 2016 (see README of 1.11 if you can't wait :-) )
-
 The core implementation (using built-in Java APIs)
 ```xml
 <dependency>
