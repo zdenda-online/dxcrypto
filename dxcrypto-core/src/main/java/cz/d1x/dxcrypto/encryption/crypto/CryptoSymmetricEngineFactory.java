@@ -5,7 +5,7 @@ import cz.d1x.dxcrypto.encryption.EncryptionEngine;
 import cz.d1x.dxcrypto.encryption.SymmetricEncryptionEngineFactory;
 
 /**
- * Factory that provides {@link EncryptionEngine} implementation for symmetric algorithms.
+ * Factory that provides {@link EncryptionEngine} implementation for symmetric algorithms from javax.crypto.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */

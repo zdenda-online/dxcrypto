@@ -13,6 +13,11 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+/**
+ * Implementation of encryption engine that uses Bouncy Castle implementations for symmetric encryption.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ */
 public class BouncyCastleSymmetricEngine implements EncryptionEngine {
 
     private final BlockCipher cipher;

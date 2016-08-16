@@ -5,6 +5,11 @@ import cz.d1x.dxcrypto.encryption.EncryptionEngine;
 import cz.d1x.dxcrypto.encryption.key.RSAKeyParams;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 
+/**
+ * Factory that provides {@link EncryptionEngine} implementation for RSA algorithm from Bouncy Castle.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ */
 public class BouncyCastleRSAEngineFactory implements AsymmetricEncryptionEngineFactory<RSAKeyParams, RSAKeyParams> {
 
     @Override

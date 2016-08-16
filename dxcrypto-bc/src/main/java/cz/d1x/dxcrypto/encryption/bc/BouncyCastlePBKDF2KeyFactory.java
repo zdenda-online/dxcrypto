@@ -9,6 +9,11 @@ import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.bouncycastle.crypto.params.KeyParameter;
 
+/**
+ * Key factory that uses implementation of PBKDF2 function from Bouncy Castle for key derivation.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ */
 public class BouncyCastlePBKDF2KeyFactory implements EncryptionKeyFactory<ByteArray, DerivedKeyParams> {
 
     @Override

@@ -6,6 +6,11 @@ import cz.d1x.dxcrypto.encryption.SymmetricEncryptionEngineFactory;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 
+/**
+ * Factory that provides {@link EncryptionEngine} implementation for symmetric algorithms from Bouncy Castle.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ */
 public class BouncyCastleSymmetricEngineFactory implements SymmetricEncryptionEngineFactory<ByteArray> {
 
     private final BlockCipher cipher;

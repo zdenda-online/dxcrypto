@@ -10,6 +10,11 @@ import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 
+/**
+ * Factory that provides {@link EncryptionEngine} implementation for RSA algorithm from Bouncy Castle.
+ *
+ * @author Zdenek Obst, zdenek.obst-at-gmail.com
+ */
 public class BouncyCastleRSAEngine implements EncryptionEngine {
 
     private final RSAKeyParameters publicKey;

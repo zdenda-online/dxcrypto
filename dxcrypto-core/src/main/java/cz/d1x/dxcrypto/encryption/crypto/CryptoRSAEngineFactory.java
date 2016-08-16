@@ -13,7 +13,7 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
 /**
- * Factory that provides {@link EncryptionEngine} implementation for RSA algorithm.
+ * Factory that provides {@link EncryptionEngine} implementation for RSA algorithm from javax.crypto.
  *
  * @author Zdenek Obst, zdenek.obst-at-gmail.com
  */
