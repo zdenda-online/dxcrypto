@@ -27,6 +27,7 @@ public class CryptoSymmetricEngine implements EncryptionEngine {
     public CryptoSymmetricEngine(String cipherName, byte[] key) throws EncryptionException {
         this.cipherName = cipherName;
         String shortCipherName = cipherName.contains("/") ? cipherName.substring(0, cipherName.indexOf("/")) : cipherName;
+        checkJCE(shortCipherName, key.length); // Crypto may require JCE installed
         this.key = new SecretKeySpec(key, shortCipherName);
         try {
             Cipher.getInstance(cipherName); // find out if i can create instances and retrieve block size
@@ -54,6 +55,18 @@ public class CryptoSymmetricEngine implements EncryptionEngine {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException |
                 InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
             throw new EncryptionException("Unable to encrypt input", e);
+        }
+    }
+
+    private void checkJCE(String name, int keySize) {
+        IllegalArgumentException exc = new IllegalArgumentException("Cipher " + name + " is not supported with key " +
+                "size of " + keySize + "b,  probably Java Cryptography Extension (JCE) is not installed in your Java.");
+        try {
+            if (Cipher.getMaxAllowedKeyLength(name) < keySize) {
+                throw exc;
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw exc;
         }
     }
 }

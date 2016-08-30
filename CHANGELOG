@@ -1,5 +1,8 @@
 Whats new in latest versions
 
+Version 2.1
+* Moved check of JCE to final build of algorithm (in case you want custom engine factory)
+
 Version 2.0
 * Split project sub-modules
 * Added Bouncy Castle implementation of encryption algorithms

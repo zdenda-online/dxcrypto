@@ -8,9 +8,6 @@ import cz.d1x.dxcrypto.encryption.key.DerivedKeyParams;
 import cz.d1x.dxcrypto.encryption.key.EncryptionKeyFactory;
 import cz.d1x.dxcrypto.encryption.key.RSAKeyParams;
 
-import javax.crypto.Cipher;
-import java.security.NoSuchAlgorithmException;
-
 /**
  * <p>
  * Factories for engines that use Java standard API (javax.crypto) as encryption implementations.
@@ -41,7 +38,6 @@ public class CryptoFactories implements EncryptionFactories {
 
     @Override
     public SymmetricEncryptionEngineFactory<ByteArray> aes256() {
-        checkJCE("AES", 256);
         return new CryptoSymmetricEngineFactory("AES/CBC/PKCS5Padding");
     }
 
@@ -55,15 +51,4 @@ public class CryptoFactories implements EncryptionFactories {
         return new CryptoRSAEngineFactory("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
     }
 
-    private void checkJCE(String name, int keySize) {
-        IllegalArgumentException exc = new IllegalArgumentException("Cipher " + name + " is not supported with key " +
-                "size of " + keySize + "b,  probably Java Cryptography Extension (JCE) is not installed in your Java.");
-        try {
-            if (Cipher.getMaxAllowedKeyLength(name) < keySize) {
-                throw exc;
-            }
-        } catch (NoSuchAlgorithmException e) {
-            throw exc;
-        }
-    }
 }
