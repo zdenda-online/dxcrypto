@@ -20,11 +20,11 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
  */
 public class BouncyCastleSymmetricEngine implements EncryptionEngine {
 
-    private final BlockCipher cipher;
+    private final Class<? extends BlockCipher> blockCipherClass;
     private final KeyParameter keyParam;
 
-    public BouncyCastleSymmetricEngine(BlockCipher cipher, KeyParameter keyParam) {
-        this.cipher = cipher;
+    public BouncyCastleSymmetricEngine(Class<? extends BlockCipher> blockCipherClass, KeyParameter keyParam) {
+        this.blockCipherClass = blockCipherClass;
         this.keyParam = keyParam;
     }
 
@@ -41,7 +41,13 @@ public class BouncyCastleSymmetricEngine implements EncryptionEngine {
     private byte[] doOperation(byte[] input, byte[] initVector, boolean isEncrypt) {
         CipherParameters params = new ParametersWithIV(keyParam, initVector);
         BlockCipherPadding padding = new PKCS7Padding();
-        BlockCipher engine = new CBCBlockCipher(cipher);
+        BlockCipher blockCipher;
+        try {
+            blockCipher = blockCipherClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new EncryptionException("Encryption fails", e);
+        }
+        BlockCipher engine = new CBCBlockCipher(blockCipher);
         BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(engine, padding);
         cipher.init(isEncrypt, params);
 

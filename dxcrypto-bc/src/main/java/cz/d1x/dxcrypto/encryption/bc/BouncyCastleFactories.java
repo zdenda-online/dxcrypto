@@ -36,17 +36,17 @@ public class BouncyCastleFactories implements EncryptionFactories {
 
     @Override
     public SymmetricEncryptionEngineFactory<ByteArray> aes256() {
-        return new BouncyCastleSymmetricEngineFactory(new AESEngine());
+        return new BouncyCastleSymmetricEngineFactory(AESEngine.class);
     }
 
     @Override
     public SymmetricEncryptionEngineFactory<ByteArray> aes() {
-        return new BouncyCastleSymmetricEngineFactory(new AESEngine());
+        return new BouncyCastleSymmetricEngineFactory(AESEngine.class);
     }
 
     @Override
     public SymmetricEncryptionEngineFactory<ByteArray> tripleDes() {
-        return new BouncyCastleSymmetricEngineFactory(new DESedeEngine());
+        return new BouncyCastleSymmetricEngineFactory(DESedeEngine.class);
     }
 
     @Override

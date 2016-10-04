@@ -13,15 +13,15 @@ import org.bouncycastle.crypto.params.KeyParameter;
  */
 public class BouncyCastleSymmetricEngineFactory implements SymmetricEncryptionEngineFactory<ByteArray> {
 
-    private final BlockCipher cipher;
+    private final Class<? extends BlockCipher> blockCipherClass;
 
-    public BouncyCastleSymmetricEngineFactory(BlockCipher cipher) {
-        this.cipher = cipher;
+    public BouncyCastleSymmetricEngineFactory(Class<? extends BlockCipher> blockCipherClass) {
+        this.blockCipherClass = blockCipherClass;
     }
 
     @Override
     public EncryptionEngine newEngine(ByteArray key) {
         KeyParameter keyParam = new KeyParameter(key.getValue());
-        return new BouncyCastleSymmetricEngine(cipher, keyParam);
+        return new BouncyCastleSymmetricEngine(blockCipherClass, keyParam);
     }
 }
